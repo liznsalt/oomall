@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/demo?&serverTimezone=Asia/Shanghai
+    username: root
+    password: mimahaonanji233
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #初始化时建立物理连接的个数
+      initial-size: 3
+      #  最小连接池数量
+      min-idle: 3
+      #最大连接池数量
+      max-active: 10
+      #获取连接时最大等待时间
+      max-wait: 60000
+      #配置监控页面访问登录名及密码
+      stat-view-servlet:
+        enabled: true
+        # 访问路径为/druid时，跳转到StatViewServlet
+        url-pattern: /druid/*
+        # 是否能够重置数据
+        reset-enable: false
+        # 需要账号密码才能访问控制台
+        login-username: admin
+        login-password: 123456
+      filter:
+        stat:
+          #是否开启慢sql查询监控
+          log-slow-sql: true
+          #慢SQL执行时间
+          slow-sql-millis: 100
+      validation-query: select 1
+
+#  redis:
+#    host: 101.132.152.28
+#    password: hyt.507.com
