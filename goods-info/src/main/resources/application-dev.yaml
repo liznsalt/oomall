@@ -32,6 +32,6 @@ spring:
           slow-sql-millis: 100
       validation-query: select 1
 
-#  redis:
-#    host: 101.132.152.28
-#    password: hyt123
+  redis:
+    host: 101.132.152.28
+    password: hyt123

@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
-    name: oomall-demo
+    name: oomall-goods-info
   profiles:
     active: dev
 
