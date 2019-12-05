@@ -8,8 +8,18 @@ import java.util.Map;
 /**
  * @author liznsalt
  */
-public class MallProduct extends Product {
-    private MallGoods goods;
-    private List<MallProduct> products;
-    private Map<String, String> specificationMap;
+public class MallProduct {
+    private MallProductPo realObj;
+
+    public MallProduct(MallProductPo productPo) {
+        realObj = productPo;
+    }
+
+    public MallProductPo getRealObj() {
+        return realObj;
+    }
+
+    public void setRealObj(MallProductPo realObj) {
+        this.realObj = realObj;
+    }
 }
