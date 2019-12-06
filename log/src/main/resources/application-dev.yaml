@@ -4,6 +4,9 @@ spring:
     url: jdbc:mysql://101.132.152.28:3306/oomall
     username: oomall
     password: OOAD3-4wmtnl
+#    url: jdbc:mysql://localhost:3306/oomall?&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: mimahaonanji233
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
