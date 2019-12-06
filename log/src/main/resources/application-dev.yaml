@@ -31,7 +31,3 @@ spring:
           #慢SQL执行时间
           slow-sql-millis: 100
       validation-query: select 1
-
-  redis:
-    host: 101.132.152.28
-    password: hyt123

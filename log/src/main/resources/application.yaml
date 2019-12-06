@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
-    name: oomall-goods-info
+    name: oomall-log
   profiles:
     active: dev
 
@@ -43,11 +43,3 @@ logging:
     # TODO 记得修改
     path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
-
-oomall:
-  #最大付款时间, 单位分钟
-  maxpaytime: 30
-  #redis缓存失效时间，单位分钟
-  redisexpiretime: 1
-  #预提库存数量
-  predeductQty: 3

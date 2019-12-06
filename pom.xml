@@ -6,6 +6,7 @@
     <modules>
         <module>demo</module>
         <module>goods-info</module>
+        <module>log</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
