@@ -1,6 +1,7 @@
 package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallBrand;
 import xmu.oomall.domain.MallGoods;
 
@@ -9,12 +10,13 @@ import java.util.List;
 /**
  * @author liznsalt
  */
+@Component
 @Mapper
 public interface BrandMapper {
     /**
      * 添加品牌
      * @param brand 品牌信息
-     * @return 添加后的品牌ID
+     * @return 行数
      */
     int addBrand(MallBrand brand);
 

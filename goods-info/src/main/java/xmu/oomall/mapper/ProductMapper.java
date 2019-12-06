@@ -1,19 +1,22 @@
 package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallProductPo;
+import xmu.oomall.domain.standard.Product;
 
 import java.util.List;
 
 /**
  * @author liznsalt
  */
+@Component
 @Mapper
 public interface ProductMapper {
     /**
      * 添加产品
      * @param product 产品信息
-     * @return 添加后的产品ID
+     * @return 行数
      */
     int addProduct(MallProductPo product);
 
@@ -44,4 +47,11 @@ public interface ProductMapper {
      * @return 子产品列表
      */
     List<MallProductPo> findSubProductsById(Integer id);
+
+    /**
+     * 批量添加产品
+     * @param productPoList 产品列表
+     * @return 行数
+     */
+    int addProducts(List<MallProductPo> productPoList);
 }

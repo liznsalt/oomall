@@ -1,6 +1,7 @@
 package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.domain.MallProductPo;
 
@@ -9,12 +10,13 @@ import java.util.List;
 /**
  * @author liznsalt
  */
+@Component
 @Mapper
 public interface GoodsMapper {
     /**
      * 增加商品
      * @param goods 商品信息
-     * @return 添加后的ID
+     * @return 行数
      */
     int addGoods(MallGoods goods);
 
@@ -54,8 +56,15 @@ public interface GoodsMapper {
 
     /**
      * 获得数据库中的货品库存量
-     * @param id 货品id
+     * @param id 产品ID
      * @return 库存量
      */
     Integer getStockInDb(Integer id);
+
+    /**
+     * 删除商品下的所有子产品
+     * @param id 商品ID
+     * @return 删除行数
+     */
+    Integer deleteBrandsById(Integer id);
 }

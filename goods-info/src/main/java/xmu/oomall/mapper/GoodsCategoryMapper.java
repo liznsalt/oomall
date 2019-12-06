@@ -1,6 +1,7 @@
 package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.domain.MallGoodsCategory;
 
@@ -9,12 +10,13 @@ import java.util.List;
 /**
  * @author liznsalt
  */
+@Component
 @Mapper
 public interface GoodsCategoryMapper {
     /**
      * 添加商品种类
      * @param goodsCategory 商品种类信息
-     * @return 添加后的商品种类ID
+     * @return 行数
      */
     int addGoodsCategory(MallGoodsCategory goodsCategory);
 
@@ -49,7 +51,6 @@ public interface GoodsCategoryMapper {
      * 根据商品种类ID得到所有属于这个种类的商品
      * @param id 商品种类ID
      * @return 商品列表
-     * @deprecated 似乎不能实现，先不做
      */
     List<MallGoods> findAllGoodsById(Integer id);
 
@@ -65,4 +66,11 @@ public interface GoodsCategoryMapper {
      * @return 一级分类列表
      */
     List<MallGoodsCategory> findAllGoodsCategoriesOfL1();
+
+    /**
+     * 级联将该类别下的所有商品的类别ID设为NULL
+     * @param id 类别ID
+     * @return 行数
+     */
+    int setGoodsCategoryIdNull(Integer id);
 }

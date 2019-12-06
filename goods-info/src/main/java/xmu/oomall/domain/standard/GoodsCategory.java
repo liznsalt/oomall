@@ -1,5 +1,7 @@
 package xmu.oomall.domain.standard;
 
+import org.apache.ibatis.type.Alias;
+
 import javax.annotation.sql.DataSourceDefinition;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,7 +12,6 @@ import java.util.Objects;
  * @Data:Created in 14:50 2019/11/29
  * @Modified By:
  **/
-
 public class GoodsCategory {
     private Integer id;
     /**
@@ -23,17 +24,17 @@ public class GoodsCategory {
     private Integer pid;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
-    private Boolean beDelete;
+    private Boolean beDeleted;
 
-    @java.lang.Override
-    public java.lang.String toString() {
+    @Override
+    public String toString() {
         return "GoodsCategory{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", pid=" + pid +
                 ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
-                ", beDelete=" + beDelete +
+                ", beDeleted=" + beDeleted +
                 '}';
     }
 
@@ -90,11 +91,11 @@ public class GoodsCategory {
         this.gmtModified = gmtModified;
     }
 
-    public Boolean getBeDelete() {
-        return beDelete;
+    public Boolean getBeDeleted() {
+        return beDeleted;
     }
 
-    public void setBeDelete(Boolean beDelete) {
-        this.beDelete = beDelete;
+    public void setBeDeleted(Boolean beDeleted) {
+        this.beDeleted = beDeleted;
     }
 }

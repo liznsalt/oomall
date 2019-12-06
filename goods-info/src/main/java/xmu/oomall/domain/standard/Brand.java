@@ -9,20 +9,19 @@ import java.util.Objects;
  * @Data:Created in 14:50 2019/11/29
  * @Modified By:
  **/
-
 public class Brand {
     private Integer id;
-    /*
+    /**
      *品牌名称
-     * */
+     */
     private String name;
-    /*
+    /**
      *品牌描述
-     * */
-    private String describe;
-    /*
+     */
+    private String description;
+    /**
      *品牌图片链接
-     * */
+     */
     private String picUrl;
 
     private LocalDateTime gmtCreate;
@@ -34,7 +33,7 @@ public class Brand {
         return "Brand{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", describe='" + describe + '\'' +
+                ", description='" + description + '\'' +
                 ", picUrl='" + picUrl + '\'' +
                 ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
@@ -71,12 +70,12 @@ public class Brand {
         this.name = name;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPicUrl() {
