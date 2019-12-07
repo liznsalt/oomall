@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Component
 @Mapper
-public interface LogMapper {
+public interface LogMapper extends tk.mybatis.mapper.common.Mapper<MallLog> {
     /**
      * 添加日志
      * @param log 日志信息
@@ -33,10 +33,10 @@ public interface LogMapper {
      */
     MallLog findLogById(Integer id);
 
-    /**
-     * 根据Example条件进行查询
-     * @param example 条件
-     * @return 日志列表
-     */
-    List<MallLog> findLogsByExample(Example example);
+//    /**
+//     * 根据Example条件进行查询
+//     * @param example 条件
+//     * @return 日志列表
+//     */
+//    List<MallLog> findLogsByExample(Example example);
 }

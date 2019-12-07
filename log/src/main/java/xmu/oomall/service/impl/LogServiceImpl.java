@@ -31,6 +31,6 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public List<MallLog> findLogsByExample(Example example) {
-        return logMapper.findLogsByExample(example);
+        return logMapper.selectByExample(example);
     }
 }
