@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   application:
-    name: oomall-log
+    name: oomall-cart
   profiles:
     active: dev
 
@@ -44,9 +44,4 @@ logging:
     path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: http://liznsalt:123456@localhost:9000/eureka/
+

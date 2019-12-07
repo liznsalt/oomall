@@ -2,18 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.LogMapper">
     
-    <resultMap id="BaseResultMap" type="mallLog">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="admin_id" jdbcType="BIGINT" property="adminId"/>
-        <result column="id" jdbcType="BIGINT" property="id"/>
-        <result column="ip" jdbcType="VARCHAR" property="ip"/>
-        <result column="type" jdbcType="TINYINT" property="type"/>
-        <result column="action" jdbcType="VARCHAR" property="action"/>
-        <result column="status" jdbcType="TINYINT" property="statusCode"/>
-        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
-        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
-        <result column="action_id" jdbcType="BIGINT" property="actionId"/>
-    </resultMap>
+<!--    <resultMap id="BaseResultMap" type="mallLog">-->
+<!--        <id column="id" jdbcType="BIGINT" property="id"/>-->
+<!--        <result column="admin_id" jdbcType="BIGINT" property="adminId"/>-->
+<!--        <result column="id" jdbcType="BIGINT" property="id"/>-->
+<!--        <result column="ip" jdbcType="VARCHAR" property="ip"/>-->
+<!--        <result column="type" jdbcType="TINYINT" property="type"/>-->
+<!--        <result column="action" jdbcType="VARCHAR" property="action"/>-->
+<!--        <result column="status" jdbcType="TINYINT" property="statusCode"/>-->
+<!--        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>-->
+<!--        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>-->
+<!--        <result column="action_id" jdbcType="BIGINT" property="actionId"/>-->
+<!--    </resultMap>-->
 
     <insert id="addLog" parameterType="mallLog" useGeneratedKeys="true" keyProperty="id">
         insert into log(admin_id, ip, type, action, status, gmt_create, gmt_modified, action_id)
@@ -46,26 +46,18 @@
         from log
     </select>
     
-<!--    <select id="findLogsByExample" parameterType="tk.mybatis.mapper.entity.Example" resultMap="LogMap">-->
-<!--        select-->
-<!--        <if test="distinct">-->
-<!--            distinct-->
-<!--        </if>-->
-<!--               id,-->
-<!--               admin_id,-->
-<!--               ip,-->
-<!--               type,-->
-<!--               action,-->
-<!--               status as status_code,-->
-<!--               gmt_create,-->
-<!--               gmt_modified,-->
-<!--               action_id-->
-<!--        from log-->
-<!--        <if test="orderByClause != null">-->
-<!--            order by ${orderByClause}-->
-<!--        </if>-->
-<!--        <if test="limitStart != null and limitSize >= 0">-->
-<!--            limit #{limitStart} , #{limitSize}-->
-<!--        </if>-->
-<!--    </select>-->
+    <select id="findLogsByCondition" resultType="mallLog">
+        select id,
+               admin_id,
+               ip,
+               type,
+               action,
+               status as status_code,
+               gmt_create,
+               gmt_modified,
+               action_id
+        from log
+        order by ${sort}  ${order} , id desc
+        limit ${limit * page}
+    </select>
 </mapper>

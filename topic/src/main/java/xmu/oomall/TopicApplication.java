@@ -1,21 +1,30 @@
 package xmu.oomall;
 
+import feign.Logger;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author liznsalt
  */
 @EnableDiscoveryClient
 @EnableEurekaClient
+@EnableFeignClients
 @SpringBootApplication
 @MapperScan("xmu.oomall.mapper")
-public class LogApplication {
+public class TopicApplication {
+
+    @Bean
+    Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;
+    }
+
     public static void main(String[] args) {
-        SpringApplication.run(LogApplication.class, args);
+        SpringApplication.run(TopicApplication.class, args);
     }
 }

@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8084
 
 spring:
   application:
-    name: oomall-log
+    name: oomall-topic
   profiles:
     active: dev
 
@@ -50,3 +50,13 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://liznsalt:123456@localhost:9000/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 5000

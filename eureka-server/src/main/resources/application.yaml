@@ -1,0 +1,9 @@
+spring:
+  security:
+    basic:
+      enabled: true
+    user:
+      name: liznsalt
+      password: 123456
+  profiles:
+    active: peer1
