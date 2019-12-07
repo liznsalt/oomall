@@ -2,11 +2,11 @@ package xmu.oomall.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 import xmu.oomall.domain.MallLog;
 import xmu.oomall.mapper.LogMapper;
 import xmu.oomall.service.LogService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,6 +20,9 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public MallLog addLog(MallLog log) {
+        log.setGmtCreate(LocalDateTime.now());
+        log.setGmtModified(LocalDateTime.now());
+        log.setBeDeleted(false);
         logMapper.addLog(log);
         return log;
     }
@@ -30,7 +33,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<MallLog> findLogsByExample(Example example) {
-        return logMapper.selectByExample(example);
+    public List<MallLog> findLogsByCondition(Integer page, Integer limit, String sort, String order) {
+        return logMapper.findLogsByCondition(page, limit, sort, order);
     }
 }

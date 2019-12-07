@@ -2,7 +2,6 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.entity.Example;
 import xmu.oomall.domain.MallLog;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  */
 @Component
 @Mapper
-public interface LogMapper extends tk.mybatis.mapper.common.Mapper<MallLog> {
+public interface LogMapper {
     /**
      * 添加日志
      * @param log 日志信息
@@ -33,10 +32,13 @@ public interface LogMapper extends tk.mybatis.mapper.common.Mapper<MallLog> {
      */
     MallLog findLogById(Integer id);
 
-//    /**
-//     * 根据Example条件进行查询
-//     * @param example 条件
-//     * @return 日志列表
-//     */
-//    List<MallLog> findLogsByExample(Example example);
+    /**
+     * 根据Example条件进行查询
+     * @param page 页数
+     * @param limit 每页行数
+     * @param sort 根据什么排序
+     * @param order 升序或者降序
+     * @return 日志列表
+     */
+    List<MallLog> findLogsByCondition(Integer page, Integer limit, String sort, String order);
 }

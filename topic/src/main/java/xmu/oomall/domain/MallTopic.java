@@ -1,12 +1,11 @@
 package xmu.oomall.domain;
 
 import org.apache.ibatis.type.Alias;
-import standard.oomall.domain.Log;
-
+import standard.oomall.domain.Topic;
 
 /**
  * @author liznsalt
  */
-@Alias("mallLog")
-public class MallLog extends Log {
+@Alias("mallTopic")
+public class MallTopic extends Topic {
 }
