@@ -1,6 +1,7 @@
 package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.domain.MallProductPo;
@@ -66,5 +67,18 @@ public interface GoodsMapper {
      * @param id 商品ID
      * @return 删除行数
      */
-    Integer deleteBrandsById(Integer id);
+    Integer deleteProductsByGoodsId(Integer id);
+
+    /**
+     * 分页得到商品
+     * @param pageNum 页数
+     * @param rowNum 每页行数
+     * @param key 根据关键字排序
+     * @param order 排序方式
+     * @return 商品列表
+     */
+    List<MallGoods> getGoods(@Param("pageNum") Integer pageNum,
+                             @Param("rowNum") Integer rowNum,
+                             @Param("key") String key,
+                             @Param("order") String order);
 }

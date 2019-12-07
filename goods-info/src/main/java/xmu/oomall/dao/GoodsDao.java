@@ -51,7 +51,7 @@ public class GoodsDao {
      */
     @CacheEvict(key = "#p0")
     public void deleteGoodsById(Integer id) {
-        goodsMapper.deleteBrandsById(id);
+        goodsMapper.deleteProductsByGoodsId(id);
         goodsMapper.deleteGoodsById(id);
     }
 

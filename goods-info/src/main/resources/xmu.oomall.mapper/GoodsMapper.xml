@@ -1,5 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.GoodsMapper">
+    
+    <resultMap id="mallGoodsMap" type="mallGoods" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
+        <result property="beSpecial" column="is_special" javaType="Boolean"/>
+    </resultMap>
 
+    <resultMap id="mallProductPoMap" type="mallProductPo" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <insert id="addGoods" parameterType="mallGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into goods(gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special)
+        VALUES (sysdate(),sysdate(),#{name},#{goodsSn},#{shortName},#{description},#{brief},#{picUrl},#{detail},#{statusCode},#{shareUrl},#{gallery},#{goodsCategoryId},#{brandId},#{beDeleted},#{weight},#{volume},#{specialFreightId},#{beSpecial})
+    </insert>
+
+    <update id="deleteGoodsById" parameterType="Integer">
+        update goods set
+            is_deleted = 1,
+            gmt_modified = sysdate()
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <update id="updateGoods" parameterType="mallGoods">
+        update goods set
+            <trim suffixOverrides=",">
+                gmt_modified = sysdate(),
+                <if test="name != null">
+                name = #{name},
+                </if>
+                <if test="goodsSn != null">
+                goods_sn = #{goodsSn},
+                </if>
+                <if test="shortName != null">
+                short_name = #{shortName},
+                </if>
+                <if test="description != null">
+                description = #{description},
+                </if>
+                <if test="brief != null">
+                brief = #{brief},
+                </if>
+                <if test="picUrl != null">
+                pic_url = #{picUrl},
+                </if>
+                <if test="detail != null">
+                detail = #{detail},
+                </if>
+                <if test="statusCode != null">
+                status = #{statusCode},
+                </if>
+                <if test="shareUrl != null">
+                share_url = #{shareUrl},
+                </if>
+                <if test="gallery != null">
+                gallery = #{gallery},
+                </if>
+                <if test="goodsCategoryId != null">
+                goods_category_id = #{goodsCategoryId},
+                </if>
+                <if test="brandId != null">
+                brand_id = #{brandId},
+                </if>
+                <choose>
+                    <when test="beDeleted == null"></when>
+                    <when test="beDeleted == true">
+                        is_deleted = 1,
+                    </when>
+                    <otherwise>
+                        is_deleted = 0,
+                    </otherwise>
+                </choose>
+                <if test="weight != null">
+                weight = #{weight},
+                </if>
+                <if test="volume != null">
+                volume = #{volume},
+                </if>
+                <if test="specialFreightId != null">
+                special_freight_id = #{specialFreightId},
+                </if>
+                <choose>
+                    <when test="beSpecial == null"></when>
+                    <when test="beSpecial == true">
+                        is_special = 1,
+                    </when>
+                    <otherwise>
+                        is_special = 0,
+                    </otherwise>
+                </choose>
+            </trim>
+        where id = #{id}
+    </update>
+
+    <select id="findGoodsById" parameterType="Integer" resultMap="mallGoodsMap">
+        select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special
+        from goods
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="getAllGoods" resultMap="mallGoodsMap">
+        select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special
+        from goods
+        where is_deleted = 0
+    </select>
+
+    <select id="findProductsById" resultMap="mallProductPoMap" parameterType="Integer">
+        select id, product_ids, pic_url, specifications, goods_id, price, safety_stock, gmt_create, gmt_modified, is_deleted
+        from product
+        where goods_id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="getStockInDb" resultType="Integer" parameterType="Integer">
+        select safety_stock
+        from product
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <update id="deleteProductsByGoodsId" parameterType="Integer">
+        update product set
+            is_deleted = 1,
+            gmt_modified = sysdate()
+        where goods_id = #{id} and is_deleted = 0
+    </update>
+
+    <select id="getGoods" resultMap="mallGoodsMap">
+        select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special
+        from goods
+        where is_deleted = 0
+        order by ${key} ${order}
+        limit  ${pageNum * rowNum - rowNum},${pageNum * rowNum}
+    </select>
 </mapper>
