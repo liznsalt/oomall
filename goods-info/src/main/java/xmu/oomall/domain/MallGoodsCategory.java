@@ -1,7 +1,7 @@
 package xmu.oomall.domain;
 
 import org.apache.ibatis.type.Alias;
-import xmu.oomall.domain.standard.GoodsCategory;
+import standard.oomall.domain.GoodsCategory;
 
 /**
  * @author liznsalt

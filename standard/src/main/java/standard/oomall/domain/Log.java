@@ -1,4 +1,4 @@
-package xmu.oomall.domain.standard;
+package standard.oomall.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class Log {
     /**
      * 操作的状态(如 200)
      */
-    private short statusCode;
+    private Integer statusCode;
     /**
      * 操作对象的ID
      */
@@ -117,11 +117,11 @@ public class Log {
         this.action = action;
     }
 
-    public short getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(short statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 

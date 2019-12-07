@@ -1,4 +1,4 @@
-package xmu.oomall.domain.standard;
+package standard.oomall.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

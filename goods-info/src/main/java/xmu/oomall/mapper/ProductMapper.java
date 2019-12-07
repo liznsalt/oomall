@@ -3,7 +3,6 @@ package xmu.oomall.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.MallProductPo;
-import xmu.oomall.domain.standard.Product;
 
 import java.util.List;
 

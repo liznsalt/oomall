@@ -27,7 +27,7 @@ class LogMapperTest {
         log.setIp("112.124.128.11");
         log.setType(1);
         log.setAction("addGoods()");
-        log.setStatusCode((short) 1);
+        log.setStatusCode(1);
         log.setGmtCreate(LocalDateTime.now());
         log.setGmtModified(LocalDateTime.now());
         log.setActionId(1);

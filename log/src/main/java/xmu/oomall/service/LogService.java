@@ -1,5 +1,6 @@
 package xmu.oomall.service;
 
+import tk.mybatis.mapper.entity.Example;
 import xmu.oomall.domain.MallLog;
 
 import java.util.List;
@@ -20,4 +21,11 @@ public interface LogService {
      * @return 日志列表
      */
     List<MallLog> getAllLogs();
+
+    /**
+     * 通过条件检索
+     * @param example 检索条件
+     * @return 日志列表
+     */
+    List<MallLog> findLogsByExample(Example example);
 }

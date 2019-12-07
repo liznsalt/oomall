@@ -1,37 +1,47 @@
-package xmu.oomall.domain.standard;
+package standard.oomall.domain;
 
-import org.apache.ibatis.type.Alias;
-
-import javax.annotation.sql.DataSourceDefinition;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * @Author: 数据库与对象模型标准组
- * @Description:商品种类的信息
- * @Data:Created in 14:50 2019/11/29
+ * @Description: 分享明细
+ * @Date: Created in 16:00 2019/11/29
  * @Modified By:
  **/
-public class GoodsCategory {
+
+public class ShareItem {
     private Integer id;
     /**
-     * 种类的名称
-     */
-    private String name;
-    /**|
-     * 该种类的父种类ID
-     */
-    private Integer pid;
+    *分享者ID
+    *
+    */
+    private Integer userId;
+    /**
+    *商品ID
+    * */
+    private Integer goodsId;
+    /**
+    *（谁分享了某件商品到达的级数状态，如张山已经分享了一个杯子50件了，按照这杯子的规则，他现在的分享状态是2级）
+    * */
+    private Integer statusCode;
+    /**
+     *成功件数
+     * */
+    private Integer successNum;
+
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Boolean beDeleted;
 
     @Override
     public String toString() {
-        return "GoodsCategory{" +
+        return "ShareItem{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", pid=" + pid +
+                ", userId=" + userId +
+                ", goodsId=" + goodsId +
+                ", statusCode=" + statusCode +
+                ", successNum=" + successNum +
                 ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
                 ", beDeleted=" + beDeleted +
@@ -42,8 +52,8 @@ public class GoodsCategory {
     public boolean equals(Object o) {
         if (this == o) {return true;}
         if (o == null || getClass() != o.getClass()) {return false;}
-        GoodsCategory that = (GoodsCategory) o;
-        return Objects.equals(id, that.id);
+        ShareItem shareItem = (ShareItem) o;
+        return Objects.equals(id, shareItem.id);
     }
 
     @Override
@@ -59,20 +69,36 @@ public class GoodsCategory {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Integer getPid() {
-        return pid;
+    public Integer getGoodsId() {
+        return goodsId;
     }
 
-    public void setPid(Integer pid) {
-        this.pid = pid;
+    public void setGoodsId(Integer goodsId) {
+        this.goodsId = goodsId;
+    }
+
+    public Integer getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public Integer getSuccessNum() {
+        return successNum;
+    }
+
+    public void setSuccessNum(Integer successNum) {
+        this.successNum = successNum;
     }
 
     public LocalDateTime getGmtCreate() {

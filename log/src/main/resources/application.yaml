@@ -43,3 +43,9 @@ logging:
     # TODO 记得修改
     path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

@@ -1,6 +1,5 @@
-package xmu.oomall.domain.standard;
+package standard.oomall.domain;
 
-import org.apache.ibatis.type.Alias;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,62 +21,62 @@ public class Goods {
     /**
      * 商品序列号
      */
-    private String goodsSn;
+     private String goodsSn;
     /**
-     *商品简称
-     */
+    *商品简称
+    */
     private String shortName;
     /**
-     *商品描述
-     */
+    *商品描述
+    */
     private String description;
     /**
-     *商品简介
-     */
+    *商品简介
+    */
     private String brief;
     /**
-     *图片链接
-     */
+    *图片链接
+    */
     private String picUrl;
     /**
-     *商品详情
-     */
+    *商品详情
+    */
     private String detail;
     /**
-     * 0：上架 1：下架
-     */
+    * 0：上架 1：下架
+    */
     private Boolean statusCode;
     /**
-     * 分享链接
-     */
+    * 分享链接
+    */
     private String shareUrl;
     /**
-     * 商品图片展示廊，就是像淘宝点进商品，滚动展示很多图片
-     */
+    * 商品图片展示廊，就是像淘宝点进商品，滚动展示很多图片
+    */
     private String gallery;
     /**
-     *商品分类ID
-     */
-    private String goodsCategoryId;
+    *商品分类ID
+    */
+    private Integer goodsCategoryId;
     /**
-     *品牌ID
-     */
+    *品牌ID
+    */
     private Integer brandId;
     /**
-     *商品重量
-     */
+    *商品重量
+    */
     private BigDecimal weight;
     /**
-     *商品体积
-     */
+    *商品体积
+    */
     private String volume;
     /**
-     *特殊邮费计算模板ID
-     */
+    *特殊邮费计算模板ID
+    */
     private Integer specialFreightId;
     /**
-     *0：默认模板计算邮费 1：特殊模板计算邮费
-     */
+    *0：默认模板计算邮费 1：特殊模板计算邮费
+    */
     private Boolean beSpecial;
 
     private Boolean beDeleted;
@@ -226,11 +225,11 @@ public class Goods {
         this.gallery = gallery;
     }
 
-    public String getGoodsCategoryId() {
+    public Integer getGoodsCategoryId() {
         return goodsCategoryId;
     }
 
-    public void setGoodsCategoryId(String goodsCategoryId) {
+    public void setGoodsCategoryId(Integer goodsCategoryId) {
         this.goodsCategoryId = goodsCategoryId;
     }
 

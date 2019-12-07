@@ -1,7 +1,7 @@
 package xmu.oomall.domain;
 
 import org.apache.ibatis.type.Alias;
-import xmu.oomall.domain.standard.Goods;
+import standard.oomall.domain.Goods;
 
 import java.util.List;
 

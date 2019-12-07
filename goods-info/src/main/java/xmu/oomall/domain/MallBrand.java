@@ -1,7 +1,7 @@
 package xmu.oomall.domain;
 
 import org.apache.ibatis.type.Alias;
-import xmu.oomall.domain.standard.Brand;
+import standard.oomall.domain.Brand;
 
 /**
  * @author liznsalt

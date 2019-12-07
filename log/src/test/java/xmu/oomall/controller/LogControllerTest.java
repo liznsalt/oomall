@@ -1,5 +1,7 @@
 package xmu.oomall.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,6 +13,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.transaction.annotation.Transactional;
 import xmu.oomall.LogApplication;
 import xmu.oomall.domain.MallLog;
+import xmu.oomall.service.LogService;
 import xmu.oomall.util.JacksonUtil;
 
 import java.time.LocalDateTime;
@@ -34,6 +37,9 @@ class LogControllerTest {
     @Autowired
     private LogController logController;
 
+    @Autowired
+    private LogService logService;
+
     @Test
     void addLog() throws Exception {
         MallLog log = new MallLog();
@@ -41,14 +47,15 @@ class LogControllerTest {
         log.setIp("112.124.128.11");
         log.setType(1);
         log.setAction("addGoods()");
-        log.setStatusCode((short) 1);
+        log.setStatusCode(1);
         log.setGmtCreate(LocalDateTime.now());
         log.setGmtModified(LocalDateTime.now());
         log.setActionId(1);
 
         String jsonString = JacksonUtil.toJson(log);
 
-        String res = this.mockMvc.perform(post("/logs").contentType("application/json;charset=UTF-8").content(jsonString))
+        String res = this.mockMvc
+                .perform(post("/logs").contentType("application/json;charset=UTF-8").content(jsonString))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
@@ -70,7 +77,6 @@ class LogControllerTest {
 
     @Test
     void list() {
-        Object res = logController.list(1, 10, "id", "desc");
-        System.out.println(res);
+
     }
 }

@@ -2,6 +2,7 @@ package xmu.oomall.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 import xmu.oomall.domain.MallLog;
 import xmu.oomall.mapper.LogMapper;
 import xmu.oomall.service.LogService;
@@ -26,5 +27,10 @@ public class LogServiceImpl implements LogService {
     @Override
     public List<MallLog> getAllLogs() {
         return logMapper.getAllLogs();
+    }
+
+    @Override
+    public List<MallLog> findLogsByExample(Example example) {
+        return logMapper.findLogsByExample(example);
     }
 }

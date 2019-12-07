@@ -2,6 +2,7 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
+import tk.mybatis.mapper.entity.Example;
 import xmu.oomall.domain.MallLog;
 
 import java.util.List;
@@ -31,4 +32,11 @@ public interface LogMapper {
      * @return 日志信息
      */
     MallLog findLogById(Integer id);
+
+    /**
+     * 根据Example条件进行查询
+     * @param example 条件
+     * @return 日志列表
+     */
+    List<MallLog> findLogsByExample(Example example);
 }
