@@ -1,35 +1,31 @@
 package xmu.oomall.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.transaction.annotation.Transactional;
+import standard.oomall.domain.Log;
 import xmu.oomall.LogApplication;
 import xmu.oomall.domain.MallLog;
-import xmu.oomall.service.LogService;
 import xmu.oomall.util.JacksonUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.junit.Assert.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = LogApplication.class)
 @AutoConfigureMockMvc
-@Transactional
-class LogControllerTest {
+//@Transactional
+public class LogControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,11 +33,8 @@ class LogControllerTest {
     @Autowired
     private LogController logController;
 
-    @Autowired
-    private LogService logService;
-
     @Test
-    void addLog() throws Exception {
+    public void addLog() throws Exception {
         MallLog log = new MallLog();
         log.setAdminId(1);
         log.setIp("112.124.128.11");
@@ -65,18 +58,13 @@ class LogControllerTest {
         MallLog resLog = JacksonUtil.parseObject(res, "data", MallLog.class);
 
         System.out.println(resLog);
-
-        assertEquals(errMsg, "成功");
-        assertEquals(errNo, 0);
-        assert resLog != null;
-        assertNotNull(resLog.getId());
-        assertEquals(resLog.getAdminId(), 1);
-        assertEquals(resLog.getAdminId(), 1);
     }
 
+    @Test
+    public void list() {
+    }
 
     @Test
-    void list() {
-
+    public void testList() {
     }
 }
