@@ -1,5 +1,6 @@
 package xmu.oomall.controller;
 
+import common.oomall.util.JacksonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import standard.oomall.domain.Log;
 import xmu.oomall.LogApplication;
 import xmu.oomall.domain.MallLog;
-import xmu.oomall.util.JacksonUtil;
 
 import java.time.LocalDateTime;
 

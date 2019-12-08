@@ -1,4 +1,4 @@
-package xmu.oomall.util;
+package common.oomall.util;
 
 
 import java.util.HashMap;
