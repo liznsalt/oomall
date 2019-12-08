@@ -2,4 +2,70 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.ProductMapper">
 
+    <insert id="addProduct" parameterType="MallProductPo" useGeneratedKeys="true" keyProperty="id">
+            insert into product(goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted)
+            values (#{goodsId},#{productIds},#{picUrl},#{specifications},#{price},#{saftyStock},sysdate(),sysdate(),#{beDeleted})
+    </insert>
+
+    <update id="deleteProductById" parameterType="Integer">
+        update product set
+            is_deleted = 1,
+            gmt_modified = sysdate()
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <update id="updateProduct" parameterType="mallProductPo">
+        update product set
+        <trim suffixOverrides=",">
+            gmt_modified = sysdate(),
+            <if test="goodsId != null">
+                goods_id = #{goodsId},
+            </if>
+            <if test="productIds != null">
+                product_ids = #{productIds},
+            </if>
+            <if test="picUrl != null">
+                pic_url = #{picUrl},
+            </if>
+            <if test="specifications != null">
+                specifications = #{specifications},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="safetyStock != null">
+                safety_stock = #{safetyStock},
+            </if>
+            <choose>
+                <when test="beDeleted == null"></when>
+                <when test="beDeleted == true">
+                    is_deleted = 1,
+                </when>
+                <otherwise>
+                    is_deleted = 0,
+                </otherwise>
+            </choose>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="findProductById" parameterType="Integer" resultMap="mallProductMap">
+        select id,goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted
+        from product
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="findSubProductsById" resultMap="mallProductPoMap" parameterType="Integer">
+        select id, product_ids, pic_url, specifications, goods_id, price, safety_stock, gmt_create, gmt_modified, is_deleted
+        from product
+        where is_deleted = 0
+    </select>
+
+    <insert id="addProducts" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into product(goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{goodsId},#{productIds},#{picUrl},#{specifications},#{price},#{saftyStock},sysdate(),sysdate(),#{beDeleted})
+        </foreach>
+    </insert>
 </mapper>

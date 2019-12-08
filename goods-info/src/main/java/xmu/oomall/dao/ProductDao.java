@@ -72,4 +72,15 @@ public class ProductDao {
         List<MallProductPo> productPoList = productMapper.findSubProductsById(id);
         return productPoList.stream().map(MallProduct::new).collect(Collectors.toList());
     }
+
+    /**
+     * 批量添加产品
+     * @param productList 产品信息列表
+     * @return 添加后的产品信息列表
+     */
+    public List<MallProduct> addProducts(List<MallProduct> productList){
+        List<MallProductPo> productPoList = productList.stream().map(MallProduct::getRealObj).collect(Collectors.toList());
+        productMapper.addProducts(productPoList);
+        return productList;
+    }
 }
