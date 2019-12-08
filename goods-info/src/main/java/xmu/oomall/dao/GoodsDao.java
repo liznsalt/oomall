@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.domain.MallProduct;
 import xmu.oomall.domain.MallProductPo;
+import xmu.oomall.mapper.BrandMapper;
+import xmu.oomall.mapper.GoodsCategoryMapper;
 import xmu.oomall.mapper.GoodsMapper;
 import xmu.oomall.mapper.ProductMapper;
 
@@ -27,6 +29,12 @@ public class GoodsDao {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private BrandMapper brandMapper;
+
+    @Autowired
+    private GoodsCategoryMapper goodsCategoryMapper;
 
     /**
      * 增加商品
@@ -73,7 +81,16 @@ public class GoodsDao {
      */
     @Cacheable(key = "#p0")
     public MallGoods findGoodsById(Integer id) {
-        return goodsMapper.findGoodsById(id);
+        MallGoods goods = goodsMapper.findGoodsById(id);
+        goods.setBrand(brandMapper.findBrandById(goods.getBrandId()));
+        goods.setGoodsCategory(goodsCategoryMapper
+                .findGoodsCategoryById(goods.getGoodsCategoryId()));
+        List<MallProductPo> productPos = goodsMapper.findProductsById(goods.getId());
+        productPos.forEach(p -> p.setGoods(goods));
+        goods.setProducts(productPos.stream()
+                .map(MallProduct::new)
+                .collect(Collectors.toList()));
+        return goods;
     }
 
     /**
