@@ -1,5 +1,9 @@
 # OOAD 3-4
 
+## 须知
+
+记得先启动 eureka-server 服务器，不然有的模块跑不起来
+
 ## 规定
 
 1. 标准组的代码独立在 standard 模块，在各个模块的 domain 层进行继承（取名为 Mall + 标准组的类名），然后在其它地方都使用自己的 domain。
@@ -10,13 +14,16 @@
 
 ## 说明
 
-### 端口号
+### 各模块及端口号
 
+- common 公共模块 无端口
+- standard 标准组模块 无端口
 - goods-info 8081
 - log 8082
 - cart 8083
 - topic 8084
-- eureka-server 9000
+- eureka 9000
+- zuul 8888
 
 ### 日志
 
@@ -24,8 +31,10 @@
     
     - goods 洪永团负责
     - brand 张有坤负责
-    - goods category 吴啸明
-    - product 沈湘越
+    - goods category 吴啸明负责
+    - product 沈湘越负责
     
     maven 配置最好和我同步，已经排除很多版本冲突问题。
-- 
+- 2019-12-08
+    
+    - topic 洪永团负责

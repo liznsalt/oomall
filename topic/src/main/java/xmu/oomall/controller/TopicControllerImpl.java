@@ -1,5 +1,6 @@
 package xmu.oomall.controller;
 
+import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,8 @@ import standard.oomall.domain.Topic;
 import xmu.oomall.domain.MallTopic;
 import xmu.oomall.service.LogService;
 import xmu.oomall.service.TopicService;
-import xmu.oomall.util.ResponseUtil;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author liznsalt
@@ -47,6 +49,48 @@ public class TopicControllerImpl {
         logger.debug("addTopic返回值为：" + retObj);
         return retObj;
     }
+
+//    @GetMapping("/")
+//    public Object list(@RequestParam(defaultValue = "1") Integer page,
+//                       @RequestParam(defaultValue = "10") Integer limit,
+//                       @RequestParam(defaultValue = "add_time") String sort,
+//                       @RequestParam(defaultValue = "desc") String order) {
+//        return null;
+//    }
+//
+//    @GetMapping("/{id}")
+//    public Object detail(@PathVariable("id") @NotNull Integer id) {
+//        return null;
+//    }
+//
+//    @GetMapping("/{id}/related")
+//    public Object related(@PathVariable @NotNull String id) {
+//        return null;
+//    }
+//
+//    @GetMapping("")
+//    public Object list(String title, String subtitle,
+//                       @RequestParam(defaultValue = "1") Integer page,
+//                       @RequestParam(defaultValue = "10") Integer limit,
+//                       @RequestParam(defaultValue = "add_time") String sort,
+//                       @RequestParam(defaultValue = "desc") String order) {
+//        return null;
+//    }
+//
+//    @GetMapping("/{id}")
+//    public Object read(@PathVariable("id") @NotNull Integer id) {
+//        return null;
+//    }
+//
+//    @PutMapping("/{id}")
+//    public Object update(@RequestBody Topic topic, @PathVariable Integer id) {
+//        return null;
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    public Object delete(@RequestBody Topic topic, @PathVariable Integer id) {
+//        return null;
+//    }
 
     @GetMapping("/test")
     @ResponseBody
