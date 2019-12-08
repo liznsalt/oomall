@@ -18,7 +18,8 @@
 - log 8082
 - cart 8083
 - topic 8084
-- eureka-server 9000
+- eureka 9000
+- zuul 8888
 
 ### 日志
 
@@ -26,8 +27,10 @@
     
     - goods 洪永团负责
     - brand 张有坤负责
-    - goods category 吴啸明
-    - product 沈湘越
+    - goods category 吴啸明负责
+    - product 沈湘越负责
     
     maven 配置最好和我同步，已经排除很多版本冲突问题。
-- 
+- 2019-12-08
+    
+    - topic 洪永团负责
