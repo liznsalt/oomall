@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.ProductMapper">
 
+    <resultMap id="mallProductPoMap" type="mallProductPo" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted"/>
+    </resultMap>
+
     <insert id="addProduct" parameterType="MallProductPo" useGeneratedKeys="true" keyProperty="id">
             insert into product(goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted)
             values (#{goodsId},#{productIds},#{picUrl},#{specifications},#{price},#{saftyStock},sysdate(),sysdate(),#{beDeleted})
@@ -33,8 +38,8 @@
             <if test="price != null">
                 price = #{price},
             </if>
-            <if test="safetyStock != null">
-                safety_stock = #{safetyStock},
+            <if test="saftyStock != null">
+                safety_stock = #{saftyStock},
             </if>
             <choose>
                 <when test="beDeleted == null"></when>
@@ -49,7 +54,7 @@
         where id = #{id}
     </update>
 
-    <select id="findProductById" parameterType="Integer" resultMap="mallProductMap">
+    <select id="findProductById" parameterType="Integer" resultMap="mallProductPoMap">
         select id,goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted
         from product
         where id = #{id} and is_deleted = 0
@@ -65,7 +70,7 @@
         insert into product(goods_id,product_ids,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{goodsId},#{productIds},#{picUrl},#{specifications},#{price},#{saftyStock},sysdate(),sysdate(),#{beDeleted})
+            (#{item.goodsId},#{item.productIds},#{item.picUrl},#{item.specifications},#{item.price},#{item.saftyStock},sysdate(),sysdate(),#{item.beDeleted})
         </foreach>
     </insert>
 </mapper>
