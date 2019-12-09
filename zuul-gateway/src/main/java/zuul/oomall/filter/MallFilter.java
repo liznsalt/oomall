@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author liznsalt
  */
 @Component
-public class TestFilter extends ZuulFilter {
+public class MallFilter extends ZuulFilter {
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -34,6 +34,7 @@ public class TestFilter extends ZuulFilter {
 
     /**
      * 是否进行过滤，返回true会执行过滤。
+     * TODO 有白名单
      */
     @Override
     public boolean shouldFilter() {
@@ -42,6 +43,7 @@ public class TestFilter extends ZuulFilter {
 
     /**
      * 自定义的过滤器逻辑，当shouldFilter()返回true时会执行。
+     * TODO 提取token，进行权限判断
      */
     @Override
     public Object run() throws ZuulException {

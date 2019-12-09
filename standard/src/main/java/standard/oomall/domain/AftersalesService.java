@@ -31,9 +31,9 @@ public class AftersalesService {
     /**
      * 售后类型，0退货，1换货
      */
-    private Boolean type;
+    private Integer type;
     /**
-     * 该申请是否被接受，0代表否，1代表是
+     * 是否申请
      */
     private Boolean beApplied;
     /**
@@ -48,6 +48,14 @@ public class AftersalesService {
      * 管理员处理状态,有三个状态：未审核：0 审核通过：1 审核拒绝：2
      */
     private Integer statusCode;
+    /**
+     * 产品ID
+     */
+    private Integer productId;
+    /**
+     * 用户ID
+     */
+    private Integer userId;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Boolean beDeleted;
@@ -65,6 +73,8 @@ public class AftersalesService {
                 ", number=" + number +
                 ", orderItemId=" + orderItemId +
                 ", statusCode=" + statusCode +
+                ", productId=" + productId +
+                ", userId=" + userId +
                 ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
                 ", beDeleted=" + beDeleted +
@@ -124,11 +134,11 @@ public class AftersalesService {
         this.endTime = endTime;
     }
 
-    public Boolean getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(Boolean type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -186,5 +196,21 @@ public class AftersalesService {
 
     public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 }
