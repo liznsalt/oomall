@@ -38,13 +38,12 @@ public class Log {
     private Integer actionId;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
-    private Boolean beDeleted;
 
     @Override
     public String toString() {
         return "Log{" +
                 "id=" + id +
-                ", adminIdId=" + adminId +
+                ", adminId=" + adminId +
                 ", ip='" + ip + '\'' +
                 ", type=" + type +
                 ", action='" + action + '\'' +
@@ -52,7 +51,6 @@ public class Log {
                 ", actionId=" + actionId +
                 ", gmtCreate=" + gmtCreate +
                 ", gmtModified=" + gmtModified +
-                ", beDeleted=" + beDeleted +
                 '}';
     }
 
@@ -99,14 +97,6 @@ public class Log {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public Boolean getBeDeleted() {
-        return beDeleted;
-    }
-
-    public void setBeDeleted(Boolean beDeleted) {
-        this.beDeleted = beDeleted;
     }
 
     public String getAction() {

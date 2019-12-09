@@ -17,7 +17,7 @@
 
     <insert id="addLog" parameterType="mallLog" useGeneratedKeys="true" keyProperty="id">
         insert into log(admin_id, ip, type, action, status, gmt_create, gmt_modified, action_id)
-        values (#{adminId}, #{ip}, #{type}, #{action}, #{statusCode}, #{gmtCreate}, #{gmtModified}, #{actionId})
+        values (#{adminId}, #{ip}, #{type}, #{action}, #{statusCode}, sysdate(), sysdate(), #{actionId})
     </insert>
 
     <select id="findLogById" parameterType="Integer" resultType="mallLog">
@@ -58,6 +58,6 @@
                action_id
         from log
         order by ${sort}  ${order} , id desc
-        limit ${limit * page}
+        limit ${limit * page - limit}, ${limit * page}
     </select>
 </mapper>

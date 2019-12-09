@@ -1,6 +1,9 @@
 package common.oomall.util;
 
 
+import common.oomall.api.CommonResult;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,5 +101,11 @@ public class ResponseUtil {
 
     public static Object unauthz() {
         return fail(506, "无操作权限");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ResponseUtil.ok(new Date()));
+//        String json = JacksonUtil.toJson(ResponseUtil.ok(new Date()));
+//        System.out.println(JacksonUtil.parseObject(json, "errno", Date.class));
     }
 }

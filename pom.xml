@@ -9,6 +9,7 @@
         <module>log</module>
         <module>cart</module>
         <module>topic</module>
+        <module>user</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -134,6 +135,12 @@
             <groupId>common.oomall</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

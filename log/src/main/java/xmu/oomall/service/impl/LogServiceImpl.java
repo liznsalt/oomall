@@ -22,7 +22,6 @@ public class LogServiceImpl implements LogService {
     public MallLog addLog(MallLog log) {
         log.setGmtCreate(LocalDateTime.now());
         log.setGmtModified(LocalDateTime.now());
-        log.setBeDeleted(false);
         logMapper.addLog(log);
         return log;
     }
