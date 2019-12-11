@@ -4,8 +4,13 @@ import xmu.oomall.domain.MallGoods;
 
 /**
  * @author liznsalt
+ * @author YaNai
  */
 public interface GoodsService {
-    boolean goodsOn(MallGoods goods);
-    boolean goodsOff(MallGoods goods);
+    Boolean goodsOn(MallGoods goods);
+    Boolean goodsOff(MallGoods goods);
+    Integer getStockInDB(Integer id);
+    void updateStockInDB(Integer id, Integer quantity);
+    MallGoods findGoodsById(Integer id);
+
 }
