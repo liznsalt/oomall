@@ -9,19 +9,22 @@ import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.MallBrand;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.mapper.BrandMapper;
+import xmu.oomall.service.RedisService;
 
 import java.util.List;
 
 /**
  * @author liznsalt
  */
-@CacheConfig(cacheNames = "brand")
+
 @Repository
 public class BrandDao {
 
     @Autowired
     private BrandMapper brandMapper;
 
+    @Autowired
+    private RedisService redisService;
     /**
      * 添加品牌
      * @param brand 品牌信息
@@ -36,11 +39,16 @@ public class BrandDao {
      * 删除品牌，级联将商品的品牌ID设NULL
      * @param id 品牌ID
      */
-    @CacheEvict(key = "#p0")
-    public void deleteBrandById(Integer id) {
+
+    public boolean deleteBrandById(Integer id) {
         //TODO 级联处理缓存
+        if((findBrandById(id)==null)||findBrandById(id).getBeDeleted())
+            return false;
+        String key = "B_" + id;
+        redisService.remove(key);
         brandMapper.setBrandIdNull(id);
         brandMapper.deleteBrandById(id);
+        return true;
     }
 
     /**
@@ -48,9 +56,13 @@ public class BrandDao {
      * @param brand 品牌信息
      * @return 更新后的品牌
      */
-    @CachePut(key = "#p0.id")
+
     public MallBrand updateBrand(MallBrand brand) {
+        if(brand.getId()==null){
+            return null;
+        }
         brandMapper.updateBrand(brand);
+        brand=findBrandById(brand.getId());
         return brand;
     }
 
@@ -59,8 +71,15 @@ public class BrandDao {
      * @param id 品牌ID
      * @return 品牌信息
      */
-    @Cacheable(key = "#p0")
+
     public MallBrand findBrandById(Integer id) {
-        return brandMapper.findBrandById(id);
+        String key = "B_" + id;
+        MallBrand brand = (MallBrand) redisService.get(key);
+        if(brand==null) {
+            brand = brandMapper.findBrandById(id);
+            redisService.set(key, brand);
+        }
+        return brand;
     }
+
 }
