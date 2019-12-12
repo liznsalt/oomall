@@ -1,6 +1,7 @@
 package xmu.oomall.service;
 
 import xmu.oomall.domain.MallAdmin;
+import xmu.oomall.domain.MallPrivilege;
 import xmu.oomall.domain.MallRole;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface RoleService {
     List<MallRole> findRoles(Integer page, Integer limit);
     List<MallAdmin> findAdmins(Integer id);
     List<MallRole> getAllRoles();
+
+    List<MallPrivilege> getPrivilegesByRoleId(Integer id);
 }

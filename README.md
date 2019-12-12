@@ -20,11 +20,10 @@
 - [X] common 公共模块 无端口
 - [X] standard 标准组模块 无端口
 - [X] log 8082 待测试
-- [X] cart 8083 
+- [ ] cart 8083 
 - [X] topic 8084 待测试
 - [X] ad 8086 
-- [ ] address 8087
-- [ ] user 8888
+- [X] user 8888
 - [ ] goods-info 8081
 
 ### 日志

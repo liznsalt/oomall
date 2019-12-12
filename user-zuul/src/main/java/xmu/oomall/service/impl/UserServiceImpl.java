@@ -62,7 +62,26 @@ public class UserServiceImpl implements UserService {
         // 添加进数据库
         userMapper.addUser(newUser);
         // 成功
-        return CommonResult.success(null, "注册成功");
+        return CommonResult.success(newUser, "注册成功");
+    }
+
+    @Override
+    public CommonResult register(MallUser user, String authCode) {
+        // 验证验证码
+        if (!verifyAuthCode(authCode, user.getMobile())) {
+            return CommonResult.failed("验证码错误");
+        }
+        // 查询是否已经有该用户
+        MallUser user1 = findByName(user.getName());
+        MallUser user2 = findByTelephone(user.getMobile());
+        if (user1 != null || user2 != null) {
+            return CommonResult.failed("该用户已经存在");
+        }
+        // 添加进数据库
+        userMapper.addUser(user);
+        user.setPassword(null);
+        // 成功
+        return CommonResult.success(user, "注册成功");
     }
 
     @Override
@@ -90,7 +109,24 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(password);
         userMapper.updateUser(user);
+        user.setPassword(null);
         return CommonResult.success(null, "密码修改成功");
+    }
+
+    @Override
+    public CommonResult updateTelephone(String telephone, String password, String authCode) {
+        MallUser user = findByTelephone(telephone);
+        if (user == null) {
+            return CommonResult.failed("该账号不存在");
+        }
+        //验证验证码
+        if (!verifyAuthCode(authCode,telephone)) {
+            return CommonResult.failed("验证码错误");
+        }
+        user.setMobile(telephone);
+        userMapper.updateUser(user);
+        user.setPassword(null);
+        return CommonResult.success(user, "手机号码修改成功");
     }
 
     @Override

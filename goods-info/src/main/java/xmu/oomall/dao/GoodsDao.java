@@ -2,9 +2,7 @@ package xmu.oomall.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import standard.oomall.domain.*;
 import xmu.oomall.domain.MallGoods;
-import xmu.oomall.domain.MallGoodsPo;
 import xmu.oomall.domain.MallProduct;
 import xmu.oomall.domain.MallProductPo;
 import xmu.oomall.mapper.BrandMapper;
@@ -45,15 +43,18 @@ public class GoodsDao {
      * @return 添加后的商品信息
      */
     public MallGoods addGoods(MallGoods goods) {
-        MallGoodsPo mallGoodsPo = goods.getMallGoodsPo();
-        goodsMapper.addGoods(mallGoodsPo);
-        goods.setId(mallGoodsPo.getId());
-        goods.getProductPoList().forEach(po -> po.setGoodsId(goods.getId()));
-        List<MallProductPo> mallProductPoList = goods.getProductPoList()
-                .stream()
-                .map(po -> (MallProductPo)po)
-                .collect(Collectors.toList());
-        productMapper.addProducts(mallProductPoList);
+        goodsMapper.addGoods(goods);
+        //FIXME 添加其子产品
+        if (goods.getProductPoList() != null) {
+            goods.setProductsGoodsId();
+            List<MallProductPo> productPoList = goods.getProducts().stream()
+                    .map(MallProduct::getRealObj).collect(Collectors.toList());
+            productMapper.addProducts(productPoList);
+        } else {
+            goods.setProducts(new ArrayList<>());
+        }
+        //TODO 设置其属性实体
+
         return goods;
     }
 
@@ -77,7 +78,7 @@ public class GoodsDao {
         if (goods.getId() == null) {
             return null;
         }
-        goodsMapper.updateGoods(goods.getMallGoodsPo());
+        goodsMapper.updateGoods(goods);
         goods = findGoodsById(goods.getId());
         return goods;
     }
@@ -91,11 +92,12 @@ public class GoodsDao {
         String key = "G_" + id;
         MallGoods goods = (MallGoods) redisService.get(key);
         if (goods == null) {
-            MallGoodsPo goodsPo = goodsMapper.findGoodsById(id);
-            if (goodsPo == null) {
+            goods = goodsMapper.findGoodsById(id);
+            if (goods == null) {
                 return null;
             }
-            goods = new MallGoods(goodsPo);
+            List<MallProduct> productList = findProductsById(id);
+            goods.setProducts(productList);
             redisService.set(key, goods);
         }
         return goods;
@@ -106,9 +108,9 @@ public class GoodsDao {
      * @param id 商品ID
      * @return 产品列表
      */
-    public List<MallProductPo> findProductsById(Integer id) {
-        List<MallProductPo> productList = goodsMapper.findProductsById(id);
-        return productList;
+    public List<MallProduct> findProductsById(Integer id) {
+        List<MallProductPo> productPoList = goodsMapper.findProductsById(id);
+        return productPoList.stream().map(MallProduct::new).collect(Collectors.toList());
     }
 
     /**
@@ -118,9 +120,6 @@ public class GoodsDao {
         if (page <= 0 || limit <= 0) {
             return new ArrayList<>();
         }
-        return goodsMapper.findGoodsByCondition(page, limit)
-                .stream()
-                .map(MallGoods::new)
-                .collect(Collectors.toList());
+        return goodsMapper.findGoodsByCondition(page, limit);
     }
 }

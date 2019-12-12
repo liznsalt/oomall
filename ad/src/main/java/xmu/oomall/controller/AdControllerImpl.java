@@ -13,19 +13,19 @@ import java.util.List;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/AdService")
+@RequestMapping("/adService")
 public class AdControllerImpl {
 
     @Autowired
     private AdService adService;
 
-    @GetMapping("/admins/ads")
+    @GetMapping("/admin/ads")
     public Object adminFindAdList() {
         List<MallAd> ads = adService.adminList();
         return CommonResult.success(ads);
     }
 
-    @PostMapping("/ads")
+    @PostMapping("/admin/ads")
     public Object adminCreateAad(MallAd ad) {
         MallAd newAd = adService.add(ad);
         return CommonResult.success(newAd);

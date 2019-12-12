@@ -47,8 +47,8 @@ public class AdServiceImpl implements AdService {
         ad.setGmtCreate(LocalDateTime.now());
         ad.setGmtModified(LocalDateTime.now());
         ad.setBeDeleted(false);
-        if (ad.getBeEnable() == null) {
-            ad.setBeEnable(true);
+        if (ad.getBeEnabled() == null) {
+            ad.setBeEnabled(true);
         }
         adMapper.insert(ad);
         return ad;

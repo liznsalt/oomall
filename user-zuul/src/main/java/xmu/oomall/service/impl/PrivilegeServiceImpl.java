@@ -44,9 +44,14 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     @Override
     public List<String> getWhiteList() {
         // FIXME
-        return Arrays.asList("/userService/admins/login", "/userService/admins/logout",
-                "/userService/register", "/userService/login",
-                "/userService/reCaptcha", "/userService/captcha");
+        return Arrays.asList(
+                "/userInfoService/admins/login",
+                "/userInfoService/admins/logout",
+                "/userInfoService/register",
+                "/userInfoService/login",
+                "/userInfoService/reCaptcha",
+                "/userInfoService/captcha"
+        );
     }
 
     @Override
@@ -59,7 +64,11 @@ public class PrivilegeServiceImpl implements PrivilegeService {
         for (String p : rolePrivilegeList) {
             String pMethod = JacksonUtil.parseString(p, "method");
             String pUrl = JacksonUtil.parseString(p, "url");
-            if (pMethod == null || pUrl == null) {
+            if (pUrl == null) {
+                continue;
+            }
+            pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
+            if (pMethod == null) {
                 continue;
             }
             if (method.toLowerCase().equals(method)  || Pattern.matches(pUrl, url)) {
