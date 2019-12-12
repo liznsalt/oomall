@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
  * @author liznsalt
  */
 @EnableDiscoveryClient
-@EnableEurekaClient
 @EnableFeignClients
 @SpringBootApplication
 @MapperScan("xmu.oomall.mapper")

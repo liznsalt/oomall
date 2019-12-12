@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.AdMapper">
+    <resultMap id="BaseResultMap" type="xmu.oomall.domain.MallAd">
+        <id column="id" property="id" />
+        <result column="is_default" javaType="Boolean" property="beDefault"/>
+        <result column="is_enabled" javaType="Boolean" property="beEnable"/>
+        <result column="is_deleted" javaType="Boolean" property="beDeleted"/>
+    </resultMap>
+</mapper>

@@ -16,15 +16,16 @@
 
 ### 各模块及端口号
 
-- common 公共模块 无端口
-- standard 标准组模块 无端口
-- goods-info 8081
-- log 8082
-- cart 8083
-- topic 8084
-- user 8085
-- eureka 9000
-- zuul 8888
+- [X] eureka 9000
+- [X] common 公共模块 无端口
+- [X] standard 标准组模块 无端口
+- [X] log 8082 待测试
+- [X] cart 8083 
+- [X] topic 8084 待测试
+- [X] ad 8086 
+- [ ] address 8087
+- [ ] user 8888
+- [ ] goods-info 8081
 
 ### 日志
 
@@ -40,3 +41,10 @@
     
     - topic log 洪永团负责
     - cart 张有坤负责
+    
+- 2019-12-12
+    
+    - [ ] feign 第一次启动失败问题
+    - [ ] 用户管理员权限问题
+    - [ ] 写日志问题
+    - [ ] 完成 Goods 模块

@@ -59,4 +59,4 @@ feign:
         execution:
           isolation:
             thread:
-              timeoutInMilliseconds: 5000
+              timeoutInMilliseconds: 30000

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,15 +28,13 @@ import java.util.Map;
  */
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
-    public static final String CLAIM_KEY_USERNAME = "username";
+    public static final String CLAIM_KEY_USERID = "userId";
     public static final String CLAIM_KEY_ROLE = "role";
     public static final String CLAIM_KEY_CREATED = "created";
+    public static final String CLAIM_KEY_EXP = "exp";
 
-    @Value("${jwt.secret}")
     private static String secret = "mall-secret";
-    @Value("${jwt.expiration}")
     private static Long expiration = 604800L;
-    @Value("${jwt.tokenHead}")
     private static String tokenHead = "Bearer";
 
     /**
@@ -65,6 +62,22 @@ public class JwtTokenUtil {
             LOGGER.info("JWT格式验证失败:{}", token);
         }
         return claims;
+    }
+
+    public static Map<String, String> getMapFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        if (claims == null) {
+            return null;
+        }
+        Claims jwt = JwtTokenUtil.getClaimsFromToken(token);
+        String json = JacksonUtil.toJson(jwt);
+
+        Map<String, String> map = new HashMap<>(5);
+        map.put(CLAIM_KEY_USERID, JacksonUtil.parseString(json, CLAIM_KEY_USERID));
+        map.put(CLAIM_KEY_ROLE, JacksonUtil.parseString(json, CLAIM_KEY_ROLE));
+        map.put(CLAIM_KEY_CREATED, JacksonUtil.parseString(json, CLAIM_KEY_CREATED));
+        map.put(CLAIM_KEY_EXP, JacksonUtil.parseString(json, CLAIM_KEY_EXP));
+        return map;
     }
 
     /**
@@ -120,7 +133,7 @@ public class JwtTokenUtil {
      */
     public static String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_USERID, userDetails.getUsername());
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }
@@ -128,29 +141,26 @@ public class JwtTokenUtil {
     /**
      * 当原来的token没过期时是可以刷新的
      *
-     * @param oldToken 带tokenHead的token
+     * @param token
      */
-    public static String refreshHeadToken(String oldToken) {
-        if(StrUtil.isEmpty(oldToken)){
-            return null;
-        }
-        String token = oldToken.substring(tokenHead.length());
+    public static String refreshHeadToken(String token) {
         if(StrUtil.isEmpty(token)){
             return null;
         }
-        //token校验不通过
         Claims claims = getClaimsFromToken(token);
-        if(claims==null){
+        if (claims == null) {
             return null;
         }
-        //如果token已经过期，不支持刷新
-        if(isTokenExpired(token)){
-            return null;
+        // FIXME 如果token已经过期，返回新token
+        if (isTokenExpired(token)) {
+            claims.put(CLAIM_KEY_CREATED, new Date());
+            return generateToken(claims);
         }
+
         //如果token在30分钟之内刚刷新过，返回原token
-        if(tokenRefreshJustBefore(token,30*60)){
+        if (tokenRefreshJustBefore(token,30*60)) {
             return token;
-        }else{
+        } else {
             claims.put(CLAIM_KEY_CREATED, new Date());
             return generateToken(claims);
         }

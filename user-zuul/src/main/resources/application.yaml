@@ -1,0 +1,118 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: oomall-user
+  profiles:
+    active: dev
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+
+mybatis:
+  #domain对象的包（标准组的）
+  type-aliases-package: xmu.oomall.domain
+  #mapper.xml所在的位置
+  mapper-locations: classpath:xmu.oomall.mapper/*.xml
+  configuration:
+    #自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
+    map-underscore-to-camel-case: true
+
+logging:
+  #设置日志打印级别
+  level:
+    #Spring框架中的日志级别
+    org.springframework.web: info
+    root: error
+    #自己项目包名下的日志级别
+    xmu.oomall.controller: debug
+    xmu.oomall.service: debug
+    xmu.oomall.dao: debug
+    xmu.oomall.mapper: error
+    xmu.oomall.domain: debug
+    xmu.oomall.util: debug
+    xmu.oomall.filter: debug
+    xmu.oomall.config: debug
+  #使用logback日志，取代默认的common日志
+  file:
+    # TODO 记得修改
+    path: C:\Users\liznsalt\log
+  config: classpath:logback-spring.xml
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://liznsalt:123456@localhost:9000/eureka/
+
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: mall-secret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24)
+  tokenHead: Bearer #JWT负载中拿到开头
+
+# 自定义redis键值
+redis:
+  key:
+    user:
+      prefix:
+        authCode: "user:authCode:"
+      expire:
+        authCode: 90 # 验证码超期时间
+    admin:
+      prefix:
+        authCode: "admin:authCode:"
+      expire:
+        authCode: 90 # 验证码超期时间
+
+
+######################################
+
+#设置熔断是为6秒
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
+  eureka:
+    enabled: true
+#关闭超时时间
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+# 接下来都是zuul，其它配置请放上面
+serviceUrl: # 各模块地址，方便修改
+  log: http://localhost:8082
+  topic: http://localhost:8084
+  cart:  http://localhost:8083
+  ad: http://localhost:8086
+zuul:
+  host:
+    max-total-connections: 10000
+    max-per-route-connections: 50
+  routes: #给服务配置路由
+    user-service:
+      path: /**/userInfoService/**
+      url: forward:/
+    log-service:
+      path: /**/logService/**
+      url: ${serviceUrl.log}
+    topic-service:
+      path: /**/topicService/**
+      url: ${serviceUrl.topic}
+    cart-service:
+      path: /**/cartService/**
+      url: ${serviceUrl.cart}
+    ad-service:
+      path: /**/adService/**
+      url: ${serviceUrl.ad}
+  #  sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤

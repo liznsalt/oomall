@@ -25,9 +25,7 @@ public interface LogService {
      * 通过条件检索
      * @param page 页数
      * @param limit 每页行数
-     * @param sort 根据什么排序
-     * @param order 升序或者降序
      * @return 日志列表
      */
-    List<MallLog> findLogsByCondition(Integer page, Integer limit, String sort, String order);
+    List<MallLog> findLogsByCondition(Integer page, Integer limit);
 }
