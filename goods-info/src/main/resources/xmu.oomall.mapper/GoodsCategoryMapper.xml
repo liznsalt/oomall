@@ -14,7 +14,7 @@
         <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
     </resultMap>
 
-    <insert id="addGoodsCategory" parameterType="mallGoodsCategory" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addGoodsCategory" parameterType="mallGoodsCategoryPo" useGeneratedKeys="true" keyProperty="id">
         insert into goods_category(name,pid,gmt_create,gmt_modified,is_deleted)
         values (#{name},#{pid},sysdate(),sysdate(),#{beDeleted})
     </insert>
@@ -26,7 +26,7 @@
         where id = #{id} and is_deleted = 0
     </update>
 
-    <update id="updateGoodsCategory" parameterType="mallGoodsCategory">
+    <update id="updateGoodsCategory" parameterType="mallGoodsCategoryPo">
         update goods_category set
         <trim suffixOverrides=",">
             gmt_modified=sysdate(),
@@ -45,7 +45,7 @@
         where id =# {id}
     </update>
 
-    <select id="findGoodsCategoryById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+    <select id="findGoodsCategoryById" resultMap="mallGoodsCategoryPoMap" parameterType="Integer">
         select id,
             name,
             pid,
@@ -56,7 +56,7 @@
         where id = #{id} and is_deleted = 0
     </select>
 
-    <select id="getAllGoodsCategories" resultMap="mallGoodsCategoryMap">
+    <select id="getAllGoodsCategories" resultMap="mallGoodsCategoryPoMap">
         select id,
             name,
             pid,
@@ -67,7 +67,7 @@
         where is_deleted = 0
     </select>
 
-    <select id="findAllGoodsById" resultMap="mallGoodsMap" parameterType="Integer">
+    <select id="findAllGoodsById" resultMap="mallGoodsPoMap" parameterType="Integer">
         select id,
             gmt_create,
             gmt_modified,
@@ -92,7 +92,7 @@
         where goods_category_id = #{id} and is_deleted = 0
     </select>
 
-    <select id="findSubGoodsCategoriesById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+    <select id="findSubGoodsCategoriesById" resultMap="mallGoodsCategoryPoMap" parameterType="Integer">
         select id,
             name,
             pid,
@@ -103,7 +103,7 @@
         where pid = #{id} and is_deleted = 0
     </select>
 
-    <select id="findAllGoodsCategoriesOfL1" resultMap="mallGoodsCategoryMap">
+    <select id="findAllGoodsCategoriesOfL1" resultMap="mallGoodsCategoryPoMap">
         select id,
             name,
             pid,
