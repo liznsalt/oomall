@@ -32,7 +32,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<MallLog> findLogsByCondition(Integer page, Integer limit, String sort, String order) {
-        return logMapper.findLogsByCondition(page, limit, sort, order);
+    public List<MallLog> findLogsByCondition(Integer page, Integer limit) {
+        return logMapper.findLogsByCondition(page, limit);
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/logs")
+@RequestMapping("/logService")
 public class LogController {
 
     private static final Logger logger = LoggerFactory.getLogger(LogController.class);
@@ -22,8 +22,7 @@ public class LogController {
     @Autowired
     private LogService logService;
 
-    @PostMapping("")
-    @ResponseBody
+    @PostMapping("/logs")
     public Object addLog(@RequestBody MallLog log) {
         logger.debug("addLog参数：" + log);
         MallLog newLog = logService.addLog(log);
@@ -32,24 +31,21 @@ public class LogController {
         return retObj;
     }
 
-    @GetMapping("")
-    @ResponseBody
+    @GetMapping("/logs")
     public Object list(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer limit,
-                       @RequestParam(defaultValue = "gmt_create") String sort,
-                       @RequestParam(defaultValue = "desc") String order) {
-        List<MallLog> logList = logService.findLogsByCondition(page, limit, sort, order);
+                       @RequestParam(defaultValue = "10") Integer limit) {
+        List<MallLog> logList = logService.findLogsByCondition(page, limit);
         Object retObj = ResponseUtil.ok(logList);
         logger.debug("list返回值：" + retObj);
         return retObj;
     }
 
-    @GetMapping("/")
-    @ResponseBody
-    public Object list() {
-        List<MallLog> logList = logService.getAllLogs();
-        Object retObj = ResponseUtil.ok(logList);
-        logger.debug("list返回值：" + retObj);
-        return retObj;
-    }
+//    @GetMapping("/")
+//    @ResponseBody
+//    public Object list() {
+//        List<MallLog> logList = logService.getAllLogs();
+//        Object retObj = ResponseUtil.ok(logList);
+//        logger.debug("list返回值：" + retObj);
+//        return retObj;
+//    }
 }

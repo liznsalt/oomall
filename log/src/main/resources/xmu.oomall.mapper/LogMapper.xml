@@ -2,25 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.LogMapper">
     
-<!--    <resultMap id="BaseResultMap" type="mallLog">-->
-<!--        <id column="id" jdbcType="BIGINT" property="id"/>-->
-<!--        <result column="admin_id" jdbcType="BIGINT" property="adminId"/>-->
-<!--        <result column="id" jdbcType="BIGINT" property="id"/>-->
-<!--        <result column="ip" jdbcType="VARCHAR" property="ip"/>-->
-<!--        <result column="type" jdbcType="TINYINT" property="type"/>-->
-<!--        <result column="action" jdbcType="VARCHAR" property="action"/>-->
-<!--        <result column="status" jdbcType="TINYINT" property="statusCode"/>-->
-<!--        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>-->
-<!--        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>-->
-<!--        <result column="action_id" jdbcType="BIGINT" property="actionId"/>-->
-<!--    </resultMap>-->
+    <resultMap id="mallLogMap" type="mallLog">
+        <id column="id" property="id"/>
+        <result column="status" property="statusCode"/>
+    </resultMap>
 
     <insert id="addLog" parameterType="mallLog" useGeneratedKeys="true" keyProperty="id">
         insert into log(admin_id, ip, type, action, status, gmt_create, gmt_modified, action_id)
         values (#{adminId}, #{ip}, #{type}, #{action}, #{statusCode}, sysdate(), sysdate(), #{actionId})
     </insert>
 
-    <select id="findLogById" parameterType="Integer" resultType="mallLog">
+    <select id="findLogById" parameterType="Integer" resultMap="mallLogMap">
         select id,
                admin_id,
                ip,
@@ -33,7 +25,7 @@
         from log where id = #{id}
     </select>
 
-    <select id="getAllLogs" resultType="mallLog">
+    <select id="getAllLogs" resultMap="mallLogMap">
         select id,
                admin_id,
                ip,
@@ -46,7 +38,7 @@
         from log
     </select>
     
-    <select id="findLogsByCondition" resultType="mallLog">
+    <select id="findLogsByCondition" resultMap="mallLogMap">
         select id,
                admin_id,
                ip,
@@ -57,7 +49,6 @@
                gmt_modified,
                action_id
         from log
-        order by ${sort}  ${order} , id desc
         limit ${limit * page - limit}, ${limit * page}
     </select>
 </mapper>

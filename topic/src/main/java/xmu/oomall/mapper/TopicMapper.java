@@ -52,21 +52,15 @@ public interface TopicMapper {
      * 根据分页条件查找专题信息
      * @param page 当前页数
      * @param limit 每页记录条数
-     * @param sort 根据什么字段来排序
-     * @param order 升序 or 降序
      * @return 专题信息列表
      */
-    List<MallTopic> findTopicsByCondition(Integer page, Integer limit,
-                                          String sort, String order);
+    List<MallTopic> findTopicsByCondition(Integer page, Integer limit);
 
     /**
      * 根据分页条件查找未删除的专题信息
      * @param page 当前页数
      * @param limit 每页记录条数
-     * @param sort 根据什么字段来排序
-     * @param order 升序 or 降序
      * @return 专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit,
-                                                    String sort, String order);
+    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit);
 }

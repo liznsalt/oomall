@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.RoleMapper">
+
+    <resultMap id="mallRoleMap" type="mallRole">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted"/>
+    </resultMap>
+    <resultMap id="mallAdminForRoleMap" type="mallAdmin">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="mallRole" useGeneratedKeys="true" keyProperty="id">
+        insert into role(name, gmt_create, gmt_modified, is_deleted)
+        values (#{name}, sysdate(), sysdate(), #{beDeleted})
+    </insert>
+
+    <update id="deleteById" parameterType="Integer">
+        update role set is_deleted = 1, gmt_modified = sysdate()
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <update id="update" parameterType="mallRole">
+        update role
+            <trim suffixOverrides=",">
+                gmt_modified = sysdate(),
+                <if test="name != null">
+                    name = #{name},
+                </if>
+                <choose>
+                    <when test="beDeleted == null"/>
+                    <when test="beDeleted == true">
+                        is_deleted = 1,
+                    </when>
+                    <otherwise>
+                        is_deleted = 0,
+                    </otherwise>
+                </choose>
+            </trim>
+        where id = #{id}
+    </update>
+
+    <select id="findById" parameterType="Integer" resultMap="mallRoleMap">
+        select id, name, gmt_create, gmt_modified, is_deleted
+        from role where id = #{id}
+    </select>
+
+    <select id="findRoles" resultMap="mallRoleMap">
+        select id, name, gmt_create, gmt_modified, is_deleted
+        from role
+        limit ${limit * page - limit}, ${limit * page}
+    </select>
+
+    <select id="findAdmins" parameterType="Integer" resultMap="mallAdminForRoleMap">
+        select id, gmt_create, gmt_modified, username, password, role_id, is_deleted
+        from admin
+        where role_id = #{id}
+    </select>
+
+    <select id="getAllRoles" resultMap="mallRoleMap">
+        select id, name, gmt_create, gmt_modified, is_deleted
+        from role
+    </select>
+</mapper>

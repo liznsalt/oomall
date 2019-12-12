@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>demo</module>
         <module>goods-info</module>
         <module>log</module>
         <module>cart</module>
         <module>topic</module>
-        <module>user</module>
+        <module>ad</module>
+        <module>user-zuul</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -109,19 +109,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger2</artifactId>-->
-<!--            <version>2.7.0</version>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>2.7.0</version>-->
-<!--        </dependency>-->
 
         <!--   标准组     -->
         <dependency>

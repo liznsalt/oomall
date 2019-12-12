@@ -48,21 +48,15 @@ public interface TopicService {
      * 通过条件查找专题信息
      * @param page 当前第几页
      * @param limit 每页记录条数
-     * @param sort 按什么字段排序
-     * @param order 升序 or 降序
      * @return 符合情况的专题信息列表
      */
-    List<MallTopic> findTopicsByCondition(Integer page, Integer limit,
-                                          String sort, String order);
+    List<MallTopic> findTopicsByCondition(Integer page, Integer limit);
 
     /**
      * 通过条件查找未被删除的专题信息
      * @param page 当前第几页
      * @param limit 每页记录条数
-     * @param sort 按什么字段排序
-     * @param order 升序 or 降序
      * @return 符合情况且未被删除的专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit,
-                                                    String sort, String order);
+    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit);
 }

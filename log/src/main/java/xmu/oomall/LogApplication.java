@@ -11,7 +11,6 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * @author liznsalt
  */
 @EnableDiscoveryClient
-@EnableEurekaClient
 @SpringBootApplication
 @MapperScan("xmu.oomall.mapper")
 public class LogApplication {

@@ -61,17 +61,12 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<MallTopic> findTopicsByCondition(Integer page, Integer limit,
-                                                 String sort, String order) {
+    public List<MallTopic> findTopicsByCondition(Integer page, Integer limit) {
         if (page <= 0 && limit <= 0) {
             return null;
         }
-        if (!order.toLowerCase().equals("asc")
-                && !order.toLowerCase().equals("desc")) {
-            return null;
-        }
         try {
-            return topicMapper.findTopicsByCondition(page, limit, sort, order);
+            return topicMapper.findTopicsByCondition(page, limit);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -79,17 +74,12 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit,
-                                                           String sort, String order) {
+    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit) {
         if (page <= 0 && limit <= 0) {
             return null;
         }
-        if (!order.toLowerCase().equals("asc")
-                && !order.toLowerCase().equals("desc")) {
-            return null;
-        }
         try {
-            return topicMapper.findNotDeletedTopicsByCondition(page, limit, sort, order);
+            return topicMapper.findNotDeletedTopicsByCondition(page, limit);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

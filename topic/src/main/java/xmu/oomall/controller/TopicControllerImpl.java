@@ -12,6 +12,7 @@ import xmu.oomall.domain.MallTopic;
 import xmu.oomall.service.LogService;
 import xmu.oomall.service.TopicService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/topics")
+@RequestMapping("/topicService")
 public class TopicControllerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(TopicControllerImpl.class);
@@ -30,8 +31,9 @@ public class TopicControllerImpl {
     @Autowired
     private LogService logService;
 
-    @PostMapping("")
-    public Object create(@RequestBody MallTopic topic) {
+    @PostMapping("/topics")
+    public Object create(@RequestBody MallTopic topic, HttpServletRequest request) {
+
         logger.debug("addTopic参数为：" + topic);
 
         // FIXME 测试先将管理员ID设为1 IP设为1.1.1.1
@@ -52,44 +54,43 @@ public class TopicControllerImpl {
         return retObj;
     }
 
-    @GetMapping("/")
+    @GetMapping("/topics")
     public Object list(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit,
-                       @RequestParam(defaultValue = "gmt_create") String sort,
-                       @RequestParam(defaultValue = "desc") String order) {
+                       HttpServletRequest request) {
+        System.out.println(request.getHeader("token"));
+        System.out.println(request.getHeader("userId"));
+        System.out.println(request.getHeader("ip"));
         List<MallTopic> topicList = topicService
-                .findNotDeletedTopicsByCondition(page, limit, sort, order);
+                .findNotDeletedTopicsByCondition(page, limit);
         return CommonResult.success(topicList);
     }
 
-    @GetMapping("/{id}/detail")
+    @GetMapping("/topics/{id}")
     public Object detail(@PathVariable("id") @NotNull Integer id) {
         MallTopic topic = topicService.findNotDeletedTopicById(id);
         return CommonResult.success(topic);
     }
 
-//    @GetMapping("/{id}/related")
-//    public Object related(@PathVariable @NotNull String id) {
-//
-//        return null;
-//    }
-
 //    @GetMapping("")
 //    public Object list(String title, String subtitle,
 //                       @RequestParam(defaultValue = "1") Integer page,
-//                       @RequestParam(defaultValue = "10") Integer limit,
-//                       @RequestParam(defaultValue = "add_time") String sort,
-//                       @RequestParam(defaultValue = "desc") String order) {
+//                       @RequestParam(defaultValue = "10") Integer limit) {
 //        return null;
 //    }
 
+    /**
+     * TODO
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Object read(@PathVariable("id") @NotNull Integer id) {
         MallTopic topic = topicService.findTopicById(id);
         return CommonResult.success(topic);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/topics/{id}")
     public Object update(@RequestBody Topic topic, @PathVariable Integer id) {
         topic.setId(id);
         Boolean result = topicService.updateTopic((MallTopic) topic);
@@ -100,7 +101,7 @@ public class TopicControllerImpl {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/topics/{id}")
     public Object delete(@RequestBody Topic topic, @PathVariable Integer id) {
         Boolean result = topicService.deleteTopicById(id);
         if (result) {
@@ -108,18 +109,5 @@ public class TopicControllerImpl {
         } else {
             return CommonResult.failed();
         }
-    }
-
-    @GetMapping("/test")
-    @ResponseBody
-    public Object test() {
-        Log log = new Log();
-        log.setAdminId(1);
-        log.setIp("1.1.1.1");
-        log.setType(1);
-        log.setAction("1213");
-        log.setStatusCode(1);
-        log.setActionId(1);
-        return logService.addLog(log);
     }
 }
