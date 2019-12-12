@@ -54,5 +54,4 @@ public interface ProductMapper {
      * @return 行数
      */
     int addProducts(List<MallProductPo> productPoList);
-
 }

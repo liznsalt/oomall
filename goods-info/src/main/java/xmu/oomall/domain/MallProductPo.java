@@ -18,4 +18,5 @@ public class MallProductPo extends ProductPo {
         this.setSafetyStock(mallProduct.getSafetyStock());
     }
     public MallProductPo() {    }
+
 }

@@ -70,5 +70,4 @@
             (#{item.goodsId},#{item.picUrl},#{item.specifications},#{item.price},#{item.saftyStock},sysdate(),sysdate(),#{item.beDeleted})
         </foreach>
     </insert>
-
 </mapper>
