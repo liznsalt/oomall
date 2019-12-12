@@ -2,4 +2,121 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.GoodsCategoryMapper">
 
+
+    <resultMap id="mallGoodsCategoryPoMap" type="mallGoodsCategoryPo" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
+    </resultMap>
+
+    <resultMap id="mallGoodsPoMap" type="mallGoodsPo" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beSpecial" column="is_special" javaType="Boolean"/>
+        <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
+    </resultMap>
+
+    <insert id="addGoodsCategory" parameterType="mallGoodsCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_category(name,pid,gmt_create,gmt_modified,is_deleted)
+        values (#{name},#{pid},sysdate(),sysdate(),#{beDeleted})
+    </insert>
+
+    <update id="deleteGoodsCategoryById" parameterType="Integer">
+        update goods_category set
+            is_deleted = 1,
+            gmt_modified = sysdate()
+        where id = #{id} and is_deleted = 0
+    </update>
+
+    <update id="updateGoodsCategory" parameterType="mallGoodsCategory">
+        update goods_category set
+        <trim suffixOverrides=",">
+            gmt_modified=sysdate(),
+            <if test="name != null">name=#{name},</if>
+            <if test="pid != null">pid=#{pid},</if>
+            <choose>
+                <when test="beDeleted == null"></when>
+                <when test="beDeleted == true">
+                    is_deleted = 1,
+                </when>
+                <otherwise>
+                    is_deleted = 0,
+                </otherwise>
+            </choose>
+        </trim>
+        where id =# {id}
+    </update>
+
+    <select id="findGoodsCategoryById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+        select id,
+            name,
+            pid,
+            gmt_create,
+            gmt_modified,
+            is_deleted
+        from goods_category
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="getAllGoodsCategories" resultMap="mallGoodsCategoryMap">
+        select id,
+            name,
+            pid,
+            gmt_create,
+            gmt_modified,
+            is_deleted
+        from goods_category
+        where is_deleted = 0
+    </select>
+
+    <select id="findAllGoodsById" resultMap="mallGoodsMap" parameterType="Integer">
+        select id,
+            gmt_create,
+            gmt_modified,
+            name,
+            goods_sn,
+            short_name,
+            description,
+            brief,
+            pic_url,
+            detail,
+            status,
+            share_url,
+            gallery,
+            goods_category_id,
+            brand_id,
+            is_deleted,
+            weight,
+            volume,
+            special_freight_id,
+            is_special
+        from goods
+        where goods_category_id = #{id} and is_deleted = 0
+    </select>
+
+    <select id="findSubGoodsCategoriesById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+        select id,
+            name,
+            pid,
+            gmt_create,
+            gmt_modified,
+            is_deleted
+        from goods_category
+        where pid = #{id} and is_deleted = 0
+    </select>
+
+    <select id="findAllGoodsCategoriesOfL1" resultMap="mallGoodsCategoryMap">
+        select id,
+            name,
+            pid,
+            gmt_create,
+            gmt_modified,
+            is_deleted
+        from goods_category
+        where pid = null and is_deleted = 0
+    </select>
+
+    <update id="setGoodsCategoryIdNull" parameterType="Integer">
+        update goods set
+            goods_category_id=null
+        where goods_category_id =# {id}
+    </update>
 </mapper>
