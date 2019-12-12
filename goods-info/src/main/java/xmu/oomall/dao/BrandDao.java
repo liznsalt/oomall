@@ -31,7 +31,7 @@ public class BrandDao {
      * @return 添加后的品牌信息
      */
     public MallBrand addBrand(MallBrand brand) {
-        brandMapper.addBrand(brand);
+        brandMapper.addBrand(brand.setToMallBrandPo());
         return brand;
     }
 
@@ -61,7 +61,7 @@ public class BrandDao {
         if(brand.getId()==null){
             return null;
         }
-        brandMapper.updateBrand(brand);
+        brandMapper.updateBrand(brand.setToMallBrandPo());
         brand=findBrandById(brand.getId());
         return brand;
     }
@@ -76,7 +76,7 @@ public class BrandDao {
         String key = "B_" + id;
         MallBrand brand = (MallBrand) redisService.get(key);
         if (brand == null) {
-            brand = brandMapper.findBrandById(id);
+            brand = brandMapper.findBrandById(id).setToMallBrand();
             if (brand == null) {
                 return null;
             }
@@ -84,5 +84,7 @@ public class BrandDao {
         }
         return brand;
     }
+
+    
 
 }
