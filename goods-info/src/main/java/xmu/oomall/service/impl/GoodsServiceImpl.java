@@ -54,13 +54,13 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Integer getStockInDB(Integer id) {
         MallProduct product = productDao.findProductById(id);
-        return product.getSaftyStock();
+        return product.getSafetyStock();
     }
 
     @Override
     public void updateStockInDB(Integer id, Integer quantity) {
         MallProduct product = productDao.findProductById(id);
-        product.setSaftyStock(quantity);
+        product.setSafetyStock(quantity);
         productDao.updateProduct(product);
     }
 
@@ -83,7 +83,7 @@ public class GoodsServiceImpl implements GoodsService {
         }
         product.setGoodsId(id);
         MallProduct newProduct = productDao.addProduct(product);
-        goods.getProducts().add(newProduct);
+        goods.getProductPoList().add(newProduct);
         redisService.set("G_" + goods.getId(), goods);
         return product;
     }
