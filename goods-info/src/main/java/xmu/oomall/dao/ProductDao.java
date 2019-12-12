@@ -50,6 +50,7 @@ public class ProductDao {
      */
     public MallProduct updateProduct(MallProduct product) {
         productMapper.updateProduct(product.getRealObj());
+        product = findProductById(product.getId());
         return product;
     }
 

@@ -75,8 +75,11 @@ public class BrandDao {
     public MallBrand findBrandById(Integer id) {
         String key = "B_" + id;
         MallBrand brand = (MallBrand) redisService.get(key);
-        if(brand==null) {
+        if (brand == null) {
             brand = brandMapper.findBrandById(id);
+            if (brand == null) {
+                return null;
+            }
             redisService.set(key, brand);
         }
         return brand;

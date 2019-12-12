@@ -11,6 +11,7 @@ import xmu.oomall.mapper.GoodsMapper;
 import xmu.oomall.mapper.ProductMapper;
 import xmu.oomall.service.RedisService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,10 +45,14 @@ public class GoodsDao {
     public MallGoods addGoods(MallGoods goods) {
         goodsMapper.addGoods(goods);
         //FIXME 添加其子产品
-        goods.setProductsGoodsId();
-        List<MallProductPo> productPoList = goods.getProducts().stream()
-                .map(MallProduct::getRealObj).collect(Collectors.toList());
-        productMapper.addProducts(productPoList);
+        if (goods.getProducts() != null) {
+            goods.setProductsGoodsId();
+            List<MallProductPo> productPoList = goods.getProducts().stream()
+                    .map(MallProduct::getRealObj).collect(Collectors.toList());
+            productMapper.addProducts(productPoList);
+        } else {
+            goods.setProducts(new ArrayList<>());
+        }
         //TODO 设置其属性实体
 
         return goods;
@@ -88,6 +93,9 @@ public class GoodsDao {
         MallGoods goods = (MallGoods) redisService.get(key);
         if (goods == null) {
             goods = goodsMapper.findGoodsById(id);
+            if (goods == null) {
+                return null;
+            }
             List<MallProduct> productList = findProductsById(id);
             goods.setProducts(productList);
             redisService.set(key, goods);
@@ -108,7 +116,10 @@ public class GoodsDao {
     /**
      * 通过条件返回商品列表
      */
-    public List<MallGoods> findGoodsByCondition() {
-        return null;
+    public List<MallGoods> findGoodsByCondition(Integer page, Integer limit) {
+        if (page <= 0 || limit <= 0) {
+            return new ArrayList<>();
+        }
+        return goodsMapper.findGoodsByCondition(page, limit);
     }
 }
