@@ -8,17 +8,5 @@ import standard.oomall.domain.GoodsCategory;
  */
 @Alias("mallGoodsCategory")
 public class MallGoodsCategory extends GoodsCategory {
-    private MallGoodsCategory parentCategory;
 
-    /****************************************************
-     * 生成代码
-     ****************************************************/
-
-    public MallGoodsCategory getParentCategory() {
-        return parentCategory;
-    }
-
-    public void setParentCategory(MallGoodsCategory parentCategory) {
-        this.parentCategory = parentCategory;
-    }
 }

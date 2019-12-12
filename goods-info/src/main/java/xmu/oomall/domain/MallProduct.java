@@ -1,8 +1,6 @@
 package xmu.oomall.domain;
 
 
-import xmu.oomall.domain.standard.Product;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,8 +11,6 @@ import java.util.Map;
  */
 public class MallProduct {
     private MallProductPo realObj;
-
-    public MallProduct() { realObj = new MallProductPo(); }
 
     public MallProduct(MallProductPo productPo) {
         realObj = productPo;

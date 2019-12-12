@@ -41,7 +41,7 @@ logging:
   #使用logback日志，取代默认的common日志
   file:
     # TODO 记得修改
-    path: C:\Users\liznsalt\log
+    path: C:\Users\hyt\log
   config: classpath:logback-spring.xml
 
 oomall:
