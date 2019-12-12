@@ -2,8 +2,8 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
-import xmu.oomall.domain.MallGoods;
-import xmu.oomall.domain.MallGoodsCategory;
+import xmu.oomall.domain.MallGoodsCategoryPo;
+import xmu.oomall.domain.MallGoodsPo;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface GoodsCategoryMapper {
      * @param goodsCategory 商品种类信息
      * @return 行数
      */
-    int addGoodsCategory(MallGoodsCategory goodsCategory);
+    int addGoodsCategory(MallGoodsCategoryPo goodsCategory);
 
     /**
      * 根据种类ID删除种类
@@ -32,40 +32,40 @@ public interface GoodsCategoryMapper {
      * @param goodsCategory 商品种类信息
      * @return 更新的行数
      */
-    int updateGoodsCategory(MallGoodsCategory goodsCategory);
+    int updateGoodsCategory(MallGoodsCategoryPo goodsCategory);
 
     /**
      * 根据商品种类ID检索商品种类
      * @param id 商品种类ID
      * @return 商品种类信息
      */
-    MallGoodsCategory findGoodsCategoryById(Integer id);
+    MallGoodsCategoryPo findGoodsCategoryById(Integer id);
 
     /**
      * 得到所有商品种类
      * @return 种类列表
      */
-    List<MallGoodsCategory> getAllGoodsCategories();
+    List<MallGoodsCategoryPo> getAllGoodsCategories();
 
     /**
      * 根据商品种类ID得到所有属于这个种类的商品
      * @param id 商品种类ID
      * @return 商品列表
      */
-    List<MallGoods> findAllGoodsById(Integer id);
+    List<MallGoodsPo> findAllGoodsById(Integer id);
 
     /**
      * 根据分类ID得到其下所有子分类
      * @param id 分类ID
      * @return 子分类列表
      */
-    List<MallGoodsCategory> findSubGoodsCategoriesById(Integer id);
+    List<MallGoodsCategoryPo> findSubGoodsCategoriesById(Integer id);
 
     /**
      * 得到所有一级分类
      * @return 一级分类列表
      */
-    List<MallGoodsCategory> findAllGoodsCategoriesOfL1();
+    List<MallGoodsCategoryPo> findAllGoodsCategoriesOfL1();
 
     /**
      * 级联将该类别下的所有商品的类别ID设为NULL
