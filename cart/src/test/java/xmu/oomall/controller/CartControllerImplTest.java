@@ -20,46 +20,4 @@ public class CartControllerImplTest {
     @Autowired
     private CartControllerImpl cartController;
 
-    @Test
-    public void cartIndex() {
-        System.out.println(cartController.cartIndex(1));
-    }
-
-    @Test
-    public void add() {
-        MallCartItem cartItem = new MallCartItem();
-        cartItem.setNumber(1);
-        cartItem.setProductId(1);
-        cartItem.setBeCheck(true);
-        System.out.println(cartController.add(1, cartItem));
-    }
-
-    @Test
-    public void fastadd() {
-        MallCartItem cartItem = new MallCartItem();
-        cartItem.setId(1);
-        cartItem.setNumber(2);
-        cartItem.setProductId(1);
-        cartItem.setBeCheck(true);
-        System.out.println(cartController.add(1, cartItem));
-    }
-
-    @Test
-    public void update() {
-        MallCartItem cartItem = new MallCartItem();
-        cartItem.setId(2);
-        cartItem.setNumber(2);
-        cartItem.setProductId(1);
-        System.out.println(cartController.update(2, cartItem));
-    }
-
-    @Test
-    public void delete() {
-        System.out.println(cartController.delete("3", 1, "aaa"));
-    }
-
-    @Test
-    public void goodscount() {
-        System.out.println(cartController.goodscount(1));
-    }
 }

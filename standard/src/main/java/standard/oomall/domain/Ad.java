@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -17,6 +20,8 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode
 public class Ad {
+    @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
     /**
      * 该广告的链接
@@ -37,10 +42,12 @@ public class Ad {
     /**
      * 该广告是否是默认广告
      */
+    @Column(name = "is_default")
     private Boolean beDefault;
     /**
      * 该广告是否启用
      */
+    @Column(name = "is_enabled")
     private Boolean beEnabled;
     /**
      * 该广告上线的时间
@@ -52,6 +59,7 @@ public class Ad {
     private LocalDateTime endTime;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
+    @Column(name = "is_deleted")
     private Boolean beDeleted;
 
 }

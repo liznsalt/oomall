@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import xmu.oomall.domain.MallCartItem;
 import xmu.oomall.service.CartService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,7 +26,9 @@ public class CartControllerImpl {
     }
 
     @PostMapping("/carts")
-    public Object add(Integer userId, MallCartItem cart) {
+    public Object add(MallCartItem cart,
+                      HttpServletRequest request) {
+        Integer userId = Integer.valueOf(request.getHeader("userId"));
         MallCartItem cartItem = cartService.add(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
             return CommonResult.failed();
@@ -35,7 +38,11 @@ public class CartControllerImpl {
     }
 
     @PostMapping("/carts/{id}")
-    public Object fastadd(Integer userId, MallCartItem cart) {
+    public Object fastAdd(@PathVariable Integer id,
+                          MallCartItem cart,
+                          HttpServletRequest request) {
+        Integer userId = Integer.valueOf(request.getHeader("userId"));
+        cart.setId(id);
         MallCartItem cartItem = cartService.fastAdd(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
             return CommonResult.failed();
@@ -45,9 +52,11 @@ public class CartControllerImpl {
     }
 
     @PutMapping("/carts/{id}")
-    public Object update(Integer userId, MallCartItem cart) {
+    public Object update(MallCartItem cart,
+                         HttpServletRequest request) {
+        Integer userId = Integer.valueOf(request.getHeader("userId"));
         if (cart.getId() == null) {
-            return CommonResult.failed("改购物车项不存在");
+            return CommonResult.failed("该购物车项不存在");
         }
         MallCartItem cartItem = cartService.update(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
@@ -58,18 +67,13 @@ public class CartControllerImpl {
     }
 
     @DeleteMapping("/carts/{id}")
-    public Object delete(@PathVariable String id, Integer userId, String body) {
+    public Object delete(@PathVariable String id,
+                         HttpServletRequest request) {
         boolean ok = cartService.delete(Integer.valueOf(id));
         if (ok) {
             return CommonResult.success(null);
         } else {
             return CommonResult.failed();
         }
-    }
-
-    @GetMapping("/carts/count")
-    public Object goodscount(Integer userId) {
-        int count = cartService.goodsCount(userId);
-        return CommonResult.success(count);
     }
 }
