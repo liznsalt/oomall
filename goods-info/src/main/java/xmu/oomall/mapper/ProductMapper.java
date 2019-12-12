@@ -2,6 +2,7 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
+import xmu.oomall.domain.MallProduct;
 import xmu.oomall.domain.MallProductPo;
 
 import java.util.List;
@@ -14,10 +15,10 @@ import java.util.List;
 public interface ProductMapper {
     /**
      * 添加产品
-     * @param product 产品信息
+     * @param productPo 产品信息
      * @return 行数
      */
-    int addProduct(MallProductPo product);
+    int addProduct(MallProductPo productPo);
 
     /**
      * 通过产品ID删除产品
@@ -28,10 +29,10 @@ public interface ProductMapper {
 
     /**
      * 更新产品
-     * @param product 产品信息
+     * @param productPo 产品信息
      * @return 更新的行数
      */
-    int updateProduct(MallProductPo product);
+    int updateProduct(MallProductPo productPo);
 
     /**
      * 通过产品ID检索产品
@@ -41,8 +42,8 @@ public interface ProductMapper {
     MallProductPo findProductById(Integer id);
 
     /**
-     * 通过产品ID检索其所有子产品
-     * @param id 产品ID
+     * 通过商品ID检索其所有子产品
+     * @param id 商品ID
      * @return 子产品列表
      */
     List<MallProductPo> findSubProductsById(Integer id);

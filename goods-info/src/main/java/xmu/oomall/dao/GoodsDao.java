@@ -45,7 +45,7 @@ public class GoodsDao {
     public MallGoods addGoods(MallGoods goods) {
         goodsMapper.addGoods(goods);
         //FIXME 添加其子产品
-        if (goods.getProducts() != null) {
+        if (goods.getProductPoList() != null) {
             goods.setProductsGoodsId();
             List<MallProductPo> productPoList = goods.getProducts().stream()
                     .map(MallProduct::getRealObj).collect(Collectors.toList());
