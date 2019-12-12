@@ -71,14 +71,10 @@ public interface GoodsMapper {
 
     /**
      * 分页得到商品
-     * @param pageNum 页数
-     * @param rowNum 每页行数
-     * @param key 根据关键字排序
-     * @param order 排序方式
+     * @param page 页数
+     * @param limit 每页行数
      * @return 商品列表
      */
-    List<MallGoods> getGoods(@Param("pageNum") Integer pageNum,
-                             @Param("rowNum") Integer rowNum,
-                             @Param("key") String key,
-                             @Param("order") String order);
+    List<MallGoods> findGoodsByCondition(Integer page, Integer limit);
+
 }

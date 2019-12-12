@@ -1,10 +1,6 @@
 package xmu.oomall.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.MallGoods;
 import xmu.oomall.domain.MallProduct;
@@ -13,14 +9,16 @@ import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.mapper.GoodsCategoryMapper;
 import xmu.oomall.mapper.GoodsMapper;
 import xmu.oomall.mapper.ProductMapper;
+import xmu.oomall.service.RedisService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author liznsalt
+ * @author YaNai
  */
-@CacheConfig(cacheNames = "goods")
 @Repository
 public class GoodsDao {
 
@@ -36,6 +34,9 @@ public class GoodsDao {
     @Autowired
     private GoodsCategoryMapper goodsCategoryMapper;
 
+    @Autowired
+    private RedisService redisService;
+
     /**
      * 增加商品
      * @param goods 商品信息
@@ -44,10 +45,14 @@ public class GoodsDao {
     public MallGoods addGoods(MallGoods goods) {
         goodsMapper.addGoods(goods);
         //FIXME 添加其子产品
-        goods.setProductsGoodsId();
-        List<MallProductPo> productPoList = goods.getProducts().stream()
-                .map(MallProduct::getRealObj).collect(Collectors.toList());
-        productMapper.addProducts(productPoList);
+        if (goods.getProducts() != null) {
+            goods.setProductsGoodsId();
+            List<MallProductPo> productPoList = goods.getProducts().stream()
+                    .map(MallProduct::getRealObj).collect(Collectors.toList());
+            productMapper.addProducts(productPoList);
+        } else {
+            goods.setProducts(new ArrayList<>());
+        }
         //TODO 设置其属性实体
 
         return goods;
@@ -57,8 +62,9 @@ public class GoodsDao {
      * 删除商品，并将其子产品删除
      * @param id 商品ID
      */
-    @CacheEvict(key = "#p0")
     public void deleteGoodsById(Integer id) {
+        String key = "G_" + id;
+        redisService.remove(key);
         goodsMapper.deleteProductsByGoodsId(id);
         goodsMapper.deleteGoodsById(id);
     }
@@ -68,9 +74,12 @@ public class GoodsDao {
      * @param goods 商品信息
      * @return 修改后的商品信息
      */
-    @CachePut(key = "#p0.id")
     public MallGoods updateGoods(MallGoods goods) {
+        if (goods.getId() == null) {
+            return null;
+        }
         goodsMapper.updateGoods(goods);
+        goods = findGoodsById(goods.getId());
         return goods;
     }
 
@@ -79,17 +88,18 @@ public class GoodsDao {
      * @param id 商品ID
      * @return 商品信息
      */
-    @Cacheable(key = "#p0")
     public MallGoods findGoodsById(Integer id) {
-        MallGoods goods = goodsMapper.findGoodsById(id);
-        goods.setBrand(brandMapper.findBrandById(goods.getBrandId()));
-        goods.setGoodsCategory(goodsCategoryMapper
-                .findGoodsCategoryById(goods.getGoodsCategoryId()));
-        List<MallProductPo> productPos = goodsMapper.findProductsById(goods.getId());
-        productPos.forEach(p -> p.setGoods(goods));
-        goods.setProducts(productPos.stream()
-                .map(MallProduct::new)
-                .collect(Collectors.toList()));
+        String key = "G_" + id;
+        MallGoods goods = (MallGoods) redisService.get(key);
+        if (goods == null) {
+            goods = goodsMapper.findGoodsById(id);
+            if (goods == null) {
+                return null;
+            }
+            List<MallProduct> productList = findProductsById(id);
+            goods.setProducts(productList);
+            redisService.set(key, goods);
+        }
         return goods;
     }
 
@@ -101,5 +111,15 @@ public class GoodsDao {
     public List<MallProduct> findProductsById(Integer id) {
         List<MallProductPo> productPoList = goodsMapper.findProductsById(id);
         return productPoList.stream().map(MallProduct::new).collect(Collectors.toList());
+    }
+
+    /**
+     * 通过条件返回商品列表
+     */
+    public List<MallGoods> findGoodsByCondition(Integer page, Integer limit) {
+        if (page <= 0 || limit <= 0) {
+            return new ArrayList<>();
+        }
+        return goodsMapper.findGoodsByCondition(page, limit);
     }
 }
