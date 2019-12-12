@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class ProductDao {
-
     @Autowired
     private ProductMapper productMapper;
 

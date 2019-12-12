@@ -25,5 +25,6 @@ public class MallProduct extends Product{
         this.setPrice(productPo.getPrice());
         this.setSafetyStock(productPo.getSafetyStock());
         this.setSpecifications(productPo.getSpecifications());
+
     }
 }

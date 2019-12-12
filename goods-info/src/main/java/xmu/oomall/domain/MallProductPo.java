@@ -17,8 +17,5 @@ public class MallProductPo extends ProductPo {
         this.setGoodsId(mallProduct.getGoodsId());
         this.setSafetyStock(mallProduct.getSafetyStock());
     }
-    public MallProductPo()
-    {
-
-    }
+    public MallProductPo() {    }
 }
