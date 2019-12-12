@@ -30,7 +30,7 @@ public class ProductDao {
      * @return 添加后的产品
      */
     public MallProduct addProduct(MallProduct product) {
-        MallProductPo productPo = product.getRealObj();
+        MallProductPo productPo = new MallProductPo(product);
         productMapper.addProduct(productPo);
         return product;
     }
@@ -49,7 +49,8 @@ public class ProductDao {
      * @return 更新的行数
      */
     public MallProduct updateProduct(MallProduct product) {
-        productMapper.updateProduct(product.getRealObj());
+        MallProductPo productPo = new MallProductPo(product);
+        productMapper.updateProduct(productPo);
         product = findProductById(product.getId());
         return product;
     }
@@ -80,7 +81,7 @@ public class ProductDao {
      * @return 添加后的产品信息列表
      */
     public List<MallProduct> addProducts(List<MallProduct> productList){
-        List<MallProductPo> productPoList = productList.stream().map(MallProduct::getRealObj).collect(Collectors.toList());
+        List<MallProductPo> productPoList = productList.stream().map(MallProductPo::new).collect(Collectors.toList());
         productMapper.addProducts(productPoList);
         return productList;
     }
