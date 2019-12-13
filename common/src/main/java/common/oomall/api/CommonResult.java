@@ -1,7 +1,5 @@
 package common.oomall.api;
 
-import common.oomall.util.JacksonUtil;
-
 import java.util.Date;
 
 /**
@@ -66,30 +64,48 @@ public class CommonResult<T> {
     /**
      * 参数验证失败返回结果
      */
-    public static <T> CommonResult<T> validateFailed() {
-        return failed(ResultCode.VALIDATE_FAILED);
+    public static <T> CommonResult<T> badArgument() {
+        return failed(ResultCode.BADARGUMENT);
+    }
+    public static <T> CommonResult<T> badArgument(String message) {
+        return new CommonResult<T>(ResultCode.BADARGUMENT.getCode(), message, null);
     }
 
-    /**
-     * 参数验证失败返回结果
-     * @param message 提示信息
-     */
-    public static <T> CommonResult<T> validateFailed(String message) {
-        return new CommonResult<T>(ResultCode.VALIDATE_FAILED.getCode(), message, null);
+    public static <T> CommonResult<T> badArgumentValue() {
+        return failed(ResultCode.BADARGUMENTVALUE);
+    }
+    public static <T> CommonResult<T> badArgumentValue(String message) {
+        return new CommonResult<T>(ResultCode.BADARGUMENTVALUE.getCode(), message, null);
+    }
+
+    public static <T> CommonResult<T> unLogin() {
+        return failed(ResultCode.UNLOGIN);
+    }
+
+    public static <T> CommonResult<T> serious() {
+        return failed(ResultCode.SERIOUS);
+    }
+
+    public static <T> CommonResult<T> upSupport() {
+        return failed(ResultCode.UNSUPPORT);
+    }
+
+    public static <T> CommonResult<T> updatedDateExpired() {
+        return failed(ResultCode.UPDATEDDATEEXPIRED);
+    }
+
+    public static <T> CommonResult<T> updatedDataFailed() {
+        return failed(ResultCode.UPDATEDDATAFAILED);
     }
 
     /**
      * 未登录返回结果
      */
-    public static <T> CommonResult<T> unauthorized(T data) {
-        return new CommonResult<T>(ResultCode.UNAUTHORIZED.getCode(), ResultCode.UNAUTHORIZED.getMessage(), data);
+    public static <T> CommonResult<T> unauthorized() {
+        return new CommonResult<T>(ResultCode.UNAUTHZ.getCode(), ResultCode.UNAUTHZ.getMessage(), null);
     }
-
-    /**
-     * 未授权返回结果
-     */
-    public static <T> CommonResult<T> forbidden(T data) {
-        return new CommonResult<T>(ResultCode.FORBIDDEN.getCode(), ResultCode.FORBIDDEN.getMessage(), data);
+    public static <T> CommonResult<T> unauthorized(T data) {
+        return new CommonResult<T>(ResultCode.UNAUTHZ.getCode(), ResultCode.UNAUTHZ.getMessage(), data);
     }
 
     public long getErrno() {

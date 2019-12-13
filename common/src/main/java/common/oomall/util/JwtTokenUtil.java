@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Map;
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
     public static final String CLAIM_KEY_USERID = "userId";
-    public static final String CLAIM_KEY_ROLE = "role";
+    public static final String CLAIM_KEY_ROLEID = "roleId";
     public static final String CLAIM_KEY_CREATED = "created";
     public static final String CLAIM_KEY_EXP = "exp";
 
@@ -74,7 +73,7 @@ public class JwtTokenUtil {
 
         Map<String, String> map = new HashMap<>(5);
         map.put(CLAIM_KEY_USERID, JacksonUtil.parseString(json, CLAIM_KEY_USERID));
-        map.put(CLAIM_KEY_ROLE, JacksonUtil.parseString(json, CLAIM_KEY_ROLE));
+        map.put(CLAIM_KEY_ROLEID, JacksonUtil.parseString(json, CLAIM_KEY_ROLEID));
         map.put(CLAIM_KEY_CREATED, JacksonUtil.parseString(json, CLAIM_KEY_CREATED));
         map.put(CLAIM_KEY_EXP, JacksonUtil.parseString(json, CLAIM_KEY_EXP));
         return map;
