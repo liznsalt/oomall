@@ -58,9 +58,9 @@ public class GoodsDao {
      * @param id 商品ID
      */
     public void deleteGoodsById(Integer id) {
-        String key = "GOODS" + id;
-        redisService.remove(key);
-        goodsMapper.deleteProductsByGoodsId(id);
+        redisService.remove("GOODS" + id);
+        redisService.remove("PRODUCTS_OF_GOODS" + id);
+        deleteProductsByGoodsId(id);
         goodsMapper.deleteGoodsById(id);
     }
 
@@ -74,7 +74,7 @@ public class GoodsDao {
             return null;
         }
         goodsMapper.updateGoods(goods);
-        // FIXME
+        redisService.remove("GOODS" + goods.getId());
         goods = findGoodsById(goods.getId());
         return goods;
     }
@@ -105,16 +105,35 @@ public class GoodsDao {
      * @return 产品列表
      */
     public List<Product> findProductsById(Integer id) {
-        return goodsMapper.findProductsById(id);
+        String key = "PRODUCTS_OF_GOODS" + id;
+        List<Product> productList = (List<Product>) redisService.get(key);
+        if (productList == null) {
+            productList = goodsMapper.findProductsById(id);
+            if (productList == null) {
+                return null;
+            }
+            redisService.set(key, productList);
+        }
+        return productList;
     }
 
     /**
      * 通过条件返回商品列表
      */
-    public List<Goods> findGoodsByCondition(Integer page, Integer limit) {
+    public List<Goods> findGoodsByCondition(String goodsSn, String goodsName,
+                                            Integer status, Integer page,
+                                            Integer limit) {
         if (page <= 0 || limit <= 0) {
             return new ArrayList<>();
         }
-        return goodsMapper.findGoodsByCondition(page, limit);
+        return goodsMapper.findGoodsByCondition(goodsSn, goodsName, status, page, limit);
+    }
+
+    public void deleteProductsByGoodsId(Integer id) {
+        List<Product> productList = goodsMapper.findProductsById(id);
+        for (Product product : productList) {
+            redisService.remove("BRAND" + product.getId());
+        }
+        goodsMapper.deleteProductsByGoodsId(id);
     }
 }
