@@ -75,7 +75,7 @@ public class UserControllerImpl {
         if (newAdmin == null) {
             return CommonResult.failed("已经存在此管理员名字");
         } else {
-//            newAdmin.setPassword(null);
+            newAdmin.setPassword(null);
             return CommonResult.success(newAdmin);
         }
     }
@@ -89,6 +89,7 @@ public class UserControllerImpl {
     @GetMapping("/admin/{id}")
     public Object getAdminInfo(@PathVariable Integer id) {
         MallAdmin admin = adminService.findById(id);
+        admin.setPassword(null);
         return CommonResult.success(admin);
     }
 
@@ -102,6 +103,7 @@ public class UserControllerImpl {
     @PutMapping("/admin/{id}")
     public Object updateAdmin(@PathVariable Integer id, @RequestBody MallAdmin admin) {
         MallAdmin newAdmin = adminService.update(id, admin);
+        newAdmin.setPassword(null);
         return CommonResult.success(newAdmin);
     }
 
@@ -124,6 +126,7 @@ public class UserControllerImpl {
     public Object adminInfo(HttpServletRequest request) {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         MallAdmin admin = adminService.findById(adminId);
+        admin.setPassword(null);
         return CommonResult.success(admin);
     }
 
@@ -141,7 +144,9 @@ public class UserControllerImpl {
         Map<String, Object> map = new HashMap<>(5);
         map.put("token", token);
         map.put("tokenHead", tokenHead);
-        map.put("data", adminService.findByName(username));
+        MallAdmin admin = adminService.findByName(username);
+        admin.setPassword(null);
+        map.put("data", admin);
         return CommonResult.success(map);
     }
 
@@ -162,7 +167,9 @@ public class UserControllerImpl {
     @PutMapping("/admin/password")
     public Object updateAdminPassword(@RequestBody MallAdmin admin) {
         // FIXME
-        return CommonResult.success(adminService.update(admin.getId(), admin));
+        MallAdmin newAdmin = adminService.update(admin.getId(), admin);
+        newAdmin.setPassword(null);
+        return CommonResult.success(newAdmin);
     }
 
 
@@ -220,14 +227,12 @@ public class UserControllerImpl {
     /**
      * 修改role权限
      * @param id role的id
-     * @param role 要修改的role实例
      * @return 没有permission表，暂时返回role
      */
     @PutMapping("/roles/{id}/permission")
-    public Object updateRolePermission(@PathVariable("id") Integer id, @RequestBody MallRole role) {
+    public Object updateRolePermission(@PathVariable("id") Integer id) {
         // FIXME
-        role.setId(id);
-        return CommonResult.success(roleService.update(role));
+        return CommonResult.success(roleService.getPrivilegesByRoleId(id));
     }
 
     /**
@@ -247,90 +252,83 @@ public class UserControllerImpl {
      * 请求验证码
      *
      * 这里需要一定机制防止短信验证码被滥用
-     * @param captcha 手机号码 { mobile: xxx, type: xxx }
      * @return 验证码captcha
      */
     @PostMapping("/captcha")
-    public Object captcha(@RequestBody Object captcha) {
-        return null;
+    public Object captcha(@RequestParam String telephone) {
+        return userService.generateAuthCode(telephone);
     }
 
     /**
      * 用户账号登录
-     * TODO
-     * @param body 包含账号密码
      * @return 数据是userInfoVo
      */
     @PostMapping("/login")
     @ResponseBody
-    public Object userLogin(@RequestBody Object body) {
-        return null;
-//        String token = userService.login(username, password);
-//        if (token == null) {
-//            return CommonResult.validateFailed("用户名或密码错误");
-//        }
-//        Map<String, String> tokenMap = new HashMap<>(5);
-//        tokenMap.put("token", token);
-//        tokenMap.put("tokenHead", tokenHead);
-//        return CommonResult.success(tokenMap);
+    public Object userLogin(@RequestParam String username,
+                            @RequestParam String password) {
+        String token = userService.login(username, password);
+        if (token == null) {
+            return CommonResult.validateFailed("用户名或密码错误");
+        }
+        Map<String, Object> tokenMap = new HashMap<>(5);
+        tokenMap.put("token", token);
+        tokenMap.put("tokenHead", tokenHead);
+        MallUser user = userService.findByName(username);
+        tokenMap.put("data", user);
+        return CommonResult.success(tokenMap);
     }
 
     /**
      * 账号密码重置
      *
-     * @param body    请求内容
-     *                {
-     *                password: xxx,
-     *                mobile: xxx
-     *                code: xxx
-     *                }
-     *                其中code是手机验证码，目前还不支持手机短信验证码
-     * @param request 请求对象
      * @return 登录结果
      * 成功则 { errno: 0, errmsg: '成功' }
      * 失败则 { errno: XXX, errmsg: XXX }
      */
     @PutMapping("/password")
-    public Object reset(@RequestBody String body, HttpServletRequest request) {
-        return null;
+    public Object reset(@RequestParam String telephone,
+                        @RequestParam String password,
+                        @RequestParam String authCode) {
+        return userService.updatePassword(telephone, password, authCode);
     }
 
     /**
      * 账号手机号码重置
      *
-     * @param body    请求内容
      *                {
      *                password: xxx,
      *                mobile: xxx
      *                code: xxx
      *                }
      *                其中code是手机验证码，目前还不支持手机短信验证码
-     * @param request 请求对象
      * @return 登录结果
      * 成功则 { errno: 0, errmsg: '成功' }
      * 失败则 { errno: XXX, errmsg: XXX }
      */
     @PutMapping("/phone")
-    public Object resetPhone(@RequestBody String body, HttpServletRequest request) {
-        return null;
+    public Object resetPhone(@RequestParam String password,
+                             @RequestParam String telephone,
+                             @RequestParam String code) {
+        return userService.updateTelephone(telephone, password, code);
     }
 
     /**
      * 请求注册验证码
      *
      * 这里需要一定机制防止短信验证码被滥用
-     * @param body 包括phoneNumber,captchaType
+     * param body 包括phoneNumber,captchaType
      * @return 验证码
      */
     @PostMapping("/regCaptcha")
-    public Object registerCaptcha(@RequestBody Object body) {
-        return null;
+    public Object registerCaptcha(@RequestParam String telephone) {
+        return userService.generateAuthCode(telephone);
     }
 
     /**
      * 用户账号注册
      *
-     * @param body    请求内容
+     *     请求内容
      *                {
      *                username: xxx,
      *                password: xxx,
@@ -354,8 +352,10 @@ public class UserControllerImpl {
      * 失败则 { errno: XXX, errmsg: XXX }
      */
     @PostMapping("/register")
-    public Object register(@RequestBody String body, HttpServletRequest request) {
-        return null;
+    public Object register(@RequestBody MallUser user,
+                           @RequestParam String code,
+                           HttpServletRequest request) {
+        return userService.register(user, code);
     }
 
 
@@ -367,7 +367,12 @@ public class UserControllerImpl {
      * @return 用户个人页面数据userInfoVo
      */
     @GetMapping("/user")
-    public Object userInfo() {
-        return null;
+    public Object userInfo(HttpServletRequest request) {
+        Integer userId = Integer.valueOf(request.getHeader("userId"));
+        if (userId == null) {
+            return CommonResult.validateFailed("没有userId参数");
+        }
+        MallUser user = userService.findById(userId);
+        return CommonResult.success(user);
     }
 }

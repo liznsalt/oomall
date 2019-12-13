@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -17,6 +20,8 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode
 public class CartItemPo {
+    @Id
+    @GeneratedValue(generator = "JDBC")
     private Integer id;
     /**
      * 购物车归属的用户id
@@ -29,6 +34,7 @@ public class CartItemPo {
     /**
      * 是否选中，0未选中，1已选中
      */
+    @Column(name = "is_check")
     private Boolean beCheck;
     /**
      * 数量

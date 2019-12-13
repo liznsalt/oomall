@@ -10,6 +10,10 @@
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
     </resultMap>
+    <resultMap id="mallPrivilegeForRoleMap" type="mallPrivilege">
+        <id column="id" property="id"/>
+        <result column="is_deleted" property="beDeleted" javaType="Boolean" />
+    </resultMap>
 
     <insert id="insert" parameterType="mallRole" useGeneratedKeys="true" keyProperty="id">
         insert into role(name, gmt_create, gmt_modified, is_deleted)
@@ -61,5 +65,9 @@
     <select id="getAllRoles" resultMap="mallRoleMap">
         select id, name, gmt_create, gmt_modified, is_deleted
         from role
+    </select>
+
+    <select id="getPrivilegesByRoleId" parameterType="Integer" resultMap="mallPrivilegeForRoleMap">
+        select * from privilege where role_id = #{id}
     </select>
 </mapper>

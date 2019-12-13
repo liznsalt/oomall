@@ -24,20 +24,15 @@ public class LogController {
 
     @PostMapping("/logs")
     public Object addLog(@RequestBody MallLog log) {
-        logger.debug("addLog参数：" + log);
         MallLog newLog = logService.addLog(log);
-        Object retObj = ResponseUtil.ok(newLog);
-        logger.debug("addLog返回值：" + retObj);
-        return retObj;
+        return ResponseUtil.ok(newLog);
     }
 
     @GetMapping("/logs")
     public Object list(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit) {
         List<MallLog> logList = logService.findLogsByCondition(page, limit);
-        Object retObj = ResponseUtil.ok(logList);
-        logger.debug("list返回值：" + retObj);
-        return retObj;
+        return ResponseUtil.ok(logList);
     }
 
 //    @GetMapping("/")

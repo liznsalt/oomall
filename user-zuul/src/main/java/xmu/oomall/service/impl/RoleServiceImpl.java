@@ -3,6 +3,7 @@ package xmu.oomall.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xmu.oomall.domain.MallAdmin;
+import xmu.oomall.domain.MallPrivilege;
 import xmu.oomall.domain.MallRole;
 import xmu.oomall.mapper.RoleMapper;
 import xmu.oomall.service.RoleService;
@@ -54,5 +55,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<MallRole> getAllRoles() {
         return roleMapper.getAllRoles();
+    }
+
+    @Override
+    public List<MallPrivilege> getPrivilegesByRoleId(Integer id) {
+        return roleMapper.getPrivilegesByRoleId(id);
     }
 }
