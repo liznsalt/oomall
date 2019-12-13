@@ -1,25 +1,26 @@
 package xmu.oomall.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.MallGoodsCategory;
+import xmu.oomall.domain.MallGoodsCategoryPo;
 import xmu.oomall.mapper.GoodsCategoryMapper;
+import xmu.oomall.service.RedisService;
 
 import java.util.List;
 
 /**
  * @author liznsalt
  */
-@CacheConfig(cacheNames = "goodsCategory")
 @Repository
 public class GoodsCategoryDao {
 
     @Autowired
     private GoodsCategoryMapper goodsCategoryMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 添加商品种类
@@ -27,16 +28,19 @@ public class GoodsCategoryDao {
      * @return 添加后的商品种类
      */
     public MallGoodsCategory addGoodsCategory(MallGoodsCategory goodsCategory) {
-        goodsCategoryMapper.addGoodsCategory(goodsCategory);
+        MallGoodsCategoryPo goodsCategoryPo = new MallGoodsCategoryPo(goodsCategory);
+        goodsCategoryMapper.addGoodsCategory(goodsCategoryPo);
         return goodsCategory;
     }
+
     /**
      * 删除种类，级联将商品的种类ID设NULL
      * @param id 种类ID
      */
-    @CacheEvict(key = "#p0")
     public void deleteGoodsCategoryById(Integer id) {
         //TODO 级联处理缓存
+        String key = "C_" + id;
+        redisService.remove(key);
         goodsCategoryMapper.setGoodsCategoryIdNull(id);
         goodsCategoryMapper.deleteGoodsCategoryById(id);
     }
@@ -48,7 +52,12 @@ public class GoodsCategoryDao {
      */
     @CachePut(key = "#p0.id")
     public MallGoodsCategory updateGoodsCategory(MallGoodsCategory goodsCategory) {
-        goodsCategoryMapper.updateGoodsCategory(goodsCategory);
+        if (goodsCategory.getId() == null) {
+            return null;
+        }
+        MallGoodsCategoryPo goodsCategoryPo = new MallGoodsCategoryPo(goodsCategory);
+        goodsCategoryMapper.updateGoodsCategory(goodsCategoryPo);
+        goodsCategory = findGoodsCategoryById(goodsCategory.getId());
         return goodsCategory;
     }
 
@@ -57,17 +66,26 @@ public class GoodsCategoryDao {
      * @param id 商品种类ID
      * @return 商品种类信息
      */
-    @Cacheable(key = "#p0")
     public MallGoodsCategory findGoodsCategoryById(Integer id) {
-        return goodsCategoryMapper.findGoodsCategoryById(id);
+        String key = "C_" + id;
+        MallGoodsCategory goodsCategory = (MallGoodsCategory) redisService.get(key);
+        MallGoodsCategoryPo goodsCategoryPo = new MallGoodsCategoryPo(goodsCategory);
+        if (goodsCategory == null) {
+            goodsCategoryPo = goodsCategoryMapper.findGoodsCategoryById(id);
+            if (goodsCategory == null) {
+                return null;
+            }
+            redisService.set(key, goodsCategory);
+        }
+        return new MallGoodsCategory(goodsCategoryPo);
+        //return goodsCategoryMapper.findGoodsCategoryById(id);
     }
 
     /**
      * 得到所有一级分类
      * @return 一级分类列表
      */
-    @Cacheable(cacheNames = "L1")
-    public List<MallGoodsCategory> findAllGoodsCategoriesOfL1() {
+    public List<MallGoodsCategoryPo> findAllGoodsCategoriesOfL1() {
         return goodsCategoryMapper.findAllGoodsCategoriesOfL1();
     }
 }

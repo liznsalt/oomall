@@ -8,5 +8,12 @@ import standard.oomall.domain.GoodsCategory;
  */
 @Alias("mallGoodsCategory")
 public class MallGoodsCategory extends GoodsCategory {
-
+    public MallGoodsCategory(MallGoodsCategoryPo goodsCategoryPo){
+        this.setId(goodsCategoryPo.getId());
+        this.setName(goodsCategoryPo.getName());
+        this.setPid(goodsCategoryPo.getPid());
+        this.setGmtCreate(goodsCategoryPo.getGmtCreate());
+        this.setGmtModified(goodsCategoryPo.getGmtModified());
+        this.setBeDeleted(goodsCategoryPo.getBeDeleted());
+    }
 }
