@@ -24,10 +24,28 @@ public class Product extends ProductPo {
 
     public Product(ProductPo productPo) {
         // TODO
+        this.setId(productPo.getId());
+        this.setPicUrl(productPo.getPicUrl());
+        this.setSpecifications(productPo.getSpecifications());
+        this.setGoodsId(productPo.getGoodsId());
+        this.setPrice(productPo.getPrice());
+        this.setSafetyStock(productPo.getSafetyStock());
+        this.setGmtCreate(productPo.getGmtCreate());
+        this.setGmtModified(productPo.getGmtModified());
+        this.setBeDeleted(productPo.getBeDeleted());
     }
     public ProductPo getProductPo() {
         ProductPo productPo = new ProductPo();
         // TODO
+        productPo.setId(this.getId());
+        productPo.setPicUrl(this.getPicUrl());
+        productPo.setSpecifications(this.getSpecifications());
+        productPo.setGoodsId(this.getGoodsId());
+        productPo.setPrice(this.getPrice());
+        productPo.setSafetyStock(this.getSafetyStock());
+        productPo.setGmtCreate(this.getGmtCreate());
+        productPo.setGmtModified(this.getGmtModified());
+        productPo.setBeDeleted(this.getBeDeleted());
         return productPo;
     }
 }

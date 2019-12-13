@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.Brand;
+import xmu.oomall.domain.Goods;
 import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.service.RedisService;
 
@@ -47,6 +48,11 @@ public class BrandDao {
         }
         String key = "BRAND" + id;
         redisService.remove(key);
+        List<Goods> goodsList= brandMapper.findAllGoodsById(id);
+        for(Goods goods:goodsList){
+            String goodsKey = "GOODS" + id;
+            redisService.remove(goodsKey);
+        }
         brandMapper.setBrandIdNull(id);
         brandMapper.deleteBrandById(id);
         return true;
@@ -62,6 +68,8 @@ public class BrandDao {
             return null;
         }
         // TODO 删除redis
+        String key = "BRAND" + brand.getId();
+        redisService.remove(key);
         brandMapper.updateBrand(brand);
         brand=findBrandById(brand.getId());
         return brand;
