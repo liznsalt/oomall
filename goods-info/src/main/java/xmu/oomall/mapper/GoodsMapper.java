@@ -74,6 +74,7 @@ public interface GoodsMapper {
      * @param limit 每页行数
      * @return 商品列表
      */
-    List<Goods> findGoodsByCondition(Integer page, Integer limit);
+    List<Goods> findGoodsByCondition(String goodsSn, String goodsName, Integer status,
+                                     Integer page, Integer limit);
 
 }
