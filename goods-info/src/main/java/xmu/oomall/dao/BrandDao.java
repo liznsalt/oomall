@@ -1,13 +1,14 @@
 package xmu.oomall.dao;
 
+import common.oomall.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import xmu.oomall.domain.MallBrand;
-import xmu.oomall.domain.MallGoods;
+import xmu.oomall.domain.Brand;
+import xmu.oomall.domain.Goods;
 import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.service.RedisService;
 
@@ -30,8 +31,8 @@ public class BrandDao {
      * @param brand 品牌信息
      * @return 添加后的品牌信息
      */
-    public MallBrand addBrand(MallBrand brand) {
-        brandMapper.addBrand(brand.setToMallBrandPo());
+    public Brand addBrand(Brand brand) {
+        brandMapper.addBrand(brand);
         return brand;
     }
 
@@ -42,10 +43,16 @@ public class BrandDao {
 
     public boolean deleteBrandById(Integer id) {
         //TODO 级联处理缓存
-        if((findBrandById(id)==null)||findBrandById(id).getBeDeleted())
+        if((findBrandById(id)==null)||findBrandById(id).getBeDeleted()) {
             return false;
-        String key = "B_" + id;
+        }
+        String key = "BRAND" + id;
         redisService.remove(key);
+        List<Goods> goodsList= brandMapper.findAllGoodsById(id);
+        for(Goods goods:goodsList){
+            String goodsKey = "GOODS" + id;
+            redisService.remove(goodsKey);
+        }
         brandMapper.setBrandIdNull(id);
         brandMapper.deleteBrandById(id);
         return true;
@@ -56,12 +63,14 @@ public class BrandDao {
      * @param brand 品牌信息
      * @return 更新后的品牌
      */
-
-    public MallBrand updateBrand(MallBrand brand) {
+    public Brand updateBrand(Brand brand) {
         if(brand.getId()==null){
             return null;
         }
-        brandMapper.updateBrand(brand.setToMallBrandPo());
+        // TODO 删除redis
+        String key = "BRAND" + brand.getId();
+        redisService.remove(key);
+        brandMapper.updateBrand(brand);
         brand=findBrandById(brand.getId());
         return brand;
     }
@@ -72,11 +81,11 @@ public class BrandDao {
      * @return 品牌信息
      */
 
-    public MallBrand findBrandById(Integer id) {
-        String key = "B_" + id;
-        MallBrand brand = (MallBrand) redisService.get(key);
+    public Brand findBrandById(Integer id) {
+        String key = "BRAND" + id;
+        Brand brand = (Brand) redisService.get(key);
         if (brand == null) {
-            brand = brandMapper.findBrandById(id).setToMallBrand();
+            brand = brandMapper.findBrandById(id);
             if (brand == null) {
                 return null;
             }
@@ -85,6 +94,6 @@ public class BrandDao {
         return brand;
     }
 
-    
+
 
 }

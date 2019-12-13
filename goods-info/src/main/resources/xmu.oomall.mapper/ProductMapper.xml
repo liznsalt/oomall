@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.ProductMapper">
 
-    <resultMap id="mallProductPoMap" type="mallProductPo" autoMapping="true">
+    <resultMap id="mallProductMap" type="mallProduct" autoMapping="true">
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted"/>
     </resultMap>
 
-    <insert id="addProduct" parameterType="MallProductPo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addProduct" parameterType="MallProduct" useGeneratedKeys="true" keyProperty="id">
             insert into product(goods_id,pic_url,specifications,price,safety_stock,gmt_create,gmt_modified,is_deleted)
             values (#{goodsId},#{picUrl},#{specifications},#{price},#{saftyStock},sysdate(),sysdate(),#{beDeleted})
     </insert>
@@ -19,7 +19,7 @@
         where id = #{id} and is_deleted = 0
     </update>
 
-    <update id="updateProduct" parameterType="mallProductPo">
+    <update id="updateProduct" parameterType="mallProduct">
         update product set
         <trim suffixOverrides=",">
             gmt_modified = sysdate(),
@@ -57,7 +57,7 @@
         where id = #{id} and is_deleted = 0
     </select>
 
-    <select id="findSubProductsById" resultMap="mallProductPoMap" parameterType="Integer">
+    <select id="findSubProductsById" resultMap="mallProductMap" parameterType="Integer">
         select id, pic_url, specifications, goods_id, price, safety_stock, gmt_create, gmt_modified, is_deleted
         from product
         where is_deleted = 0 and goods_id=#{goodsId}

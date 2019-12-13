@@ -1,21 +1,15 @@
 package xmu.oomall.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import xmu.oomall.domain.MallProduct;
-import xmu.oomall.domain.MallProductPo;
+import xmu.oomall.domain.Product;
 import xmu.oomall.mapper.ProductMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TODO 需要管理缓存，因为有PO，所以较为复杂，不能单纯用注解
- *
+ *  TODO redis
  * @author liznsalt
  */
 @Repository
@@ -29,9 +23,8 @@ public class ProductDao {
      * @param product 产品信息
      * @return 添加后的产品
      */
-    public MallProduct addProduct(MallProduct product) {
-        MallProductPo productPo = new MallProductPo(product);
-        productMapper.addProduct(productPo);
+    public Product addProduct(Product product) {
+        productMapper.addProduct(product);
         return product;
     }
 
@@ -48,9 +41,8 @@ public class ProductDao {
      * @param product 产品信息
      * @return 更新的行数
      */
-    public MallProduct updateProduct(MallProduct product) {
-        MallProductPo productPo = new MallProductPo(product);
-        productMapper.updateProduct(productPo);
+    public Product updateProduct(Product product) {
+        productMapper.updateProduct(product);
         product = findProductById(product.getId());
         return product;
     }
@@ -60,9 +52,9 @@ public class ProductDao {
      * @param id 产品ID
      * @return 产品信息
      */
-    public MallProduct findProductById(Integer id) {
-        MallProductPo productPo = productMapper.findProductById(id);
-        return new MallProduct(productPo);
+    public Product findProductById(Integer id) {
+        Product product = productMapper.findProductById(id);
+        return product;
     }
 
     /**
@@ -70,9 +62,8 @@ public class ProductDao {
      * @param id 产品ID
      * @return 子产品列表
      */
-    List<MallProduct> findSubProductsById(Integer id) {
-        List<MallProductPo> productPoList = productMapper.findSubProductsById(id);
-        return productPoList.stream().map(MallProduct::new).collect(Collectors.toList());
+    List<Product> findSubProductsById(Integer id) {
+        return productMapper.findSubProductsById(id);
     }
 
     /**
@@ -80,8 +71,8 @@ public class ProductDao {
      * @param productList 产品信息列表
      * @return 添加后的产品信息列表
      */
-    public List<MallProduct> addProducts(List<MallProduct> productList){
-        List<MallProductPo> productPoList = productList.stream().map(MallProductPo::new).collect(Collectors.toList());
+    public List<Product> addProducts(List<Product> productList){
+        List<Product> productPoList = productList.stream().map(Product::new).collect(Collectors.toList());
         productMapper.addProducts(productPoList);
         return productList;
     }

@@ -6,15 +6,15 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import xmu.oomall.domain.MallGoodsCategory;
+import xmu.oomall.domain.GoodsCategory;
 import xmu.oomall.mapper.GoodsCategoryMapper;
 
 import java.util.List;
 
 /**
+ * TODO redis
  * @author liznsalt
  */
-@CacheConfig(cacheNames = "goodsCategory")
 @Repository
 public class GoodsCategoryDao {
 
@@ -26,7 +26,7 @@ public class GoodsCategoryDao {
      * @param goodsCategory 商品种类信息
      * @return 添加后的商品种类
      */
-    public MallGoodsCategory addGoodsCategory(MallGoodsCategory goodsCategory) {
+    public GoodsCategory addGoodsCategory(GoodsCategory goodsCategory) {
         goodsCategoryMapper.addGoodsCategory(goodsCategory);
         return goodsCategory;
     }
@@ -34,9 +34,8 @@ public class GoodsCategoryDao {
      * 删除种类，级联将商品的种类ID设NULL
      * @param id 种类ID
      */
-    @CacheEvict(key = "#p0")
     public void deleteGoodsCategoryById(Integer id) {
-        //TODO 级联处理缓存
+        // TODO 级联处理缓存
         goodsCategoryMapper.setGoodsCategoryIdNull(id);
         goodsCategoryMapper.deleteGoodsCategoryById(id);
     }
@@ -46,8 +45,7 @@ public class GoodsCategoryDao {
      * @param goodsCategory 商品种类信息
      * @return 更新后的商品种类
      */
-    @CachePut(key = "#p0.id")
-    public MallGoodsCategory updateGoodsCategory(MallGoodsCategory goodsCategory) {
+    public GoodsCategory updateGoodsCategory(GoodsCategory goodsCategory) {
         goodsCategoryMapper.updateGoodsCategory(goodsCategory);
         return goodsCategory;
     }
@@ -57,8 +55,7 @@ public class GoodsCategoryDao {
      * @param id 商品种类ID
      * @return 商品种类信息
      */
-    @Cacheable(key = "#p0")
-    public MallGoodsCategory findGoodsCategoryById(Integer id) {
+    public GoodsCategory findGoodsCategoryById(Integer id) {
         return goodsCategoryMapper.findGoodsCategoryById(id);
     }
 
@@ -67,7 +64,7 @@ public class GoodsCategoryDao {
      * @return 一级分类列表
      */
     @Cacheable(cacheNames = "L1")
-    public List<MallGoodsCategory> findAllGoodsCategoriesOfL1() {
+    public List<GoodsCategory> findAllGoodsCategoriesOfL1() {
         return goodsCategoryMapper.findAllGoodsCategoriesOfL1();
     }
 }

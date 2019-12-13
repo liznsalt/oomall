@@ -2,19 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.GoodsMapper">
     
-    <resultMap id="mallGoodsPoMap" type="mallGoodsPo" autoMapping="true">
+    <resultMap id="mallGoodsMap" type="mallGoods" autoMapping="true">
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
         <result property="beSpecial" column="is_special" javaType="Boolean"/>
         <result property="statusCode" column="status" javaType="Boolean"/>
     </resultMap>
 
-    <resultMap id="mallProductPoMap" type="mallProductPo" autoMapping="true">
+    <resultMap id="mallProductMap" type="mallProduct" autoMapping="true">
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted"/>
     </resultMap>
 
-    <insert id="addGoods" parameterType="mallGoodsPo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addGoods" parameterType="mallGoods" useGeneratedKeys="true" keyProperty="id">
         insert into goods(gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special)
         VALUES (sysdate(),sysdate(),#{name},#{goodsSn},#{shortName},#{description},#{brief},#{picUrl},#{detail},#{statusCode},#{shareUrl},#{gallery},#{goodsCategoryId},#{brandId},#{beDeleted},#{weight},#{volume},#{specialFreightId},#{beSpecial})
     </insert>
@@ -26,7 +26,7 @@
         where id = #{id} and is_deleted = 0
     </update>
 
-    <update id="updateGoods" parameterType="mallGoodsPo">
+    <update id="updateGoods" parameterType="mallGoods">
         update goods set
             <trim suffixOverrides=",">
                 gmt_modified = sysdate(),
@@ -106,19 +106,19 @@
         where id = #{id}
     </update>
 
-    <select id="findGoodsById" parameterType="Integer" resultMap="mallGoodsPoMap">
+    <select id="findGoodsById" parameterType="Integer" resultMap="mallGoodsMap">
         select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special, price
         from goods
         where id = #{id} and is_deleted = 0
     </select>
 
-    <select id="getAllGoods" resultMap="mallGoodsPoMap">
+    <select id="getAllGoods" resultMap="mallGoodsMap">
         select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special, price
         from goods
         where is_deleted = 0
     </select>
 
-    <select id="findProductsById" resultMap="mallProductPoMap" parameterType="Integer">
+    <select id="findProductsById" resultMap="mallProductMap" parameterType="Integer">
         select id, pic_url, specifications, goods_id, price, safety_stock, gmt_create, gmt_modified, is_deleted
         from product
         where goods_id = #{id} and is_deleted = 0
@@ -137,9 +137,23 @@
         where goods_id = #{id} and is_deleted = 0
     </update>
 
-    <select id="findGoodsByCondition" resultMap="mallGoodsPoMap">
+    <select id="findGoodsByCondition" resultMap="mallGoodsMap">
         select id, gmt_create, gmt_modified, name, goods_sn, short_name, description, brief, pic_url, detail, status, share_url, gallery, goods_category_id, brand_id, is_deleted, weight, volume, special_freight_id, is_special, price
         from goods
+        <if test="goodsSn!=null or goodsName!=null or status!=null">
+            where
+            <trim suffixOverrides="and">
+                <if test="goodsSn != null">
+                    goods_sn like '%${goodsSn}%' and
+                </if>
+                <if test="goodsName != null">
+                    name like '%${goodsName}%' and
+                </if>
+                <if test="status != null">
+                    status = #{status} and
+                </if>
+            </trim>
+        </if>
         limit  ${page * limit - limit},${page * limit}
     </select>
 </mapper>

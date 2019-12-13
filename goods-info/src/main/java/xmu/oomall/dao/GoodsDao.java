@@ -2,9 +2,9 @@ package xmu.oomall.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import xmu.oomall.domain.MallGoods;
-import xmu.oomall.domain.MallProduct;
-import xmu.oomall.domain.MallProductPo;
+import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.Product;
+import xmu.oomall.domain.ProductPo;
 import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.mapper.GoodsCategoryMapper;
 import xmu.oomall.mapper.GoodsMapper;
@@ -42,19 +42,14 @@ public class GoodsDao {
      * @param goods 商品信息
      * @return 添加后的商品信息
      */
-    public MallGoods addGoods(MallGoods goods) {
+    public Goods addGoods(Goods goods) {
         goodsMapper.addGoods(goods);
-        //FIXME 添加其子产品
-        if (goods.getProductPoList() != null) {
-            goods.setProductsGoodsId();
-            List<MallProductPo> productPoList = goods.getProducts().stream()
-                    .map(MallProduct::getRealObj).collect(Collectors.toList());
-            productMapper.addProducts(productPoList);
-        } else {
-            goods.setProducts(new ArrayList<>());
+        for (ProductPo productPo : goods.getProductPoList()) {
+            Product product = new Product(productPo);
+            product.setGoodsId(goods.getId());
+            productMapper.addProduct(product);
+            productPo.setId(product.getId());
         }
-        //TODO 设置其属性实体
-
         return goods;
     }
 
@@ -63,9 +58,9 @@ public class GoodsDao {
      * @param id 商品ID
      */
     public void deleteGoodsById(Integer id) {
-        String key = "G_" + id;
-        redisService.remove(key);
-        goodsMapper.deleteProductsByGoodsId(id);
+        redisService.remove("GOODS" + id);
+        redisService.remove("PRODUCTS_OF_GOODS" + id);
+        deleteProductsByGoodsId(id);
         goodsMapper.deleteGoodsById(id);
     }
 
@@ -74,11 +69,12 @@ public class GoodsDao {
      * @param goods 商品信息
      * @return 修改后的商品信息
      */
-    public MallGoods updateGoods(MallGoods goods) {
+    public Goods updateGoods(Goods goods) {
         if (goods.getId() == null) {
             return null;
         }
         goodsMapper.updateGoods(goods);
+        redisService.remove("GOODS" + goods.getId());
         goods = findGoodsById(goods.getId());
         return goods;
     }
@@ -88,16 +84,16 @@ public class GoodsDao {
      * @param id 商品ID
      * @return 商品信息
      */
-    public MallGoods findGoodsById(Integer id) {
-        String key = "G_" + id;
-        MallGoods goods = (MallGoods) redisService.get(key);
+    public Goods findGoodsById(Integer id) {
+        String key = "GOODS" + id;
+        Goods goods = (Goods) redisService.get(key);
         if (goods == null) {
             goods = goodsMapper.findGoodsById(id);
             if (goods == null) {
                 return null;
             }
-            List<MallProduct> productList = findProductsById(id);
-            goods.setProducts(productList);
+            List<Product> productList = findProductsById(id);
+            goods.setProductPoList(productList.stream().map(Product::getProductPo).collect(Collectors.toList()));
             redisService.set(key, goods);
         }
         return goods;
@@ -108,18 +104,36 @@ public class GoodsDao {
      * @param id 商品ID
      * @return 产品列表
      */
-    public List<MallProduct> findProductsById(Integer id) {
-        List<MallProductPo> productPoList = goodsMapper.findProductsById(id);
-        return productPoList.stream().map(MallProduct::new).collect(Collectors.toList());
+    public List<Product> findProductsById(Integer id) {
+        String key = "PRODUCTS_OF_GOODS" + id;
+        List<Product> productList = (List<Product>) redisService.get(key);
+        if (productList == null) {
+            productList = goodsMapper.findProductsById(id);
+            if (productList == null) {
+                return null;
+            }
+            redisService.set(key, productList);
+        }
+        return productList;
     }
 
     /**
      * 通过条件返回商品列表
      */
-    public List<MallGoods> findGoodsByCondition(Integer page, Integer limit) {
+    public List<Goods> findGoodsByCondition(String goodsSn, String goodsName,
+                                            Integer status, Integer page,
+                                            Integer limit) {
         if (page <= 0 || limit <= 0) {
             return new ArrayList<>();
         }
-        return goodsMapper.findGoodsByCondition(page, limit);
+        return goodsMapper.findGoodsByCondition(goodsSn, goodsName, status, page, limit);
+    }
+
+    public void deleteProductsByGoodsId(Integer id) {
+        List<Product> productList = goodsMapper.findProductsById(id);
+        for (Product product : productList) {
+            redisService.remove("BRAND" + product.getId());
+        }
+        goodsMapper.deleteProductsByGoodsId(id);
     }
 }

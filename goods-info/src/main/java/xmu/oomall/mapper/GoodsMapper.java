@@ -2,8 +2,8 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
-import xmu.oomall.domain.MallGoodsPo;
-import xmu.oomall.domain.MallProductPo;
+import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.Product;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface GoodsMapper {
      * @param goods 商品信息
      * @return 行数
      */
-    int addGoods(MallGoodsPo goods);
+    int addGoods(Goods goods);
 
     /**
      * 根据商品ID删除商品
@@ -32,27 +32,27 @@ public interface GoodsMapper {
      * @param goods 商品信息
      * @return 修改行数
      */
-    int updateGoods(MallGoodsPo goods);
+    int updateGoods(Goods goods);
 
     /**
      * 通过商品ID检索商品
      * @param id 商品ID
      * @return 商品信息
      */
-    MallGoodsPo findGoodsById(Integer id);
+    Goods findGoodsById(Integer id);
 
     /**
      * 得到所有商品
      * @return 商品列表
      */
-    List<MallGoodsPo> getAllGoods();
+    List<Goods> getAllGoods();
 
     /**
      * 通过商品ID检索其下所有产品
      * @param id 商品ID
      * @return 产品列表
      */
-    List<MallProductPo> findProductsById(Integer id);
+    List<Product> findProductsById(Integer id);
 
     /**
      * 获得数据库中的货品库存量
@@ -74,6 +74,7 @@ public interface GoodsMapper {
      * @param limit 每页行数
      * @return 商品列表
      */
-    List<MallGoodsPo> findGoodsByCondition(Integer page, Integer limit);
+    List<Goods> findGoodsByCondition(String goodsSn, String goodsName, Integer status,
+                                     Integer page, Integer limit);
 
 }
