@@ -30,7 +30,16 @@ public class CartControllerImpl {
 
     @PostMapping("/carts")
     public Object add(MallCartItem cart, HttpServletRequest request) {
-        Integer userId = Integer.valueOf(request.getHeader("userId"));
+        if (cart == null) {
+            return CommonResult.badArgument("cart 为空");
+        }
+
+        String userIdString = request.getHeader("userId");
+        if (userIdString == null) {
+            return CommonResult.unLogin();
+        }
+        Integer userId = Integer.valueOf(userIdString);
+
         MallCartItem cartItem = cartService.add(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
             return CommonResult.failed();
@@ -43,7 +52,15 @@ public class CartControllerImpl {
     public Object fastAdd(@PathVariable Integer id,
                           MallCartItem cart,
                           HttpServletRequest request) {
-        Integer userId = Integer.valueOf(request.getHeader("userId"));
+        if (cart == null) {
+            return CommonResult.badArgument("cart 为空");
+        }
+
+        String userIdString = request.getHeader("userId");
+        if (userIdString == null) {
+            return CommonResult.unLogin();
+        }
+        Integer userId = Integer.valueOf(userIdString);
         cart.setId(id);
         MallCartItem cartItem = cartService.fastAdd(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
@@ -56,10 +73,16 @@ public class CartControllerImpl {
     @PutMapping("/carts/{id}")
     public Object update(MallCartItem cart,
                          HttpServletRequest request) {
-        Integer userId = Integer.valueOf(request.getHeader("userId"));
-        if (cart.getId() == null) {
-            return CommonResult.failed("该购物车项不存在");
+        if (cart == null) {
+            return CommonResult.badArgument("该购物车项不存在");
         }
+
+        String userIdString = request.getHeader("userId");
+        if (userIdString == null) {
+            return CommonResult.unLogin();
+        }
+        Integer userId = Integer.valueOf(userIdString);
+
         MallCartItem cartItem = cartService.update(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
             return CommonResult.failed();

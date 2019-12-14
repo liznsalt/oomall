@@ -35,7 +35,7 @@ public class AdControllerImpl {
         log.setAdminId(adminId);
         log.setIp(ip);
         log.setType(type);
-        log.setAction(action);
+        log.setActions(action);
         log.setStatusCode(statusCode);
         log.setActionId(actionId);
         logService.addLog(log);
@@ -56,20 +56,23 @@ public class AdControllerImpl {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
 
-        MallAd newAd = adService.add(ad);
-        if (newAd.getId() == null) {
-            writeLog(adminId, ip, INSERT, "创建广告", 0, null);
-            return CommonResult.failed();
-        } else {
-            writeLog(adminId, ip, INSERT, "创建广告", 1, newAd.getId());
-            return CommonResult.success(newAd);
+        if (ad == null) {
+            return CommonResult.badArgument("id 为空");
         }
+
+        MallAd newAd = adService.add(ad);
+        writeLog(adminId, ip, INSERT, "创建广告", 1, newAd.getId());
+        return CommonResult.success(newAd);
     }
 
     @GetMapping("/ads/{id}")
     public Object adminFindAd(@PathVariable Integer id, HttpServletRequest request) {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
+
+        if (id == null) {
+            return CommonResult.badArgument("id 为空");
+        }
 
         writeLog(adminId, ip, SELECT, "查看广告", 1, id);
         return CommonResult.success(adService.find(id));
@@ -80,6 +83,10 @@ public class AdControllerImpl {
                                 HttpServletRequest request) {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
+
+        if (id == null) {
+            return CommonResult.badArgument("id 为空");
+        }
 
         ad.setId(id);
         ad = adService.update(ad);
@@ -92,6 +99,10 @@ public class AdControllerImpl {
                                 HttpServletRequest request) {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
+
+        if (id == null) {
+            return CommonResult.badArgument("id 为空");
+        }
 
         boolean ok = adService.deleteById(id);
         writeLog(adminId, ip, DELETE, "删除广告", 1, id);
