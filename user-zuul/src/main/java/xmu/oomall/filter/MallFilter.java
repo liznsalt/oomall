@@ -2,6 +2,7 @@ package xmu.oomall.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.exception.ZuulException;
 import common.oomall.api.CommonResult;
 import common.oomall.component.ERole;
 import common.oomall.util.CookieUtil;
@@ -49,7 +50,7 @@ public class MallFilter extends ZuulFilter {
      */
     @Override
     public int filterOrder() {
-        return 1;
+        return -100;
     }
 
     /**
@@ -61,23 +62,21 @@ public class MallFilter extends ZuulFilter {
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
         LOGGER.info("uri:{}", request.getRequestURI());
-        // 不在白名单内则需要过滤
-        return !privilegeService.getWhiteList().contains(request.getRequestURI());
+        return true;
     }
 
     /**
      * 自定义的过滤器逻辑，当shouldFilter()返回true时会执行。
      */
     @Override
-    public Object run() {
-        System.out.println("不在白名单内");
+    public Object run() throws ZuulException {
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
         String host = request.getRemoteHost();
         String method = request.getMethod();
         String uri = request.getRequestURI();
         LOGGER.info("Remote host:{},method:{},uri:{}", host, method, uri);
-        // 头部提取token，进行权限判断
+        // 提取token，进行权限判断
         readTokenFromHeader(requestContext, request);
         return null;
     }
@@ -85,20 +84,35 @@ public class MallFilter extends ZuulFilter {
     /**
      * 从 header 中读取 token 并校验
      */
-    private void readTokenFromHeader(RequestContext requestContext, HttpServletRequest request) {
+    private void readTokenFromHeader(RequestContext requestContext,
+                                     HttpServletRequest request) {
         //从 header 中读取
         String headerToken = request.getHeader("token");
         if (StringUtils.isEmpty(headerToken)) {
-            setUnauthorizedResponse(requestContext);
+            verifyEmptyToken(requestContext, request);
         } else {
             verifyToken(requestContext, request, headerToken);
+        }
+    }
+
+
+    private void verifyEmptyToken(RequestContext requestContext,
+                                  HttpServletRequest request) {
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+        if (!privilegeService.matchAuth(method, uri, 0)) {
+            // 不在游客名单内
+            System.out.println("不在游客名单内");
+            setUnauthorizedResponse(requestContext);
         }
     }
 
     /**
      * TODO 校验token
      */
-    private void verifyToken(RequestContext requestContext, HttpServletRequest request, String token) {
+    private void verifyToken(RequestContext requestContext,
+                             HttpServletRequest request,
+                             String token) {
         String host = request.getRemoteHost();
         String method = request.getMethod();
         String uri = request.getRequestURI();
@@ -112,55 +126,44 @@ public class MallFilter extends ZuulFilter {
             setUnauthorizedResponse(requestContext);
             return;
         }
-        // FIXME 判断是用户还是管理员
-        String role = tokenMap.get(JwtTokenUtil.CLAIM_KEY_ROLE);
-        System.out.println("role:" + role);
-        if (ERole.USER.getName().equals(role)) {
-            // 用户
-            if (!privilegeService.matchAuth(method, uri, ERole.USER)) {
-                // 不在用户权限名单内
-                System.out.println("不在用户权限名单内");
-                setUnauthorizedResponse(requestContext);
-                return;
-            }
-        } else if (ERole.ADMIN.getName().equals(role)) {
-            // 管理员
-            if (!privilegeService.matchAuth(method, uri, ERole.ADMIN)) {
-                // 不在管理员权限名单内
-                System.out.println("不在管理员权限名单内");
-                setUnauthorizedResponse(requestContext);
-                return;
-            }
+        // FIXME 用户角色
+        String roleId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_ROLEID);
+        if (roleId == null) {
+            // 角色都没有
+            setUnauthorizedResponse(requestContext);
+            return;
+        }
+        if (!privilegeService.matchAuth(method, uri, Integer.valueOf(roleId))) {
+            // 不在用户权限名单内
+            System.out.println("不在角色权限名单内");
+            setUnauthorizedResponse(requestContext);
         } else {
-            // 没有这个角色？
-            setUnauthorizedResponse(requestContext);
-            return;
-        }
+            // 验证以及刷新token
+            String newToken = JwtTokenUtil.refreshHeadToken(token);
+            if (newToken == null) {
+                // 没有钥匙？
+                setUnauthorizedResponse(requestContext);
+                return;
+            }
 
-        // 验证以及刷新token
-        String newToken = JwtTokenUtil.refreshHeadToken(token);
-        if (newToken == null) {
-            // 没有钥匙？
-            setUnauthorizedResponse(requestContext);
-            return;
+            // 修改header，加上userId和ip
+            String userId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID);
+            UriUtil.changeHeader(requestContext, request,
+                    userId, roleId,
+                    IpAddressUtil.getIpAddress(request), newToken);
         }
-
-        // 修改header，加上userId和ip
-        String userId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID);
-        UriUtil.changeHeader(requestContext, request, userId, IpAddressUtil.getIpAddress(request), newToken);
     }
 
     /**
      * 设置 401 无权限状态
      */
     private void setUnauthorizedResponse(RequestContext requestContext) {
+        requestContext.getResponse().setContentType("text/html;charset=UTF-8");
         requestContext.setSendZuulResponse(false);
         requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
-
+        requestContext.set("isSuccess", false);
         CommonResult result = CommonResult.unauthorized(null);
-        String res = JacksonUtil.toJson(result);
-
-        requestContext.setResponseBody(res);
+        requestContext.setResponseBody(result.toString());
     }
 
 }

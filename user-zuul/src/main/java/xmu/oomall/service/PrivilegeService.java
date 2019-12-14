@@ -13,5 +13,5 @@ public interface PrivilegeService {
     List<MallPrivilege> getAll();
     Map<Integer, List<String>> getAllPrivileges();
     List<String> getWhiteList();
-    boolean matchAuth(String method, String url, ERole role);
+    boolean matchAuth(String method, String url, Integer roleId);
 }

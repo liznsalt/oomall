@@ -1,10 +1,10 @@
 package xmu.oomall.controller;
 
 import common.oomall.api.CommonResult;
+import common.oomall.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import standard.oomall.domain.User;
 import xmu.oomall.domain.MallAdmin;
 import xmu.oomall.domain.MallRole;
 import xmu.oomall.domain.MallUser;
@@ -34,6 +34,14 @@ public class UserControllerImpl {
     @Autowired
     private RoleService roleService;
 
+    private Map<String, String> getTokenMap(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        if (token == null) {
+            return null;
+        }
+        return JwtTokenUtil.getMapFromToken(token);
+    }
+
     // 内部接口
 
     /**
@@ -45,9 +53,8 @@ public class UserControllerImpl {
     public Object updateUserRebate(@RequestParam Integer userId,
                                    @RequestParam Integer rebate,
                                    HttpServletRequest request) {
-//        Integer userId = Integer.valueOf(request.getHeader("userId"));
         if (userId == null) {
-            return CommonResult.validateFailed("没有传入userId");
+            return CommonResult.badArgument("没有传入userId");
         }
         return userService.updateRebate(userId, rebate);
     }
@@ -124,7 +131,17 @@ public class UserControllerImpl {
      */
     @GetMapping("/admins/info")
     public Object adminInfo(HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        String token = request.getHeader("token");
+        if (token == null) {
+            return CommonResult.unauthorized(null);
+        }
+        // 解析token，得到用户的id和role
+        Map<String, String> tokenMap = JwtTokenUtil.getMapFromToken(token);
+        if (tokenMap == null) {
+            return CommonResult.unauthorized(null);
+        }
+        Integer adminId = Integer.valueOf(tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID));
+
         MallAdmin admin = adminService.findById(adminId);
         admin.setPassword(null);
         return CommonResult.success(admin);
@@ -264,12 +281,11 @@ public class UserControllerImpl {
      * @return 数据是userInfoVo
      */
     @PostMapping("/login")
-    @ResponseBody
     public Object userLogin(@RequestParam String username,
                             @RequestParam String password) {
         String token = userService.login(username, password);
         if (token == null) {
-            return CommonResult.validateFailed("用户名或密码错误");
+            return CommonResult.badArgumentValue("用户名或密码错误");
         }
         Map<String, Object> tokenMap = new HashMap<>(5);
         tokenMap.put("token", token);
@@ -368,10 +384,17 @@ public class UserControllerImpl {
      */
     @GetMapping("/user")
     public Object userInfo(HttpServletRequest request) {
-        Integer userId = Integer.valueOf(request.getHeader("userId"));
-        if (userId == null) {
-            return CommonResult.validateFailed("没有userId参数");
+        String token = request.getHeader("token");
+        if (token == null) {
+            return CommonResult.unauthorized(null);
         }
+        // 解析token，得到用户的id和role
+        Map<String, String> tokenMap = JwtTokenUtil.getMapFromToken(token);
+        if (tokenMap == null) {
+            return CommonResult.unauthorized(null);
+        }
+        Integer userId = Integer.valueOf(tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID));
+
         MallUser user = userService.findById(userId);
         return CommonResult.success(user);
     }

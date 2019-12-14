@@ -43,7 +43,7 @@ logging:
   #使用logback日志，取代默认的common日志
   file:
     # TODO 记得修改
-    path: C:\Users\liznsalt\log
+#    path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
 
 eureka:
@@ -52,6 +52,16 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://liznsalt:123456@localhost:9000/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 30000
 
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
@@ -115,4 +125,6 @@ zuul:
     ad-service:
       path: /**/adService/**
       url: ${serviceUrl.ad}
-  #  sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤
+  sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤
+  ignored-services: '*'
+  add-host-header: true

@@ -27,7 +27,7 @@ public class MallMember {
     public Map<String, Object> generateClaims() {
         Map<String, Object> map = new HashMap<>(3);
         map.put(JwtTokenUtil.CLAIM_KEY_USERID, member.getId());
-        map.put(JwtTokenUtil.CLAIM_KEY_ROLE, member.getRole().getName());
+        map.put(JwtTokenUtil.CLAIM_KEY_ROLEID, member.getRoleId());
         map.put(JwtTokenUtil.CLAIM_KEY_CREATED, new Date());
         return map;
     }
@@ -57,7 +57,7 @@ public class MallMember {
     public void setPassword(String password) {
         member.setPassword(password);
     }
-    public ERole getRole() {
-        return member.getRole();
+    public Integer getRoleId() {
+        return member.getRoleId();
     }
 }

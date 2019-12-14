@@ -20,14 +20,16 @@ public class CartControllerImpl {
     private CartService cartService;
 
     @GetMapping("/carts")
-    public Object cartIndex(Integer userId) {
+    public Object cartIndex(Integer userId, HttpServletRequest request) {
+        if (userId == null) {
+            return CommonResult.unLogin();
+        }
         List<MallCartItem> cartItems = cartService.list(userId);
         return CommonResult.success(cartItems);
     }
 
     @PostMapping("/carts")
-    public Object add(MallCartItem cart,
-                      HttpServletRequest request) {
+    public Object add(MallCartItem cart, HttpServletRequest request) {
         Integer userId = Integer.valueOf(request.getHeader("userId"));
         MallCartItem cartItem = cartService.add(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {

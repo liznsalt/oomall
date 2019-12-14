@@ -11,6 +11,6 @@ public interface IMember {
     void setUsername(String username);
     String getPassword();
     void setPassword(String password);
-    ERole getRole();
+    Integer getRoleId();
     boolean beEnable();
 }

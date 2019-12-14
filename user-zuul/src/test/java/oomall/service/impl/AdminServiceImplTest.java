@@ -27,7 +27,7 @@ public class AdminServiceImplTest {
 
     @Test
     public void login1() {
-        String token = adminService.login("mai", "123");
+        String token = adminService.login("lizn", "123");
         System.out.println(token);
         System.out.println(JwtTokenUtil.getClaimsFromToken(token));
     }

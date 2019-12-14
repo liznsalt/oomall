@@ -20,11 +20,6 @@ public class MallUser extends User implements IMember {
     }
 
     @Override
-    public ERole getRole() {
-        return ERole.USER;
-    }
-
-    @Override
     public boolean beEnable() {
         return !getBeDeleted();
     }

@@ -31,13 +31,26 @@ public class TopicControllerImpl {
     @Autowired
     private LogService logService;
 
+    private final static Integer INSERT = 0;
+    private final static Integer DELETE = 1;
+    private final static Integer UPDATE = 2;
+    private final static Integer SELECT = 3;
+    private void writeLog(Integer adminId, String ip, Integer type,
+                          String action, Integer statusCode, Integer actionId) {
+        Log log = new Log();
+        log.setAdminId(adminId);
+        log.setIp(ip);
+        log.setType(type);
+        log.setAction(action);
+        log.setStatusCode(statusCode);
+        log.setActionId(actionId);
+        logService.addLog(log);
+    }
+
     @GetMapping("/topics")
     public Object list(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit,
                        HttpServletRequest request) {
-        System.out.println(request.getHeader("token"));
-        System.out.println(request.getHeader("userId"));
-        System.out.println(request.getHeader("ip"));
         List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
         return CommonResult.success(topicList);
     }
@@ -51,34 +64,32 @@ public class TopicControllerImpl {
     @PostMapping("/topics")
     public Object create(@RequestBody MallTopic topic,
                          HttpServletRequest request) {
-
-        logger.debug("addTopic参数为：" + topic);
-
-        // FIXME 测试先将管理员ID设为1 IP设为1.1.1.1
-        Log log = new Log();
-        log.setAdminId(Integer.valueOf(request.getHeader("userId")));
-        log.setIp(request.getHeader("ip"));
-        log.setType(0);
-        log.setAction("添加专题");
+        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        String ip = request.getHeader("ip");
 
         MallTopic resTopic = topicService.addTopic(topic);
-        log.setStatusCode(1);
-        log.setActionId(resTopic.getId());
-        Object retObj = CommonResult.success(resTopic);
-
-        // FIXME 记录日志
-        logService.addLog(log);
-        logger.debug("addTopic返回值为：" + retObj);
-        return retObj;
+        if (resTopic.getId() == null) {
+            writeLog(adminId, ip, INSERT, "添加专题", 0, null);
+            return CommonResult.failed();
+        } else {
+            writeLog(adminId, ip, INSERT, "添加专题", 1, resTopic.getId());
+            return CommonResult.success(resTopic);
+        }
     }
 
     @PutMapping("/topics/{id}")
-    public Object update(@RequestBody Topic topic, @PathVariable Integer id) {
+    public Object update(@RequestBody Topic topic, @PathVariable Integer id,
+                         HttpServletRequest request) {
+        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        String ip = request.getHeader("ip");
+
         topic.setId(id);
         Boolean result = topicService.updateTopic((MallTopic) topic);
         if (result) {
+            writeLog(adminId, ip, UPDATE, "修改专题", 1, id);
             return CommonResult.success(result);
         } else {
+            writeLog(adminId, ip, UPDATE, "修改专题", 0, id);
             return CommonResult.failed();
         }
     }
@@ -86,10 +97,15 @@ public class TopicControllerImpl {
     @DeleteMapping("/topics/{id}")
     public Object delete(@PathVariable Integer id,
                          HttpServletRequest request) {
+        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        String ip = request.getHeader("ip");
+
         Boolean result = topicService.deleteTopicById(id);
         if (result) {
+            writeLog(adminId, ip, DELETE, "删除专题", 1, id);
             return CommonResult.success(result);
         } else {
+            writeLog(adminId, ip, DELETE, "删除专题", 0, id);
             return CommonResult.failed();
         }
     }

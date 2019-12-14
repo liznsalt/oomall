@@ -1,10 +1,10 @@
 package xmu.oomall.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import standard.oomall.domain.Log;
-
-import java.util.List;
 
 /**
  * @author liznsalt

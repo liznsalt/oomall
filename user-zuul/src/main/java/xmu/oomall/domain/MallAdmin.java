@@ -11,11 +11,6 @@ import standard.oomall.domain.Admin;
 public class MallAdmin extends Admin implements IMember {
 
     @Override
-    public ERole getRole() {
-        return ERole.ADMIN;
-    }
-
-    @Override
     public boolean beEnable() {
         return !getBeDeleted();
     }

@@ -4,19 +4,16 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import standard.oomall.domain.Log;
 
-import java.util.List;
-
 /**
  * @author liznsalt
  */
-@FeignClient("oomall-log")
 @RequestMapping("/logService")
+@FeignClient("oomall-log")
 public interface LogService {
-    /**
-     * 添加日志
-     * @param log 日志信息
-     * @return /
-     */
     @PostMapping("/logs")
     Object addLog(@RequestBody Log log);
+
+    @GetMapping("/logs")
+    Object list(@RequestParam(defaultValue = "1") Integer page,
+                @RequestParam(defaultValue = "10") Integer limit);
 }

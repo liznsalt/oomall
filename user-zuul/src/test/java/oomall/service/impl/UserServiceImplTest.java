@@ -21,7 +21,7 @@ public class UserServiceImplTest {
 
     @Test
     public void login() {
-        String token = userService.login("mai", "1234");
+        String token = userService.login("mai", "123");
         System.out.println(token);
         System.out.println(JwtTokenUtil.getClaimsFromToken(token));
     }

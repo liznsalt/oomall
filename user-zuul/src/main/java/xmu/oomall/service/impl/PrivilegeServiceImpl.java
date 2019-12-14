@@ -46,7 +46,6 @@ public class PrivilegeServiceImpl implements PrivilegeService {
         // FIXME
         return Arrays.asList(
                 "/userInfoService/admins/login",
-                "/userInfoService/admins/logout",
                 "/userInfoService/register",
                 "/userInfoService/login",
                 "/userInfoService/reCaptcha",
@@ -55,9 +54,9 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     }
 
     @Override
-    public boolean matchAuth(String method, String url, ERole role) {
+    public boolean matchAuth(String method, String url, Integer roleId) {
         Map<Integer, List<String>> privilegesMap = getAllPrivileges();
-        List<String> rolePrivilegeList = privilegesMap.getOrDefault(role.getRoleId(), null);
+        List<String> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
         if (rolePrivilegeList == null) {
             return false;
         }
@@ -72,6 +71,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
                 continue;
             }
             if (method.toLowerCase().equals(method)  || Pattern.matches(pUrl, url)) {
+                System.out.println("匹配成功");
                 return true;
             }
         }
