@@ -11,11 +11,11 @@ import java.util.Map;
  */
 @Alias("mallPrivilege")
 public class MallPrivilege extends Privilege {
-    private static Map<Integer, List<String>> allPrivilege = null;
-    public static void setAllPrivilege(Map<Integer, List<String>> allPrivilege) {
+    private static Map<Integer, List<MallPrivilege>> allPrivilege = null;
+    public static void setAllPrivilege(Map<Integer, List<MallPrivilege>> allPrivilege) {
         MallPrivilege.allPrivilege = allPrivilege;
     }
-    public static Map<Integer, List<String>> getAllPrivilege() {
+    public static Map<Integer, List<MallPrivilege>> getAllPrivilege() {
         return MallPrivilege.allPrivilege;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface PrivilegeService {
     List<MallPrivilege> getAll();
-    Map<Integer, List<String>> getAllPrivileges();
+    Map<Integer, List<MallPrivilege>> getAllPrivileges();
     List<String> getWhiteList();
     boolean matchAuth(String method, String url, Integer roleId);
 }

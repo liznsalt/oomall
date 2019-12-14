@@ -4,6 +4,7 @@ import common.oomall.component.ERole;
 import common.oomall.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import standard.oomall.domain.Privilege;
 import xmu.oomall.domain.MallPrivilege;
 import xmu.oomall.mapper.PrivilegeMapper;
 import xmu.oomall.service.PrivilegeService;
@@ -26,15 +27,15 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     }
 
     @Override
-    public Map<Integer, List<String>> getAllPrivileges() {
+    public Map<Integer, List<MallPrivilege>> getAllPrivileges() {
         if (MallPrivilege.getAllPrivilege() == null) {
             List<MallPrivilege> privileges = getAll();
-            Map<Integer, List<String>> res = new HashMap<>(200);
+            Map<Integer, List<MallPrivilege>> res = new HashMap<>(200);
             for (MallPrivilege privilege : privileges) {
                 if (!res.containsKey(privilege.getRoleId())) {
                     res.put(privilege.getRoleId(), new ArrayList<>());
                 }
-                res.get(privilege.getRoleId()).add(privilege.getName());
+                res.get(privilege.getRoleId()).add(privilege);
             }
             MallPrivilege.setAllPrivilege(res);
         }
@@ -55,14 +56,14 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public boolean matchAuth(String method, String url, Integer roleId) {
-        Map<Integer, List<String>> privilegesMap = getAllPrivileges();
-        List<String> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
+        Map<Integer, List<MallPrivilege>> privilegesMap = getAllPrivileges();
+        List<MallPrivilege> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
         if (rolePrivilegeList == null) {
             return false;
         }
-        for (String p : rolePrivilegeList) {
-            String pMethod = JacksonUtil.parseString(p, "method");
-            String pUrl = JacksonUtil.parseString(p, "url");
+        for (MallPrivilege p : rolePrivilegeList) {
+            String pMethod = p.getMethod();
+            String pUrl = p.getUrl();
             if (pUrl == null) {
                 continue;
             }

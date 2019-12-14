@@ -8,7 +8,7 @@
     </resultMap>
 
     <insert id="addLog" parameterType="mallLog" useGeneratedKeys="true" keyProperty="id">
-        insert into log(admin_id, ip, type, action, status, gmt_create, gmt_modified, action_id)
+        insert into oomall_log(admin_id, ip, type, actions, status, gmt_create, gmt_modified, action_id)
         values (#{adminId}, #{ip}, #{type}, #{action}, #{statusCode}, sysdate(), sysdate(), #{actionId})
     </insert>
 
@@ -17,12 +17,13 @@
                admin_id,
                ip,
                type,
-               action,
-               status as status_code,
+               actions,
+               status,
                gmt_create,
                gmt_modified,
                action_id
-        from log where id = #{id}
+        from oomall_log
+        where id = #{id}
     </select>
 
     <select id="getAllLogs" resultMap="mallLogMap">
@@ -30,12 +31,12 @@
                admin_id,
                ip,
                type,
-               action,
-               status as status_code,
+               actions,
+               status,
                gmt_create,
                gmt_modified,
                action_id
-        from log
+        from oomall_log
     </select>
     
     <select id="findLogsByCondition" resultMap="mallLogMap">
@@ -43,12 +44,12 @@
                admin_id,
                ip,
                type,
-               action,
-               status as status_code,
+               actions,
+               status,
                gmt_create,
                gmt_modified,
                action_id
-        from log
+        from oomall_log
         limit ${limit * page - limit}, ${limit * page}
     </select>
 </mapper>

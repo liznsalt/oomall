@@ -97,6 +97,9 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> updatedDataFailed() {
         return failed(ResultCode.UPDATEDDATAFAILED);
     }
+    public static <T> CommonResult<T> updatedDataFailed(String message) {
+        return new CommonResult<T>(ResultCode.UPDATEDDATAFAILED.getCode(), message, null);
+    }
 
     /**
      * 未登录返回结果

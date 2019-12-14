@@ -7,17 +7,17 @@
     </resultMap>
 
     <insert id="addUser" parameterType="mallUser" useGeneratedKeys="true" keyProperty="id">
-        insert into user(password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted, role_id)
+        insert into oomall_user(password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted, role_id)
         values (#{password}, #{name}, #{gender}, #{birthday}, #{mobile}, #{nickname}, #{rebate}, #{avatar}, #{lastLoginTime}, #{lastLoginIp}, #{userLevel}, #{wxOpenId}, #{sessionKey}, #{gmtCreate}, #{gmtModified}, #{beDeleted}, #{roleId})
     </insert>
 
     <update id="deleteById" parameterType="Integer">
-        update user set is_deleted = 1, gmt_modified = sysdate()
+        update oomall_user set is_deleted = 1, gmt_modified = sysdate()
         where id = #{id} and is_deleted = 0
     </update>
 
     <update id="updateUser" parameterType="mallUser">
-        update user set
+        update oomall_user set
         <trim suffixOverrides=",">
             gmt_modified = sysdate(),
             <if test="name != null">
@@ -77,30 +77,30 @@
 
     <select id="findById" parameterType="Integer" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
-        from user
+        from oomall_user
         where id = #{id}
     </select>
 
     <select id="findByCondition" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
-        from user
+        from oomall_user
         limit ${limit * page - limit}, ${limit * page}
     </select>
 
     <select id="findByName" resultMap="mallUserMap" parameterType="String">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
-        from user
+        from oomall_user
         where name = #{name}
     </select>
 
     <select id="findByTelephone" resultMap="mallUserMap" parameterType="String">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
-        from user
+        from oomall_user
         where mobile = #{telephone}
     </select>
 
     <select id="getAllUsers" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
-        from user
+        from oomall_user
     </select>
 </mapper>
