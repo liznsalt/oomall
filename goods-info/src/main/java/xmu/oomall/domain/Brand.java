@@ -17,9 +17,34 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-@Alias("mallBrand")
+@Alias("brand")
 public class Brand extends BrandPo {
 
     private List<GoodsPo> goodsPoList;
 
+    public Brand(){
+
+    }
+
+    public Brand(BrandPo brandPo){
+        this.setId(brandPo.getId());
+        this.setName(brandPo.getName());
+        this.setDescription(brandPo.getDescription());
+        this.setPicUrl(brandPo.getPicUrl());
+        this.setGmtCreate(brandPo.getGmtCreate());
+        this.setGmtModified(brandPo.getGmtModified());
+        this.setBeDeleted(brandPo.getBeDeleted());
+    }
+
+    public BrandPo getBrandPo(){
+        BrandPo brandPo = new BrandPo();
+        brandPo.setId(this.getId());
+        brandPo.setName(this.getName());
+        brandPo.setDescription(this.getDescription());
+        brandPo.setPicUrl(this.getPicUrl());
+        brandPo.setGmtCreate(this.getGmtCreate());
+        brandPo.setGmtModified(this.getGmtModified());
+        brandPo.setBeDeleted(this.getBeDeleted());
+        return brandPo;
+    }
 }

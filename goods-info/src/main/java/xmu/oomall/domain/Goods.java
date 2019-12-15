@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-@Alias("mallGoods")
+@Alias("goods")
 public class Goods extends GoodsPo {
     private BrandPo brandPo;
     private GoodsCategoryPo goodsCategoryPo;
@@ -29,6 +29,9 @@ public class Goods extends GoodsPo {
     private ShareRule shareRule;
     private PresaleRule presaleRule;
 
+    public Goods(){
+
+    }
     public Goods(GoodsPo goodsPo) {
         this.setId(goodsPo.getId());
         this.setGmtCreate(goodsPo.getGmtCreate());

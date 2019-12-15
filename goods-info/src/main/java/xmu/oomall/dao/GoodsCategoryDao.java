@@ -6,9 +6,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import xmu.oomall.domain.Goods;
 import xmu.oomall.domain.GoodsCategory;
+import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.mapper.GoodsCategoryMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,10 +63,23 @@ public class GoodsCategoryDao {
     }
 
     /**
+     * 根据商品种类ID得到该种类所有商品
+     * @param id 商品种类ID
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<Goods> 即是商品的一个列表
+     */
+    public List<GoodsPo> findGoodsByCategoryId(Integer id, Integer page, Integer limit) {
+        if(page<=0||limit<=0){
+            return new ArrayList<>();
+        }
+        return goodsCategoryMapper.findAllGoodsById(id,page,limit);
+    }
+
+    /**
      * 得到所有一级分类
      * @return 一级分类列表
      */
-    @Cacheable(cacheNames = "L1")
     public List<GoodsCategory> findAllGoodsCategoriesOfL1() {
         return goodsCategoryMapper.findAllGoodsCategoriesOfL1();
     }

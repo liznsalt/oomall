@@ -32,40 +32,48 @@ public class GoodsServiceImpl implements GoodsService {
     private RedisService redisService;
 
     @Override
-    public Boolean goodsOn(MallGoods goods) {
+    public Boolean goodsOn(Goods goods) {
         if (goods.getId() == null) {
             return false;
         }
-        goods.setStatusCode(false);
+        goods.setStatusCode(1);
         goodsDao.updateGoods(goods);
         return true;
     }
 
     @Override
-    public Boolean goodsOff(MallGoods goods) {
+    public Boolean goodsOff(Goods goods) {
         if (goods.getId() == null) {
             return false;
         }
-        goods.setStatusCode(true);
+        goods.setStatusCode(0);
         goodsDao.updateGoods(goods);
         return true;
     }
 
     @Override
     public Integer getStockInDB(Integer id) {
-        MallProduct product = productDao.findProductById(id);
+        Product product = productDao.findProductById(id);
         return product.getSafetyStock();
     }
 
     @Override
     public void updateStockInDB(Integer id, Integer quantity) {
-        MallProduct product = productDao.findProductById(id);
+        Product product = productDao.findProductById(id);
         product.setSafetyStock(quantity);
         productDao.updateProduct(product);
     }
 
     @Override
-    public MallGoods findGoodsById(Integer id) {
+    public Goods findAllGoodsById (Integer id) {
+        if (id == null || id <= 0) {
+            return null;
+        }
+        return goodsDao.findAllGoodsById(id);
+    }
+
+    @Override
+    public Goods findGoodsById(Integer id){
         if (id == null || id <= 0) {
             return null;
         }
@@ -73,29 +81,37 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallProduct addProductByGoodsId(Integer id, MallProduct product) {
+    public Product addProductByGoodsId(Integer id, Product product) {
         if (id == null || id <= 0 || product == null) {
             return null;
         }
-        MallGoods goods = goodsDao.findGoodsById(id);
+        Goods goods = goodsDao.findGoodsById(id);
         if (goods == null) {
             return null;
         }
         product.setGoodsId(id);
-        MallProduct newProduct = productDao.addProduct(product);
+        Product newProduct = productDao.addProduct(product);
         goods.getProductPoList().add(newProduct);
-        redisService.set("G_" + goods.getId(), goods);
+        redisService.set("GOODS" + goods.getId(), goods);
         return product;
     }
 
     @Override
-    public MallProduct updateProductById(Integer id, MallProduct product) {
+    public Product findProductById(Integer id){
+        if(id==null||id<=0){
+            return null;
+        }
+        return productDao.findProductById(id);
+    }
+
+    @Override
+    public Product updateProductById(Integer id, Product product) {
         if (id == null || id <= 0 || product == null) {
             return null;
         }
         product.setId(id);
-        MallProduct mallProduct = productDao.updateProduct(product);
-        return mallProduct;
+        Product product1 = productDao.updateProduct(product);
+        return product1;
     }
 
     @Override
@@ -103,8 +119,8 @@ public class GoodsServiceImpl implements GoodsService {
         if (id == null || id <= 0) {
             return false;
         }
-        MallProduct mallProduct = productDao.findProductById(id);
-        if (mallProduct == null) {
+        Product product = productDao.findProductById(id);
+        if (product == null) {
             return false;
         }
         productDao.deleteProductById(id);
@@ -112,7 +128,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallGoods addGoods(MallGoods goods) {
+    public Goods addGoods(Goods goods) {
         if (goods == null) {
             return null;
         }
@@ -120,7 +136,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallGoods updateGoodsById(Integer id, MallGoods goods) {
+    public Goods updateGoodsById(Integer id, Goods goods) {
         if (id == null || id <= 0|| goods == null) {
             return null;
         }
@@ -133,8 +149,8 @@ public class GoodsServiceImpl implements GoodsService {
         if (id == null || id <= 0) {
             return false;
         }
-        MallGoods mallGoods = goodsDao.findGoodsById(id);
-        if (mallGoods == null) {
+        Goods goods = goodsDao.findGoodsById(id);
+        if (goods == null) {
             return false;
         }
         goodsDao.deleteGoodsById(id);
@@ -142,17 +158,15 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<MallGoods> getCategoriesInfoById(Integer id) {
+    public List<GoodsPo> getCategoriesInfoById(Integer id, Integer page, Integer limit) {
         if (id == null || id <= 0) {
             return null;
         }
-        // TODO: dao层需要提供查询根据 category id 查询 goods 的接口
-
-        return null;
+        return goodsCategoryDao.findGoodsByCategoryId(id,page,limit);
     }
 
     @Override
-    public MallBrand addBrand(MallBrand brand) {
+    public Brand addBrand(Brand brand) {
         if (brand == null) {
             return null;
         }
@@ -160,7 +174,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallBrand findBrandById(Integer id) {
+    public Brand findBrandById(Integer id) {
         if (id == null || id <= 0) {
             return null;
         }
@@ -168,7 +182,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallBrand updateBrandById(Integer id, MallBrand brand) {
+    public Brand updateBrandById(Integer id, Brand brand) {
         if (id == null || id <= 0 || brand == null) {
             return null;
         }
@@ -188,12 +202,12 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<MallGoodsCategory> getGoodsCategory() {
+    public List<GoodsCategory> getGoodsCategory() {
         return goodsCategoryDao.findAllGoodsCategoriesOfL1();
     }
 
     @Override
-    public MallGoodsCategory addGoodsCategory(MallGoodsCategory goodsCategory) {
+    public GoodsCategory addGoodsCategory(GoodsCategory goodsCategory) {
         if (goodsCategory == null) {
             return null;
         }
@@ -201,7 +215,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallGoodsCategory findGoodsCategoryById(Integer id) {
+    public GoodsCategory findGoodsCategoryById(Integer id) {
         if (id == null || id <= 0) {
             return null;
         }
@@ -209,7 +223,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public MallGoodsCategory updateGoodsCategoryById(Integer id, MallGoodsCategory goodsCategory) {
+    public GoodsCategory updateGoodsCategoryById(Integer id, GoodsCategory goodsCategory) {
         if (id == null || id <= 0 || goodsCategory == null) {
             return null;
         }
@@ -230,7 +244,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<MallGoodsCategory> getOneLevelGoodsCategory() {
+    public List<GoodsCategory> getOneLevelGoodsCategory() {
         return goodsCategoryDao.findAllGoodsCategoriesOfL1();
     }
 

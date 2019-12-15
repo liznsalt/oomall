@@ -15,7 +15,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-@Alias("mallProduct")
+@Alias("product")
 public class Product extends ProductPo {
     private GoodsPo goodsPo;
     public Product() {

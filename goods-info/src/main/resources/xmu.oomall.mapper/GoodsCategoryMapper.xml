@@ -3,31 +3,37 @@
 <mapper namespace="xmu.oomall.mapper.GoodsCategoryMapper">
 
 
-    <resultMap id="mallGoodsCategoryMap" type="mallGoodsCategory" autoMapping="true">
+    <resultMap id="goodsCategoryMap" type="goodsCategory" autoMapping="true">
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
     </resultMap>
 
-    <resultMap id="mallGoodsMap" type="mallGoods" autoMapping="true">
+    <resultMap id="goodsMap" type="goods" autoMapping="true">
         <id property="id" column="id"/>
         <result property="beSpecial" column="is_special" javaType="Boolean"/>
         <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
     </resultMap>
 
-    <insert id="addGoodsCategory" parameterType="mallGoodsCategory" useGeneratedKeys="true" keyProperty="id">
-        insert into goods_category(name,pid,gmt_create,gmt_modified,is_deleted)
+    <resultMap id="goodsPoMap" type="goodsPo" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="beSpecial" column="is_special" javaType="Boolean"/>
+        <result property="beDeleted" column="is_deleted" javaType="Boolean"/>
+    </resultMap>
+
+    <insert id="addGoodsCategory" parameterType="goodsCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into oomall_goods_category(name,pid,gmt_create,gmt_modified,is_deleted)
         values (#{name},#{pid},sysdate(),sysdate(),#{beDeleted})
     </insert>
 
     <update id="deleteGoodsCategoryById" parameterType="Integer">
-        update goods_category set
+        update oomall_goods_category set
             is_deleted = 1,
             gmt_modified = sysdate()
         where id = #{id} and is_deleted = 0
     </update>
 
-    <update id="updateGoodsCategory" parameterType="mallGoodsCategory">
-        update goods_category set
+    <update id="updateGoodsCategory" parameterType="goodsCategory">
+        update oomall_goods_category set
         <trim suffixOverrides=",">
             gmt_modified=sysdate(),
             <if test="name != null">name=#{name},</if>
@@ -45,29 +51,29 @@
         where id =# {id}
     </update>
 
-    <select id="findGoodsCategoryById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+    <select id="findGoodsCategoryById" resultMap="goodsCategoryMap" parameterType="Integer">
         select id,
             name,
             pid,
             gmt_create,
             gmt_modified,
             is_deleted
-        from goods_category
+        from oomall_goods_category
         where id = #{id} and is_deleted = 0
     </select>
 
-    <select id="getAllGoodsCategories" resultMap="mallGoodsCategoryMap">
+    <select id="getAllGoodsCategories" resultMap="goodsCategoryMap">
         select id,
             name,
             pid,
             gmt_create,
             gmt_modified,
             is_deleted
-        from goods_category
+        from oomall_goods_category
         where is_deleted = 0
     </select>
 
-    <select id="findAllGoodsById" resultMap="mallGoodsMap" parameterType="Integer">
+    <select id="findAllGoodsById" resultMap="goodsPoMap" parameterType="Integer">
         select id,
             gmt_create,
             gmt_modified,
@@ -88,8 +94,9 @@
             volume,
             special_freight_id,
             is_special
-        from goods
+        from oomall_goods
         where goods_category_id = #{id} and is_deleted = 0
+        limit ${page * limit - limit},${page * limit}
     </select>
 
     <select id="findSubGoodsCategoriesById" resultMap="mallGoodsCategoryMap" parameterType="Integer">

@@ -80,7 +80,27 @@ public class GoodsDao {
     }
 
     /**
-     * 通过商品ID检索商品
+     * 通过商品ID检索所有商品
+     * @param id 商品ID
+     * @return 商品信息
+     */
+    public Goods findAllGoodsById(Integer id) {
+        String key = "GOODS" + id;
+        Goods goods = (Goods) redisService.get(key);
+        if (goods == null) {
+            goods = goodsMapper.findAllGoodsById(id);
+            if (goods == null) {
+                return null;
+            }
+            List<Product> productList = findProductsById(id);
+            goods.setProductPoList(productList.stream().map(Product::getProductPo).collect(Collectors.toList()));
+            redisService.set(key, goods);
+        }
+        return goods;
+    }
+
+    /**
+     * 通过商品ID检索已上架商品
      * @param id 商品ID
      * @return 商品信息
      */

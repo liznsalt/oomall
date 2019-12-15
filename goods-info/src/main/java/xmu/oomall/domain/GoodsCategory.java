@@ -17,7 +17,34 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-@Alias("mallGoodsCategory")
+@Alias("goodsCategory")
 public class GoodsCategory extends GoodsCategoryPo {
     private List<GoodsPo> goodsPoList;
+
+    public GoodsCategory(){
+
+    }
+
+    public GoodsCategory(GoodsCategoryPo goodsCategoryPo){
+        this.setId(goodsCategoryPo.getId());
+        this.setName(goodsCategoryPo.getName());
+        this.setPid(goodsCategoryPo.getPid());
+        this.setGmtCreate(goodsCategoryPo.getGmtCreate());
+        this.setGmtModified(goodsCategoryPo.getGmtModified());
+        this.setBeDeleted(goodsCategoryPo.getBeDeleted());
+        this.setPicUrl(goodsCategoryPo.getPicUrl());
+    }
+
+    public GoodsCategoryPo getGoodsCategoryPo(){
+        GoodsCategoryPo goodsCategoryPo = new GoodsCategoryPo();
+        goodsCategoryPo.setId(this.getId());
+        goodsCategoryPo.setName(this.getName());
+        goodsCategoryPo.setPid(this.getPid());
+        goodsCategoryPo.setGmtCreate(this.getGmtCreate());
+        goodsCategoryPo.setGmtModified(this.getGmtModified());
+        goodsCategoryPo.setBeDeleted(this.getBeDeleted());
+        goodsCategoryPo.setPicUrl(this.getPicUrl());
+        return goodsCategoryPo;
+    }
+
 }

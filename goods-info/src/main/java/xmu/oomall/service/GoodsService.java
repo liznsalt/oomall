@@ -9,26 +9,28 @@ import java.util.List;
  * @author YaNai
  */
 public interface GoodsService {
-    Boolean goodsOn(MallGoods goods);
-    Boolean goodsOff(MallGoods goods);
+    Boolean goodsOn(Goods goods);
+    Boolean goodsOff(Goods goods);
     Integer getStockInDB(Integer id);
     void updateStockInDB(Integer id, Integer quantity);
-    MallGoods findGoodsById(Integer id);
-    MallProduct addProductByGoodsId(Integer id, MallProduct product);
-    MallProduct updateProductById(Integer id, MallProduct product);
+    Goods findAllGoodsById (Integer id);
+    Goods findGoodsById(Integer id);
+    Product addProductByGoodsId(Integer id, Product product);
+    Product findProductById(Integer id);
+    Product updateProductById(Integer id, Product product);
     Boolean deleteProductById(Integer id);
-    MallGoods addGoods(MallGoods goods);
-    MallGoods updateGoodsById(Integer id, MallGoods goods);
+    Goods addGoods(Goods goods);
+    Goods updateGoodsById(Integer id, Goods goods);
     Boolean deleteGoodsById(Integer id);
-    List<MallGoods> getCategoriesInfoById(Integer id);
-    MallBrand addBrand(MallBrand brand);
-    MallBrand findBrandById(Integer id);
-    MallBrand updateBrandById(Integer id, MallBrand brand);
+    List<GoodsPo> getCategoriesInfoById(Integer id, Integer page, Integer limit);
+    Brand addBrand(Brand brand);
+    Brand findBrandById(Integer id);
+    Brand updateBrandById(Integer id, Brand brand);
     Boolean deleteBrandById(Integer id);
-    List<MallGoodsCategory> getGoodsCategory();
-    MallGoodsCategory addGoodsCategory(MallGoodsCategory goodsCategory);
-    MallGoodsCategory findGoodsCategoryById(Integer id);
-    MallGoodsCategory updateGoodsCategoryById(Integer id, MallGoodsCategory goodsCategory);
+    List<GoodsCategory> getGoodsCategory();
+    GoodsCategory addGoodsCategory(GoodsCategory goodsCategory);
+    GoodsCategory findGoodsCategoryById(Integer id);
+    GoodsCategory updateGoodsCategoryById(Integer id, GoodsCategory goodsCategory);
     Boolean deleteGoodsCategoryById(Integer id);
-    List<MallGoodsCategory> getOneLevelGoodsCategory();
+    List<GoodsCategory> getOneLevelGoodsCategory();
 }
