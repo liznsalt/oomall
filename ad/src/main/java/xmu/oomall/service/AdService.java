@@ -9,7 +9,7 @@ import java.util.List;
  * @author liznsalt
  */
 public interface AdService {
-    List<MallAd> adminList();
+    List<MallAd> adminList(String adTitle, String adContent, Integer page, Integer limit);
     List<MallAd> userList();
     MallAd find(Integer id);
 //    List<MallAd> list(Example example);
