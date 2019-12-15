@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.oomall.mapper.BrandMapper">
-    <resultMap id="brandMap" type="mallBrand" >
+    <resultMap id="brandMap" type="brand" >
         <id property="id" column="id"/>
         <result property="beDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="goodsMap" type="mallGoods">
+    <resultMap id="goodsMap" type="goods">
         <id property="id" column="id"/>
         <result property="beSpecial" column="is_special"/>
         <result property="beDeleted" column="is_deleted"/>
     </resultMap>
 
-    <insert id="addBrand" parameterType="mallBrand">
+    <insert id="addBrand" parameterType="brand">
         insert into brand(name,description,pic_url,gmt_create,gmt_modified,is_deleted)
         values (#{name},#{description},#{picUrl},#{gmtCreate},#{gmtModified},#{beDeleted})
     </insert>
@@ -24,7 +24,7 @@
         where id = #{id}
     </update>
 
-    <update id="updateBrand" parameterType="mallBrand">
+    <update id="updateBrand" parameterType="brand">
         update brand
         <trim prefix="set" suffixOverrides=",">
             <if test="name!=null">name=#{name},</if>

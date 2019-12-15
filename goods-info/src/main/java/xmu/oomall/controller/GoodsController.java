@@ -3,10 +3,7 @@ package xmu.oomall.controller;
 import common.oomall.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import standard.oomall.domain.Brand;
-import standard.oomall.domain.Goods;
-import standard.oomall.domain.GoodsCategory;
-import standard.oomall.domain.Product;
+import xmu.oomall.dao.ProductDao;
 import xmu.oomall.domain.*;
 import xmu.oomall.service.GoodsService;
 
@@ -15,6 +12,7 @@ import java.util.List;
 /**
  * @author liznsalt
  * @author YaNai
+ * @author ZYK
  */
 @RestController
 @RequestMapping("/goodsService")
@@ -24,109 +22,76 @@ public class GoodsController {
     private GoodsService goodsService;
 
     /**
-     *管理员查询商品下的产品
+     * 获取商品分类信息
      * @param id
-     * @return List<ProductVo>，所属该商品的产品列表
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<GoodsPo> 即是商品的一个列表
      */
-    @GetMapping("/goods/{id}/products")
-    public Object listProductByGoodsId(@PathVariable Integer id) {
-        MallGoods goods = goodsService.findGoodsById(id);
-        if (goods == null) {
+    @GetMapping("/categories/{id}/goods")
+    public Object getCategoriesInfoById(@PathVariable Integer id,
+                                        @RequestParam Integer page,
+                                        @RequestParam Integer limit) {
+        //TODO 分页
+        List<GoodsPo> goodsPoList = goodsService.getCategoriesInfoById(id,page,limit);
+        if (goodsPoList == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(goods.getProducts());
+        return CommonResult.success(goodsPoList);
     }
 
     /**
-     * 管理员添加商品下的产品
-     * @param id
-     * @param product
-     * @return Product，新添加的产品信息
-     */
-    @PostMapping("/goods/{id}/products")
-    public Object addProductByGoodsId(@PathVariable Integer id, @RequestBody Product product) {
-        MallProductPo mallProductPo = (MallProductPo) product;
-        MallProduct mallProduct = new MallProduct(mallProductPo);
-        MallProduct resultMallProduct = goodsService.addProductByGoodsId(id, mallProduct);
-        if (resultMallProduct == null) {
-            return CommonResult.failed();
-        }
-        return CommonResult.success(resultMallProduct);
-    }
-
-    /**
-     * 管理员修改商品下的某个产品信息
-     * @param id
-     * @param product
-     * @return Product，修改后的产品信息
-     */
-    @PutMapping("/products/{id}")
-    public Object updateProductById(@PathVariable Integer id, @RequestBody Product product) {
-        MallProductPo productPo = (MallProductPo) product;
-        MallProduct mallProduct = new MallProduct(productPo);
-        MallProduct newMallProduct = goodsService.updateProductById(id, mallProduct);
-        if (newMallProduct == null) {
-            return CommonResult.failed();
-        }
-        return CommonResult.success(newMallProduct);
-    }
-
-    /**
-     * 管理员删除商品下的某个产品信息
-     * @param id
-     * @return 无（ResponseUtil.ok()即可）
-     */
-    @DeleteMapping("/products/{id}")
-    public Object deleteProductById(@PathVariable Integer id) {
-        if (goodsService.deleteProductById(id)) {
-            CommonResult.success("OK");
-        }
-        return CommonResult.failed();
-    }
-
-    /**
-     * 新建/上架一个商品
+     * 根据条件搜索商品(用户）
      *
-     * @param goods
-     * @return Goods，即新建的一个商品
+     * @param goodsSn 商品的序列号
+     * @param goodsName 商品的名字
+     * @param status 商品是否上架
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<GoodsPo> Goods的一个列表
      */
-    @PostMapping("/goods")
-    public Object addGoods(@RequestBody Goods goods) {
-        MallGoods mallGoods = goodsService.addGoods((MallGoods)goods);
-        if (mallGoods == null) {
-            return CommonResult.failed();
-        }
-        return CommonResult.success(mallGoods);
+    @GetMapping("/goods")
+    public Object listGoods(@RequestParam String goodsSn,
+                            @RequestParam String name,
+                            @RequestParam Integer status,
+                            @RequestParam Integer page,
+                            @RequestParam Integer limit) {
+        // TODO: 不懂，商品序列号有相同的情况嘛？ name是指前缀查找嘛？
+        //TODO: 不太明白标准组status类型是什么情况
+        //TODO: 标准组未确定参数
+
+        return null;
     }
 
     /**
      * 根据id获取某个商品
      * @param id
-     * @return GoodsVo，即商品的信息，此URL与WX端是同一个URL
+     * @return Goods
      */
     @GetMapping("/goods/{id}")
-    public Object getGoodsById(Integer id) {
-        MallGoods mallGoods = goodsService.findGoodsById(id);
-        if (mallGoods == null) {
+    public Object getGoodsById(@PathVariable Integer id) {
+        Goods goods = goodsService.findGoodsById(id);
+        if (goods == null) {
             return CommonResult.failed();
         }
-        //
-        return null;
+        return CommonResult.success(goods);
     }
 
     /**
-     * 根据id更新商品信息
-     * @param id
+     * 新建一个商品
+     *
      * @param goods
-     * @return Goods，修改后的商品信息
+     * @return GoodsPo，即新建的一个商品
      */
-    @PutMapping("/goods/{id}")
-    public Object updateGoodsById(@PathVariable Integer id, @RequestBody Goods goods) {
-        MallGoods mallGoods = goodsService.updateGoodsById(id, (MallGoods)goods);
-        if (mallGoods == null) {
+    @PostMapping("/goods")
+    public Object addGoods(@RequestBody Goods goods) {
+        if(goods.getId()!=null||goods.getGmtCreate()!=null||goods.getGmtModified()!=null||goods.getShareUrl()!=null||goods.getBeDeleted()!=null)
+            return CommonResult.failed();
+        GoodsPo goodsPo = goodsService.addGoods(goods).getGoodsPo();
+        if (goodsPo == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(mallGoods);
+        return CommonResult.success(goodsPo);
     }
 
     /**
@@ -143,75 +108,183 @@ public class GoodsController {
     }
 
     /**
-     * 获取商品分类信息
+     * 根据id更新商品信息
      * @param id
-     * @return
+     * @param goodsPo
+     * @return GoodsPo，修改后的商品信息
      */
-    @GetMapping("/categories/{id}/goods")
-    public Object getCategoriesInfoById(@PathVariable Integer id) {
-        List<MallGoods> mallGoodsList = goodsService.getCategoriesInfoById(id);
-        if (mallGoodsList == null) {
+    @PutMapping("/goods/{id}")
+    public Object updateGoodsById(@PathVariable Integer id, @RequestBody GoodsPo goodsPo) {
+        if(goodsPo.getId()!=null||goodsPo.getGmtCreate()!=null||goodsPo.getGmtModified()!=null||goodsPo.getShareUrl()!=null||goodsPo.getBeDeleted()!=null)
+            return CommonResult.failed();
+        Goods goods = goodsService.updateGoodsById(id, new Goods(goodsPo));
+        if (goods == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(mallGoodsList);
+        return CommonResult.success(goods.getGoodsPo());
     }
 
     /**
-     * 根据条件搜索商品
+     * 根据条件搜索商品(用户）
      *
      * @param goodsSn 商品的序列号
-     * @param name 商品的名字
+     * @param goodsName 商品的名字
+     * @param status 商品是否上架
      * @param page 第几页
      * @param limit 一页多少
-     * @return
+     * @return List<GoodsPo> Goods的一个列表
      */
-    @GetMapping("/goods")
-    public Object listGoods(@RequestParam String goodsSn,
-                            @RequestParam String name,
-                            @RequestParam Integer page,
-                            @RequestParam Integer limit) {
-        // TODO: 不懂，商品序列号有相同的情况嘛？ name是指前缀查找嘛？
+    @GetMapping("/admin/goods")
+    public Object listGoodsToAdmin() {
+        //TODO: 标准组未确定参数
 
         return null;
     }
 
     /**
+     * 管理员查看商品详情（含已下架）
+     * @param id 商品ID
+     * @return Goods
+     */
+    @GetMapping("/admin/goods/{id}")
+    public Object getAllGoodsById(@PathVariable Integer id){
+        Goods goods = goodsService.findAllGoodsById(id);
+        if (goods == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(goods);
+    }
+
+    /**
+     *管理员查询商品下的产品
+     * @param id
+     * @return List<ProductPo>，所属该商品的产品列表
+     */
+    @GetMapping("/goods/{id}/products")
+    public Object listProductByGoodsId(@PathVariable Integer id) {
+        Goods goods = goodsService.findGoodsById(id);
+        if (goods == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(goods.getProductPoList());
+    }
+
+    /**
+     * 管理员添加商品下的产品
+     * @param id
+     * @param productPo
+     * @return GoodsPo，
+     */
+    @PostMapping("/goods/{id}/products")
+    public Object addProductByGoodsId(@PathVariable Integer id, @RequestBody ProductPo productPo) {
+
+        Product product = new Product(productPo);
+        Product resultMallProduct = goodsService.addProductByGoodsId(id, product);
+        if (resultMallProduct == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(goodsService.findGoodsById(id).getGoodsPo());
+    }
+
+    /**
+     * 根据产品id查询产品信息
+     * @param id
+     * @return Product, 查询到的产品信息
+     */
+    @GetMapping("/products/{id}")
+    public Object getProductById(@PathVariable Integer id){
+        Product product = goodsService.findProductById(id);
+        if(product == null){
+            return CommonResult.failed();
+        }
+        return CommonResult.success(product);
+    }
+
+    /**
+     * 管理员修改商品下的某个产品信息
+     * @param id
+     * @param productPo
+     * @return ProductPo，修改后的产品信息
+     */
+    @PutMapping("/products/{id}")
+    public Object updateProductById(@PathVariable Integer id, @RequestBody ProductPo productPo) {
+        Product product = new Product(productPo);
+        Product newProduct = goodsService.updateProductById(id, product);
+        if (newProduct == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(newProduct.getProductPo());
+    }
+
+    /**
+     * 管理员删除商品下的某个产品信息
+     * @param id
+     * @return 无（ResponseUtil.ok()即可）
+     */
+    @DeleteMapping("/products/{id}")
+    public Object deleteProductById(@PathVariable Integer id) {
+        if (goodsService.deleteProductById(id)) {
+            CommonResult.success("OK");
+        }
+        return CommonResult.failed();
+    }
+
+
+
+
+
+    /**
      * 根据条件搜索品牌
-     * @return List<Brand>
+     *
+     * @return List<BrandPo>
      */
     @GetMapping("/admins/brands")
     public Object listBrand() {
-        // TODO: emm,你条件呢？
+        // TODO: 待定
         return null;
     }
 
     /**
      * 创建一个品牌
-     * @param brand
-     * @return
+     * @param brandPo
+     * @return brandPo
      */
     @PostMapping("/brands")
-    public Object addBrand(@RequestBody Brand brand) {
-        MallBrand mallBrand = goodsService.addBrand((MallBrand)brand);
-        if (mallBrand == null) {
+    public Object addBrand(@RequestBody BrandPo brandPo) {
+        Brand brand = goodsService.addBrand(new Brand(brandPo));
+        if (brand == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(brand.getBrandPo());
+    }
+
+    /**
+     * 查看品牌详情,此API与商城端/brands/{id}完全相同
+     * @param id
+     * @return Brand
+     */
+    @GetMapping("/brands/{id}")
+    public Object getBrandById(@PathVariable Integer id) {
+        Brand brand = goodsService.findBrandById(id);
+        if (brand == null) {
             return CommonResult.failed();
         }
         return CommonResult.success(brand);
     }
 
     /**
-     * 查看品牌详情,此API与商城端/brands/{id}完全相同
+     * 查看品牌下的所有商品
      * @param id
-     * @return
+     * @return List<GoodsPo> 商品列表
      */
-    @GetMapping("/brands/{id}")
-    public Object getBrandById(@PathVariable Integer id) {
-        MallBrand brand = goodsService.findBrandById(id);
-        if (brand == null) {
-            return CommonResult.failed();
-        }
-        return CommonResult.success(brand);
+    @GetMapping("/brands/{id}/goods")
+    public Object getGoodsByBrandId(@PathVariable Integer id){
+        
     }
+
+
+
+
 
     /**
      * 修改单个品牌的信息
@@ -321,13 +394,4 @@ public class GoodsController {
         List<MallGoodsCategory> mallGoodsCategoryList = goodsService.getOneLevelGoodsCategory();
         return CommonResult.success(mallGoodsCategoryList);
     }
-
-//    /**
-//     * 查看所有品牌
-//     * @return List<Brand>
-//     */
-//    @GetMapping("/brands")
-//    public Object listBrand() {
-//        return null;
-//    }
 }

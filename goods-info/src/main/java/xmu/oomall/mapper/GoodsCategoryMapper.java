@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.Goods;
 import xmu.oomall.domain.GoodsCategory;
+import xmu.oomall.domain.GoodsPo;
 
 import java.util.List;
 
@@ -42,17 +43,21 @@ public interface GoodsCategoryMapper {
     GoodsCategory findGoodsCategoryById(Integer id);
 
     /**
+     * 根据商品种类ID得到其下所有商品
+     * @param id 商品种类ID
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<Goods> 即是商品的一个列表
+     */
+    List<GoodsPo> findAllGoodsById(Integer id, Integer page, Integer limit);
+
+    /**
      * 得到所有商品种类
      * @return 种类列表
      */
     List<GoodsCategory> getAllGoodsCategories();
 
-    /**
-     * 根据商品种类ID得到所有属于这个种类的商品
-     * @param id 商品种类ID
-     * @return 商品列表
-     */
-    List<Goods> findAllGoodsById(Integer id);
+
 
     /**
      * 根据分类ID得到其下所有子分类

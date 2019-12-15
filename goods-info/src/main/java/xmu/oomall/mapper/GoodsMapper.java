@@ -35,7 +35,14 @@ public interface GoodsMapper {
     int updateGoods(Goods goods);
 
     /**
-     * 通过商品ID检索商品
+     * 通过商品ID检索所有商品
+     * @param id 商品ID
+     * @return 商品信息
+     */
+    Goods findAllGoodsById(Integer id);
+
+    /**
+     * 通过商品ID检索已上架商品
      * @param id 商品ID
      * @return 商品信息
      */
