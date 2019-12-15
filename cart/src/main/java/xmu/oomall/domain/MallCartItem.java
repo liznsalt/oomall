@@ -10,6 +10,6 @@ import javax.persistence.Table;
  * @author liznsalt
  */
 @Alias("mallCartItem")
-@Table(name = "cart_item")
+@Table(name = "oomall_cart_item")
 public class MallCartItem extends CartItem {
 }

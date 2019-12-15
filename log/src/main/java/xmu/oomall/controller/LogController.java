@@ -1,5 +1,6 @@
 package xmu.oomall.controller;
 
+import common.oomall.api.CommonResult;
 import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +25,18 @@ public class LogController {
 
     @PostMapping("/logs")
     public Object addLog(@RequestBody MallLog log) {
+        if (log == null) {
+            return CommonResult.badArgumentValue("log不能为空");
+        }
         MallLog newLog = logService.addLog(log);
-        return ResponseUtil.ok(newLog);
+        return CommonResult.success(newLog);
     }
 
     @GetMapping("/logs")
     public Object list(@RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit) {
         List<MallLog> logList = logService.findLogsByCondition(page, limit);
-        return ResponseUtil.ok(logList);
+        return CommonResult.success(logList);
     }
 
 //    @GetMapping("/")

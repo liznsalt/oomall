@@ -9,6 +9,6 @@ import javax.persistence.Table;
  * @author liznsalt
  */
 @Alias("mallAd")
-@Table(name = "ad")
+@Table(name = "oomall_ad")
 public class MallAd extends Ad {
 }

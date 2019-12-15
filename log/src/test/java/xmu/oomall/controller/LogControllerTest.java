@@ -39,7 +39,7 @@ public class LogControllerTest {
         log.setAdminId(1);
         log.setIp("112.124.128.11");
         log.setType(1);
-        log.setAction("addGoods()");
+        log.setActions("addGoods()");
         log.setStatusCode(1);
         log.setGmtCreate(LocalDateTime.now());
         log.setGmtModified(LocalDateTime.now());

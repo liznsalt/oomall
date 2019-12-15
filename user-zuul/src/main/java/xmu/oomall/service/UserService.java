@@ -21,7 +21,7 @@ public interface UserService {
     CommonResult register(String username, String password, String telephone, String authCode);
     @Transactional
     CommonResult register(MallUser user, String authCode);
-    CommonResult generateAuthCode(String telephone);
+    String generateAuthCode(String telephone);
     @Transactional
     CommonResult updatePassword(String telephone, String password, String authCode);
     @Transactional

@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public MallRole insert(MallRole role) {
         int count = roleMapper.insert(role);
-        return role;
+        return count == 0 ? null : role;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public MallRole update(MallRole role) {
-        roleMapper.update(role);
-        return role;
+        int count = roleMapper.update(role);
+        return count == 0 ? null : role;
     }
 
     @Override

@@ -12,8 +12,4 @@ import standard.oomall.domain.Log;
 public interface LogService {
     @PostMapping("/logs")
     Object addLog(@RequestBody Log log);
-
-    @GetMapping("/logs")
-    Object list(@RequestParam(defaultValue = "1") Integer page,
-                @RequestParam(defaultValue = "10") Integer limit);
 }

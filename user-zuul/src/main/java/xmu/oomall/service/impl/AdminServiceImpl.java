@@ -66,7 +66,7 @@ public class AdminServiceImpl implements AdminService {
         if (admin == null) {
             throw new UsernameNotFoundException("用户名不存在");
         }
-        return  new MallMemberDetails(admin);
+        return new MallMemberDetails(admin);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class AdminServiceImpl implements AdminService {
         if (admin == null) {
             throw new UsernameNotFoundException("用户名不存在");
         }
-        return  new MallMember(admin);
+        return new MallMember(admin);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public MallAdmin update(Integer id, MallAdmin admin) {
         admin.setId(id);
-        adminMapper.updateAdmin(admin);
-        return admin;
+        int count = adminMapper.updateAdmin(admin);
+        return count == 0 ? null : admin;
     }
 
     @Override
@@ -98,14 +98,14 @@ public class AdminServiceImpl implements AdminService {
             // 已经存在此用户
             return null;
         }
-        adminMapper.addAdmin(admin);
-        return admin;
+        int count = adminMapper.addAdmin(admin);
+        return count == 0 ? null : admin;
     }
 
     @Override
     public String login(String username, String password) {
         String token = null;
-        // try
+        // try ..
         try {
             MallMember member = findMemberByName(username);
             if (!password.equals(member.getPassword())) {
