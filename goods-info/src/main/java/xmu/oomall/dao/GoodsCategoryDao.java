@@ -6,8 +6,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 import xmu.oomall.domain.Goods;
 import xmu.oomall.domain.GoodsCategory;
+import xmu.oomall.domain.GoodsCategoryPo;
 import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.mapper.GoodsCategoryMapper;
 
@@ -74,6 +76,16 @@ public class GoodsCategoryDao {
             return new ArrayList<>();
         }
         return goodsCategoryMapper.findAllGoodsById(id,page,limit);
+    }
+
+    /**
+     * 查看所有分类
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<GoodsCategoryPo> 所有分类列表
+     */
+    public List<GoodsCategoryPo> findAllGoodsCategories(Integer page, Integer limit){
+        return goodsCategoryMapper.findAllGoodsCategories(page,limit);
     }
 
     /**

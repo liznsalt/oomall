@@ -6,7 +6,7 @@
         <result property="beDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="goodsMap" type="goods">
+    <resultMap id="goodsMap" type="goodsPo">
         <id property="id" column="id"/>
         <result property="beSpecial" column="is_special"/>
         <result property="beDeleted" column="is_deleted"/>

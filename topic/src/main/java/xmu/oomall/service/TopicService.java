@@ -14,21 +14,21 @@ public interface TopicService {
      * @param topic 专题
      * @return 添加后的专题
      */
-    MallTopic addTopic(MallTopic topic);
+    MallTopic addTopic(MallTopic topic) throws Exception;
 
     /**
      * 更新专题信息
      * @param topic 专题信息
      * @return 更新是否成功
      */
-    Boolean updateTopic(MallTopic topic);
+    Boolean updateTopic(MallTopic topic) throws Exception;
 
     /**
      * 删除专题
      * @param id 删除专题的 id
      * @return 删除是否成功
      */
-    Boolean deleteTopicById(Integer id);
+    Boolean deleteTopicById(Integer id) throws Exception;
 
     /**
      * 查找专题

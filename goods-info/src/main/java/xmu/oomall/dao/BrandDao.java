@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.Brand;
 import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.service.RedisService;
 
@@ -48,9 +49,10 @@ public class BrandDao {
         }
         String key = "BRAND" + id;
         redisService.remove(key);
-        List<Goods> goodsList= brandMapper.findAllGoodsById(id);
-        for(Goods goods:goodsList){
-            String goodsKey = "GOODS" + id;
+        List<GoodsPo> goodsPoList= brandMapper.findAllGoodsById(id);
+        for(GoodsPo goodsPo:goodsPoList){
+            Goods goods = new Goods(goodsPo);
+            String goodsKey = "GOODS" + goods.getId();
             redisService.remove(goodsKey);
         }
         brandMapper.setBrandIdNull(id);
@@ -94,6 +96,14 @@ public class BrandDao {
         return brand;
     }
 
+    /**
+     * 通过品牌ID查找该品牌所有商品
+     * @param id
+     * @return
+     */
+    public List<GoodsPo> findGoodsByBrandId(Integer id){
+        return brandMapper.findAllGoodsById(id);
+    }
 
 
 }

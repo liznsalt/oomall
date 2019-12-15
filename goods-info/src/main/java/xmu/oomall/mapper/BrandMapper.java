@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.Brand;
 import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.GoodsPo;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public interface BrandMapper {
      * @param id 品牌ID
      * @return 商品列表
      */
-    List<Goods> findAllGoodsById(Integer id);
+    List<GoodsPo> findAllGoodsById(Integer id);
 
     /**
      * 通过品牌ID，将该品牌下所有商品的品牌ID属性设NULL

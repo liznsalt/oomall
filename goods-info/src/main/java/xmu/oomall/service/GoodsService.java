@@ -26,8 +26,9 @@ public interface GoodsService {
     Brand addBrand(Brand brand);
     Brand findBrandById(Integer id);
     Brand updateBrandById(Integer id, Brand brand);
+    List<GoodsPo> getGoodsByBrandId(Integer id);
     Boolean deleteBrandById(Integer id);
-    List<GoodsCategory> getGoodsCategory();
+    List<GoodsCategoryPo> getGoodsCategory(Integer page, Integer limit);
     GoodsCategory addGoodsCategory(GoodsCategory goodsCategory);
     GoodsCategory findGoodsCategoryById(Integer id);
     GoodsCategory updateGoodsCategoryById(Integer id, GoodsCategory goodsCategory);

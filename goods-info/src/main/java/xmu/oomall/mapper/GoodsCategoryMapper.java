@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.Goods;
 import xmu.oomall.domain.GoodsCategory;
+import xmu.oomall.domain.GoodsCategoryPo;
 import xmu.oomall.domain.GoodsPo;
 
 import java.util.List;
@@ -65,6 +66,15 @@ public interface GoodsCategoryMapper {
      * @return 子分类列表
      */
     List<GoodsCategory> findSubGoodsCategoriesById(Integer id);
+
+
+    /**得到所有分类
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<GoodsCategoryPo>
+     */
+    List<GoodsCategoryPo> findAllGoodsCategories(Integer page,Integer limit);
+
 
     /**
      * 得到所有一级分类

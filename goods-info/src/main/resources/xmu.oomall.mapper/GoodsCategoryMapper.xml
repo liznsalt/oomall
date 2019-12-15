@@ -99,7 +99,7 @@
         limit ${page * limit - limit},${page * limit}
     </select>
 
-    <select id="findSubGoodsCategoriesById" resultMap="mallGoodsCategoryMap" parameterType="Integer">
+    <select id="findSubGoodsCategoriesById" resultMap="goodsCategoryMap" parameterType="Integer">
         select id,
             name,
             pid,
@@ -110,7 +110,19 @@
         where pid = #{id} and is_deleted = 0
     </select>
 
-    <select id="findAllGoodsCategoriesOfL1" resultMap="mallGoodsCategoryMap">
+    <select id="findAllGoodsCategories" resultMap="goodsCategoryMap">
+        select id,
+            name,
+            pid,
+            gmt_create,
+            gmt_modified,
+            is_deleted
+        from goods_category
+        where is_deleted = 0
+        limit  ${page * limit - limit},${page * limit}
+    </select>
+
+    <select id="findAllGoodsCategoriesOfL1" resultMap="goodsCategoryMap">
         select id,
             name,
             pid,
