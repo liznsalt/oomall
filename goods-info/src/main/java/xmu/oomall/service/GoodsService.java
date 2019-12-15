@@ -29,6 +29,8 @@ public interface GoodsService {
     List<GoodsPo> getGoodsByBrandId(Integer id);
     Boolean deleteBrandById(Integer id);
     List<GoodsCategoryPo> getGoodsCategory(Integer page, Integer limit);
+    List<BrandPo> getBrandByCondition(Integer id, String name, Integer page, Integer limit);
+    List<GoodsPo> getGoodsByCondition(String name, Integer page, Integer limit);
     GoodsCategory addGoodsCategory(GoodsCategory goodsCategory);
     GoodsCategory findGoodsCategoryById(Integer id);
     GoodsCategory updateGoodsCategoryById(Integer id, GoodsCategory goodsCategory);

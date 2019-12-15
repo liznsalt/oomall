@@ -7,7 +7,6 @@ import xmu.oomall.dao.GoodsCategoryDao;
 import xmu.oomall.dao.GoodsDao;
 import xmu.oomall.dao.ProductDao;
 import xmu.oomall.domain.*;
-import xmu.oomall.mapper.GoodsMapper;
 import xmu.oomall.service.GoodsService;
 import xmu.oomall.service.RedisService;
 
@@ -212,6 +211,16 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public List<GoodsCategoryPo> getGoodsCategory(Integer page, Integer limit) {
         return goodsCategoryDao.findAllGoodsCategories(page,limit);
+    }
+
+    @Override
+    public List<BrandPo> getBrandByCondition(Integer id, String name, Integer page, Integer limit){
+        return brandDao.findBrandsByCondition(id,name,page,limit);
+    }
+
+    @Override
+    public List<GoodsPo> getGoodsByCondition(String name, Integer page, Integer limit){
+        return goodsDao.findGoodsByCondition(name,page,limit);
     }
 
     @Override

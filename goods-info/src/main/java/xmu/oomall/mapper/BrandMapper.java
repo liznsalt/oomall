@@ -3,7 +3,7 @@ package xmu.oomall.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.Brand;
-import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.BrandPo;
 import xmu.oomall.domain.GoodsPo;
 
 import java.util.List;
@@ -41,6 +41,15 @@ public interface BrandMapper {
      * @return 品牌信息
      */
     Brand findBrandById(Integer id);
+
+    /**
+     * 分页得到品牌
+     * @param page 页数
+     * @param limit 每页行数
+     * @return 商品列表
+     */
+    List<BrandPo> findBrandsByCondition(Integer id, String name,
+                                        Integer page, Integer limit);
 
     /**
      * 得到所有品牌
