@@ -1,15 +1,22 @@
 package xmu.oomall.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import standard.oomall.domain.Log;
+import xmu.oomall.service.impl.LogServiceFallback;
 
 /**
  * @author liznsalt
  */
-@FeignClient("oomall-log")
+@Component
+@FeignClient(name = "oomall-log",
+        decode404 = true,
+        fallbackFactory = LogServiceFallback.class,
+        configuration = FeignClientsConfiguration.class)
 @RequestMapping("/logService")
 public interface LogService {
     /**

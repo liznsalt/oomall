@@ -1,5 +1,7 @@
 package xmu.oomall.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import common.oomall.util.MallDateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,19 @@ public class AdServiceImpl implements AdService {
     private AdMapper adMapper;
 
     @Override
-    public List<MallAd> adminList() {
-        return adMapper.selectAll();
+    public List<MallAd> adminList(String adTitle, String adContent,
+                                  Integer page, Integer limit) {
+        Example example = new Example(MallAd.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (adTitle != null) {
+            criteria.andLike("name", "%" + adTitle + "%");
+        }
+        if (adContent != null) {
+            criteria.andLike("content", "%" + adContent + "%");
+        }
+        criteria.andCondition("is_deleted = 0");
+        PageHelper.startPage(page, Math.min(limit, 100));
+        return adMapper.selectByExample(example);
     }
 
     @Override

@@ -8,19 +8,19 @@
     </resultMap>
 
     <insert id="addTopic" parameterType="mallTopic" useGeneratedKeys="true" keyProperty="id">
-        insert into topic(gmt_create, gmt_modified, is_deleted, pic_url_list, content)
+        insert into oomall_topic(gmt_create, gmt_modified, is_deleted, pic_url_list, content)
         values (sysdate(), sysdate(), #{beDeleted}, #{picUrlList}, #{content})
     </insert>
 
     <update id="deleteTopicById" parameterType="Integer">
-        update topic set
+        update oomall_topic set
             is_deleted = 1,
             gmt_modified = sysdate()
         where id = #{id} and is_deleted = 0
     </update>
 
     <update id="updateTopic" parameterType="mallTopic">
-        update topic set
+        update oomall_topic set
             <trim suffixOverrides=",">
                 gmt_modified = sysdate(),
                 <choose>
@@ -44,25 +44,25 @@
 
     <select id="findTopicById" parameterType="Integer" resultMap="mallTopicMap">
         select id, gmt_create, gmt_modified, is_deleted, pic_url_list, content
-        from topic
+        from oomall_topic
         where id = #{id}
     </select>
 
     <select id="findNotDeletedTopicById" parameterType="Integer" resultMap="mallTopicMap">
         select id, gmt_create, gmt_modified, is_deleted, pic_url_list, content
-        from topic
+        from oomall_topic
         where id = #{id} and is_deleted = 0
     </select>
 
     <select id="findTopicsByCondition" resultMap="mallTopicMap">
         select id, gmt_create, gmt_modified, is_deleted, pic_url_list, content
-        from topic
+        from oomall_topic
         limit ${page * limit - limit},${page * limit}
     </select>
 
     <select id="findNotDeletedTopicsByCondition" resultMap="mallTopicMap">
         select id, gmt_create, gmt_modified, is_deleted, pic_url_list, content
-        from topic
+        from oomall_topic
         where is_deleted = 0
         limit ${page * limit - limit},${page * limit}
     </select>

@@ -41,23 +41,43 @@ public class AdControllerImpl {
         logService.addLog(log);
     }
 
+    private Integer getUserId(HttpServletRequest request) {
+        String idString = request.getHeader("userId");
+        if (idString == null) {
+            return null;
+        }
+        return Integer.valueOf(idString);
+    }
+
     @GetMapping("/admin/ads")
-    public Object adminFindAdList(HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+    public Object adminFindAdList(String adTitle, String adContent,
+                                  Integer page, Integer limit,
+                                  HttpServletRequest request) {
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
         String ip = request.getHeader("ip");
 
-        List<MallAd> ads = adService.adminList();
+        if (page == null || limit == null || page <= 0 || limit <= 0) {
+            return CommonResult.badArgument();
+        }
+
+        List<MallAd> ads = adService.adminList(adTitle, adContent, page, limit);
         writeLog(adminId, ip, SELECT, "查看广告列表", 1, null);
         return CommonResult.success(ads);
     }
 
     @PostMapping("/admin/ads")
     public Object adminCreateAad(MallAd ad, HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
         String ip = request.getHeader("ip");
 
         if (ad == null) {
-            return CommonResult.badArgument("id 为空");
+            return CommonResult.badArgument("ad 为空");
         }
 
         MallAd newAd = adService.add(ad);
@@ -67,7 +87,10 @@ public class AdControllerImpl {
 
     @GetMapping("/ads/{id}")
     public Object adminFindAd(@PathVariable Integer id, HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
         String ip = request.getHeader("ip");
 
         if (id == null) {
@@ -81,7 +104,10 @@ public class AdControllerImpl {
     @PutMapping("/ads/{id}")
     public Object adminUpdateAd(@PathVariable Integer id, @RequestBody MallAd ad,
                                 HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
         String ip = request.getHeader("ip");
 
         if (id == null) {
