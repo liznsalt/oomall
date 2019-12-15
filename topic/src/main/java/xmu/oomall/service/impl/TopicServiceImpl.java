@@ -14,34 +14,28 @@ import java.util.List;
  * @author YaNai
  */
 @Service
-public class TopicServiceImpl implements TopicService {
+public class TopicServiceImpl implements TopicService{
 
     @Autowired
     private TopicMapper topicMapper;
 
     @Override
-    public MallTopic addTopic(MallTopic topic) {
+    public MallTopic addTopic(MallTopic topic) throws Exception{
         topic.setBeDeleted(false);
         topicMapper.addTopic(topic);
         return topic;
     }
 
     @Override
-    public Boolean updateTopic(MallTopic topic) {
-        if (topic.getId() == null) {
-            return false;
-        }
-        topicMapper.updateTopic(topic);
-        return true;
+    public Boolean updateTopic(MallTopic topic) throws Exception{
+        int result = topicMapper.updateTopic(topic);
+        return result >= 1;
     }
 
     @Override
-    public Boolean deleteTopicById(Integer id) {
-        if (id == null) {
-            return false;
-        }
-        topicMapper.deleteTopicById(id);
-        return true;
+    public Boolean deleteTopicById(Integer id) throws Exception{
+        int result = topicMapper.deleteTopicById(id);
+        return result >= 1;
     }
 
     @Override
