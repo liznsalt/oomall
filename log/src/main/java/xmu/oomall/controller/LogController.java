@@ -23,7 +23,7 @@ public class LogController {
     @Autowired
     private LogService logService;
 
-    @PostMapping("/logs")
+    @PostMapping("/log")
     public Object addLog(@RequestBody MallLog log) {
         if (log == null) {
             return CommonResult.badArgumentValue("log不能为空");

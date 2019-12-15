@@ -17,6 +17,6 @@ public interface LogService {
      * @param log 日志信息
      * @return /
      */
-    @PostMapping("/logs")
+    @PostMapping("/log")
     Object addLog(@RequestBody Log log);
 }
