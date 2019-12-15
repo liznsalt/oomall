@@ -9,7 +9,7 @@
 
     <insert id="addLog" parameterType="mallLog" useGeneratedKeys="true" keyProperty="id">
         insert into oomall_log(admin_id, ip, type, actions, status, gmt_create, gmt_modified, action_id)
-        values (#{adminId}, #{ip}, #{type}, #{action}, #{statusCode}, sysdate(), sysdate(), #{actionId})
+        values (#{adminId}, #{ip}, #{type}, #{actions}, #{statusCode}, sysdate(), sysdate(), #{actionId})
     </insert>
 
     <select id="findLogById" parameterType="Integer" resultMap="mallLogMap">
