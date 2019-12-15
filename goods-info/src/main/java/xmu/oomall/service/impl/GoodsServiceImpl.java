@@ -191,6 +191,14 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    public List<GoodsPo> getGoodsByBrandId(Integer id){
+        if(id == null || id <= 0){
+            return null;
+        }
+        return brandDao.findGoodsByBrandId(id);
+    }
+
+    @Override
     public Boolean deleteBrandById(Integer id) {
         if (id == null || id <= 0) {
             return false;
@@ -202,8 +210,8 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<GoodsCategory> getGoodsCategory() {
-        return goodsCategoryDao.findAllGoodsCategoriesOfL1();
+    public List<GoodsCategoryPo> getGoodsCategory(Integer page, Integer limit) {
+        return goodsCategoryDao.findAllGoodsCategories(page,limit);
     }
 
     @Override

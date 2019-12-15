@@ -235,12 +235,13 @@ public class GoodsController {
 
     /**
      * 根据条件搜索品牌
-     *
+     * @param page
+     * @param limit
      * @return List<BrandPo>
      */
     @GetMapping("/admins/brands")
     public Object listBrand() {
-        // TODO: 待定
+
         return null;
     }
 
@@ -261,7 +262,7 @@ public class GoodsController {
     /**
      * 查看品牌详情,此API与商城端/brands/{id}完全相同
      * @param id
-     * @return Brand
+     * @return BrandPo
      */
     @GetMapping("/brands/{id}")
     public Object getBrandById(@PathVariable Integer id) {
@@ -269,7 +270,7 @@ public class GoodsController {
         if (brand == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(brand);
+        return CommonResult.success(brand.getBrandPo());
     }
 
     /**
@@ -279,26 +280,26 @@ public class GoodsController {
      */
     @GetMapping("/brands/{id}/goods")
     public Object getGoodsByBrandId(@PathVariable Integer id){
-        
+        List<GoodsPo> goodsPoList = goodsService.getGoodsByBrandId(id);
+        if(goodsPoList==null){
+            return CommonResult.failed();
+        }
+        return CommonResult.success(goodsPoList);
     }
-
-
-
-
 
     /**
      * 修改单个品牌的信息
      * @param id
-     * @param brand
-     * @return
+     * @param brandPo
+     * @return brandPo
      */
     @PutMapping("/brands/{id}")
-    public Object updateBrandById(@PathVariable Integer id, @RequestBody Brand brand) {
-        MallBrand mallBrand = goodsService.updateBrandById(id, (MallBrand)brand);
-        if (mallBrand == null) {
+    public Object updateBrandById(@PathVariable Integer id, @RequestBody BrandPo brandPo) {
+        Brand brand = goodsService.updateBrandById(id, new Brand(brandPo));
+        if (brand == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(mallBrand);
+        return CommonResult.success(brand.getBrandPo());
     }
 
     /**
@@ -316,58 +317,61 @@ public class GoodsController {
 
     /**
      * 查看所有的分类
-     * @return
+     * @param page 第几页
+     * @param limit 一页多少
+     * @return List<goodsCategoryPo>
      */
     @GetMapping("/categories")
-    public Object listGoodsCategory() {
-        List<MallGoodsCategory> categoryList = goodsService.getGoodsCategory();
-        return CommonResult.success(categoryList);
+    public Object listGoodsCategory(@RequestParam Integer page,
+                                    @RequestParam Integer limit) {
+        List<GoodsCategoryPo> categoryPoList = goodsService.getGoodsCategory(page,limit);
+        return CommonResult.success(categoryPoList);
     }
 
     /**
      * 新建一个分类
-     * @param goodsCategory
-     * @return
+     * @param goodsCategoryPo
+     * @return goodsCategoryPo
      */
     @PostMapping("/categories")
-    public Object addGoodsCategory(@RequestBody GoodsCategory goodsCategory) {
-        MallGoodsCategory mallGoodsCategory = goodsService
-                .addGoodsCategory((MallGoodsCategory) goodsCategory);
-        if (mallGoodsCategory == null) {
+    public Object addGoodsCategory(@RequestBody GoodsCategoryPo goodsCategoryPo) {
+        GoodsCategory goodsCategory = goodsService
+                .addGoodsCategory(new GoodsCategory(goodsCategoryPo));
+        if (goodsCategory == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(mallGoodsCategory);
+        return CommonResult.success(goodsCategory.getGoodsCategoryPo());
     }
 
     /**
      * 查看单个分类信息
      * @param id
-     * @return
+     * @return GoodsCategoryPo
      */
     @GetMapping("/categories/{id}")
     public Object getGoodsCategoryById(@PathVariable Integer id) {
-        MallGoodsCategory goodsCategory = goodsService.findGoodsCategoryById(id);
+        GoodsCategory goodsCategory = goodsService.findGoodsCategoryById(id);
         if (goodsCategory == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(goodsCategory);
+        return CommonResult.success(goodsCategory.getGoodsCategoryPo());
     }
 
     /**
      * 修改分类信息
      * @param id
-     * @param goodsCategory
-     * @return
+     * @param GoodsCategoryPo
+     * @return GoodsCategoryPo
      */
     @PutMapping("/categories/{id}")
     public Object updateGoodsCategoryById(@PathVariable Integer id,
-                                          @RequestBody GoodsCategory goodsCategory) {
-        MallGoodsCategory mallGoodsCategory = goodsService
-                .updateGoodsCategoryById(id, (MallGoodsCategory) goodsCategory);
-        if (mallGoodsCategory == null) {
+                                          @RequestBody GoodsCategoryPo goodsCategoryPo) {
+        GoodsCategory goodsCategory = goodsService
+                .updateGoodsCategoryById(id, new GoodsCategory(goodsCategoryPo));
+        if (goodsCategory == null) {
             return CommonResult.failed();
         }
-        return CommonResult.success(goodsCategory);
+        return CommonResult.success(goodsCategory.getGoodsCategoryPo());
     }
 
     /**
@@ -385,13 +389,26 @@ public class GoodsController {
         return CommonResult.failed();
     }
 
+
+
     /**
      * 查看所有一级分类
-     * @return
+     * @return List<GoodsCategory>
      */
     @GetMapping("/categories/l1")
     public Object listOneLevelGoodsCategory() {
-        List<MallGoodsCategory> mallGoodsCategoryList = goodsService.getOneLevelGoodsCategory();
-        return CommonResult.success(mallGoodsCategoryList);
+        List<GoodsCategory> goodsCategoryList = goodsService.getOneLevelGoodsCategory();
+        return CommonResult.success(goodsCategoryList);
+    }
+
+
+    /**
+     *
+     * @param id
+     * @return GoodsCategory
+     */
+    @GetMapping("/categories/l1/{id}/l2")
+    public Object getL2ByL1Id(@PathVariable Integer id){
+        //TODO
     }
 }
