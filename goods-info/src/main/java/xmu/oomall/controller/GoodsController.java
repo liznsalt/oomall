@@ -1,5 +1,6 @@
 package xmu.oomall.controller;
 
+import com.sun.org.apache.xpath.internal.objects.XObject;
 import common.oomall.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +8,7 @@ import xmu.oomall.dao.ProductDao;
 import xmu.oomall.domain.*;
 import xmu.oomall.service.GoodsService;
 
+import java.security.PublicKey;
 import java.util.List;
 
 /**
@@ -43,20 +45,16 @@ public class GoodsController {
     /**
      * 根据条件搜索商品(用户）
      *
-     * @param goodsSn 商品的序列号
-     * @param goodsName 商品的名字
-     * @param status 商品是否上架
+     * @param name 商品的名字
      * @param page 第几页
      * @param limit 一页多少
      * @return List<GoodsPo> Goods的一个列表
      */
     @GetMapping("/goods")
-    public Object listGoods(@RequestParam String goodsSn,
-                            @RequestParam String name,
-                            @RequestParam Integer status,
-                            @RequestParam Integer page,
-                            @RequestParam Integer limit) {
-        // TODO: 不懂，商品序列号有相同的情况嘛？ name是指前缀查找嘛？
+    public Object listGoodsToAdmin(@RequestParam String name,
+                                   @RequestParam Integer page,
+                                   @RequestParam Integer limit) {
+        //TODO: 不懂，商品序列号有相同的情况嘛？ name是指前缀查找嘛？
         //TODO: 不太明白标准组status类型是什么情况
         //TODO: 标准组未确定参数
 
@@ -127,18 +125,17 @@ public class GoodsController {
     /**
      * 根据条件搜索商品(用户）
      *
-     * @param goodsSn 商品的序列号
-     * @param goodsName 商品的名字
-     * @param status 商品是否上架
+     * @param name 商品的名字
      * @param page 第几页
      * @param limit 一页多少
      * @return List<GoodsPo> Goods的一个列表
      */
     @GetMapping("/admin/goods")
-    public Object listGoodsToAdmin() {
-        //TODO: 标准组未确定参数
-
-        return null;
+    public Object listGoods(@RequestParam String name,
+                            @RequestParam Integer page,
+                            @RequestParam Integer limit) {
+        List<GoodsPo> goodsPoList=goodsService.getGoodsByCondition(name,page,limit);
+        return CommonResult.success(goodsPoList);
     }
 
     /**
@@ -235,14 +232,19 @@ public class GoodsController {
 
     /**
      * 根据条件搜索品牌
+     * @param id
+     * @param name
      * @param page
      * @param limit
      * @return List<BrandPo>
      */
     @GetMapping("/admins/brands")
-    public Object listBrand() {
-
-        return null;
+    public Object listBrand(@RequestParam Integer id,
+                            @RequestParam String name,
+                            @RequestParam Integer page,
+                            @RequestParam Integer limit) {
+        List<BrandPo> brandPoList=goodsService.getBrandByCondition(id,name,page,limit);
+        return CommonResult.success(brandPoList);
     }
 
     /**
