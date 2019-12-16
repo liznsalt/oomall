@@ -1,8 +1,6 @@
 package common.oomall.util;
 
 
-import common.oomall.api.CommonResult;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

@@ -3,6 +3,7 @@ package xmu.oomall.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.domain.Product;
 
 import java.util.List;
@@ -81,7 +82,7 @@ public interface GoodsMapper {
      * @param limit 每页行数
      * @return 商品列表
      */
-    List<Goods> findGoodsByCondition(String goodsSn, String goodsName, Integer status,
-                                     Integer page, Integer limit);
+    List<GoodsPo> findGoodsByCondition(String name,
+                                       Integer page, Integer limit);
 
 }

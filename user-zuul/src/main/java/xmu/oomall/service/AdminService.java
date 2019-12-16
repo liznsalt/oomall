@@ -26,4 +26,5 @@ public interface AdminService {
     String refreshToken(String token);
 
     List<MallAdmin> list();
+    List<MallAdmin> list(String adminName, Integer page, Integer limit);
 }

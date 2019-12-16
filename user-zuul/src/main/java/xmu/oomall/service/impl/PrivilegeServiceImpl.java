@@ -8,6 +8,7 @@ import standard.oomall.domain.Privilege;
 import xmu.oomall.domain.MallPrivilege;
 import xmu.oomall.mapper.PrivilegeMapper;
 import xmu.oomall.service.PrivilegeService;
+import xmu.oomall.service.RoleService;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -20,6 +21,9 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Autowired
     private PrivilegeMapper privilegeMapper;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public List<MallPrivilege> getAll() {
@@ -56,8 +60,12 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public boolean matchAuth(String method, String url, Integer roleId) {
-        Map<Integer, List<MallPrivilege>> privilegesMap = getAllPrivileges();
-        List<MallPrivilege> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
+        // FIXME
+        //Map<Integer, List<MallPrivilege>> privilegesMap = getAllPrivileges();
+        //List<MallPrivilege> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
+
+        List<MallPrivilege> rolePrivilegeList = roleService.getPrivilegesByRoleId(roleId);
+
         if (rolePrivilegeList == null) {
             return false;
         }
@@ -67,6 +75,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
             if (pUrl == null) {
                 continue;
             }
+            // 修改成正则表达式
             pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
             if (pMethod == null) {
                 continue;

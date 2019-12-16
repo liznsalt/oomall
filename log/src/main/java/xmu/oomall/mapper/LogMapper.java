@@ -39,4 +39,12 @@ public interface LogMapper {
      * @return 日志列表
      */
     List<MallLog> findLogsByCondition(Integer page, Integer limit);
+
+    /**
+     * 根据Example条件进行查询
+     * @param page 页数
+     * @param limit 每页行数
+     * @return 日志列表
+     */
+    List<MallLog> findLogsByAdminId(Integer page, Integer limit, Integer adminId);
 }

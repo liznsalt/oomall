@@ -19,4 +19,5 @@ public interface RoleService {
     List<MallRole> getAllRoles();
 
     List<MallPrivilege> getPrivilegesByRoleId(Integer id);
+    List<MallPrivilege> updatePrivilegesByRoleId(Integer id, List<MallPrivilege> privileges);
 }

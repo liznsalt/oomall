@@ -6,6 +6,7 @@ import xmu.oomall.domain.MallMember;
 import xmu.oomall.domain.MallUser;
 import xmu.oomall.domain.details.MallMemberDetails;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,10 +26,10 @@ public interface UserService {
     @Transactional
     CommonResult updatePassword(String telephone, String password, String authCode);
     @Transactional
-    CommonResult updateTelephone(String telephone, String password, String authCode);
+    CommonResult updateTelephone(String telephone, String password, String authCode, String newPhone);
     @Transactional
     CommonResult updateRebate(Integer userId, Integer rebate);
-    String login(String username, String password);
+    String login(String username, String password, HttpServletRequest request);
     String refreshToken(String token);
 
     MallMemberDetails findDetailsByName(String username);

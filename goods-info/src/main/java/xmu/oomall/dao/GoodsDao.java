@@ -3,6 +3,7 @@ package xmu.oomall.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.Goods;
+import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.domain.Product;
 import xmu.oomall.domain.ProductPo;
 import xmu.oomall.mapper.BrandMapper;
@@ -140,13 +141,12 @@ public class GoodsDao {
     /**
      * 通过条件返回商品列表
      */
-    public List<Goods> findGoodsByCondition(String goodsSn, String goodsName,
-                                            Integer status, Integer page,
-                                            Integer limit) {
+    public List<GoodsPo> findGoodsByCondition(String name, Integer page,
+                                              Integer limit) {
         if (page <= 0 || limit <= 0) {
             return new ArrayList<>();
         }
-        return goodsMapper.findGoodsByCondition(goodsSn, goodsName, status, page, limit);
+        return goodsMapper.findGoodsByCondition(name, page, limit);
     }
 
     public void deleteProductsByGoodsId(Integer id) {

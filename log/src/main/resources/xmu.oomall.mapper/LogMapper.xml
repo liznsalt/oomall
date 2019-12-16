@@ -52,4 +52,19 @@
         from oomall_log
         limit ${limit * page - limit}, ${limit * page}
     </select>
+
+    <select id="findLogsByAdminId" resultMap="mallLogMap">
+        select id,
+               admin_id,
+               ip,
+               type,
+               actions,
+               status,
+               gmt_create,
+               gmt_modified,
+               action_id
+        from oomall_log
+        where admin_id = #{adminId}
+        limit ${limit * page - limit}, ${limit * page}
+    </select>
 </mapper>

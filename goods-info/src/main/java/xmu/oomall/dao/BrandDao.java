@@ -1,18 +1,15 @@
 package xmu.oomall.dao;
 
-import common.oomall.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import xmu.oomall.domain.Brand;
+import xmu.oomall.domain.BrandPo;
 import xmu.oomall.domain.Goods;
 import xmu.oomall.domain.GoodsPo;
 import xmu.oomall.mapper.BrandMapper;
 import xmu.oomall.service.RedisService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,6 +94,20 @@ public class BrandDao {
     }
 
     /**
+     * 分页得到品牌
+     * @param page 页数
+     * @param limit 每页行数
+     * @return 商品列表
+     */
+    public List<BrandPo> findBrandsByCondition(Integer id, String name,
+                                               Integer page, Integer limit){
+        if (page <= 0 || limit <= 0) {
+            return new ArrayList<>();
+        }
+        return brandMapper.findBrandsByCondition(id, name, page, limit);
+    }
+
+    /**
      * 通过品牌ID查找该品牌所有商品
      * @param id
      * @return
@@ -104,6 +115,4 @@ public class BrandDao {
     public List<GoodsPo> findGoodsByBrandId(Integer id){
         return brandMapper.findAllGoodsById(id);
     }
-
-
 }

@@ -19,4 +19,5 @@ public interface AdminMapper {
     List<MallAdmin> findByCondition(int page, int limit);
     List<MallAdmin> findByName(String name);
     List<MallAdmin> getAllAdmins();
+    List<MallAdmin> getByCondition(String adminName, Integer page, Integer limit);
 }

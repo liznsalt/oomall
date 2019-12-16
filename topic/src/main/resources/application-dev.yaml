@@ -1,4 +1,9 @@
+server:
+  port: 8084
+
 spring:
+  application:
+    name: oomall-topic
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://101.132.152.28:3306/oomall
@@ -34,3 +39,10 @@ spring:
           #慢SQL执行时间
           slow-sql-millis: 100
       validation-query: select 1
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/

@@ -10,7 +10,7 @@ import xmu.oomall.service.impl.GoodsServiceFactory;
 import xmu.oomall.service.impl.GoodsServiceFallback;
 
 @Component
-@FeignClient(name = "oomall-goods-info",
+@FeignClient(name = "goodsService",
         decode404 = true,
         fallbackFactory = GoodsServiceFactory.class,
         configuration = FeignClientsConfiguration.class
