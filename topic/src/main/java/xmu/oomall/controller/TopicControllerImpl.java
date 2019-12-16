@@ -37,10 +37,10 @@ public class TopicControllerImpl {
         return Integer.valueOf(userIdStr);
     }
 
-    private final static Integer INSERT = 0;
-    private final static Integer DELETE = 1;
+    private final static Integer INSERT = 1;
+    private final static Integer DELETE = 3;
     private final static Integer UPDATE = 2;
-    private final static Integer SELECT = 3;
+    private final static Integer SELECT = 0;
     private void writeLog(Integer adminId, String ip, Integer type,
                           String action, Integer statusCode, Integer actionId) {
         Log log = new Log();
@@ -63,11 +63,11 @@ public class TopicControllerImpl {
         }
 
         // 参数校验
-        if (page == null) {
-            return CommonResult.badArgumentValue("page为空");
+        if (page == null || page < 0) {
+            return CommonResult.badArgumentValue();
         }
-        if (limit == null) {
-            return CommonResult.badArgumentValue("limit为空");
+        if (limit == null || limit < 0) {
+            return CommonResult.badArgumentValue();
         }
 
         List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
@@ -82,8 +82,8 @@ public class TopicControllerImpl {
         }
 
         // 参数校验
-        if (id == null) {
-            return CommonResult.badArgumentValue("id为空");
+        if (id == null || id < 0) {
+            return CommonResult.badArgumentValue();
         }
 
         MallTopic topic = topicService.findNotDeletedTopicById(id);
@@ -127,8 +127,8 @@ public class TopicControllerImpl {
         if((topic.getId()==null)||(topic.getPicUrlList()==null)||(topic.getContent()==null)||(topic.getPictures()==null)) {
             return CommonResult.badArgument();
         }
-        if(id==null){
-            return CommonResult.badArgument("id为空");
+        if(id==null || id < 0){
+            return CommonResult.badArgument();
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
@@ -159,8 +159,8 @@ public class TopicControllerImpl {
         }
 
         // 参数校验
-        if (id == null) {
-            return CommonResult.badArgument("id为空");
+        if (id == null || id < 0) {
+            return CommonResult.badArgument();
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
