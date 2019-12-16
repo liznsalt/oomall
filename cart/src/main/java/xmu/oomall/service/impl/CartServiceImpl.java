@@ -99,4 +99,9 @@ public class CartServiceImpl implements CartService {
         cartMapper.deleteByExample(example);
         return true;
     }
+
+    @Override
+    public MallCartItem findCartItemById(Integer id) {
+        return cartMapper.selectByPrimaryKey(id);
+    }
 }
