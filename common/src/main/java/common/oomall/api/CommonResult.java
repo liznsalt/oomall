@@ -21,6 +21,13 @@ public class CommonResult<T> {
 
     /**
      * 成功返回结果
+     */
+    public static <T> CommonResult<T> success() {
+        return new CommonResult<T>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), null);
+    }
+
+    /**
+     * 成功返回结果
      *
      * @param data 获取的数据
      */
@@ -90,8 +97,17 @@ public class CommonResult<T> {
         return failed(ResultCode.UNSUPPORT);
     }
 
+    /**
+     * @deprecated
+     */
     public static <T> CommonResult<T> updatedDateExpired() {
         return failed(ResultCode.UPDATEDDATEEXPIRED);
+    }
+    /**
+     * @deprecated
+     */
+    public static <T> CommonResult<T> updatedDateExpired(String message) {
+        return new CommonResult<T>(ResultCode.UPDATEDDATEEXPIRED.getCode(), message, null);
     }
 
     public static <T> CommonResult<T> updatedDataFailed() {
@@ -99,6 +115,10 @@ public class CommonResult<T> {
     }
     public static <T> CommonResult<T> updatedDataFailed(String message) {
         return new CommonResult<T>(ResultCode.UPDATEDDATAFAILED.getCode(), message, null);
+    }
+
+    public static <T> CommonResult<T> illegal() {
+        return failed(ResultCode.ILLEGAL);
     }
 
     /**

@@ -1,9 +1,4 @@
-server:
-  port: 8082
-
 spring:
-  application:
-    name: oomall-log
   profiles:
     active: dev
 
@@ -41,12 +36,5 @@ logging:
   #使用logback日志，取代默认的common日志
   file:
     # TODO 记得修改
-    path: C:\Users\liznsalt\log
+#    path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: http://liznsalt:123456@localhost:9000/eureka/

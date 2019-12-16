@@ -28,4 +28,13 @@ public interface LogService {
      * @return 日志列表
      */
     List<MallLog> findLogsByCondition(Integer page, Integer limit);
+
+    /**
+     * 通过adminId
+     * @param page 页数
+     * @param limit 每页行数
+     * @param adminId adminId
+     * @return 日志列表
+     */
+    List<MallLog> findByAdminId(Integer page, Integer limit, Integer adminId);
 }

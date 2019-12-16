@@ -45,8 +45,9 @@ public class CartControllerImpl {
     @GetMapping("/cartItem/{userId}")
     public Object userCart(@PathVariable Integer userId) {
         if (userId == null) {
-            return CommonResult.badArgument("userId为空");
+            return CommonResult.badArgumentValue("userId为空");
         }
+
         List<MallCartItem> cartItems = cartService.list(userId);
         for (MallCartItem mallCartItem : cartItems) {
             Product product = findProductById(mallCartItem.getProductId());
@@ -88,12 +89,12 @@ public class CartControllerImpl {
 
         // 参数校验
         if (cart == null) {
-            return CommonResult.badArgument("cart 为空");
+            return CommonResult.badArgumentValue("cart 为空");
         }
 
         MallCartItem cartItem = cartService.add(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
-            return CommonResult.failed();
+            return CommonResult.updatedDataFailed();
         } else {
             return CommonResult.success(cartItem);
         }
@@ -108,16 +109,16 @@ public class CartControllerImpl {
 
         // 参数校验
         if (id == null) {
-            return CommonResult.badArgument("id为空");
+            return CommonResult.badArgumentValue("id为空");
         }
         if (cart == null) {
-            return CommonResult.badArgument("cart为空");
+            return CommonResult.badArgumentValue("cart为空");
         }
 
         cart.setId(id);
         MallCartItem cartItem = cartService.fastAdd(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
-            return CommonResult.failed();
+            return CommonResult.updatedDataFailed();
         } else {
             return CommonResult.success(cartItem);
         }
@@ -140,7 +141,7 @@ public class CartControllerImpl {
 
         MallCartItem cartItem = cartService.update(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
-            return CommonResult.failed();
+            return CommonResult.updatedDataFailed();
         } else {
             return CommonResult.success(cartItem);
         }
@@ -155,12 +156,12 @@ public class CartControllerImpl {
 
         // 参数校验
         if (id == null) {
-            return CommonResult.badArgument("id为空");
+            return CommonResult.badArgumentValue("id为空");
         }
 
         boolean ok = cartService.delete(id);
         if (ok) {
-            return CommonResult.success(null);
+            return CommonResult.success();
         } else {
             return CommonResult.failed();
         }
@@ -174,7 +175,7 @@ public class CartControllerImpl {
             return CommonResult.unLogin();
         }
         if (cartItem == null || cartItem.getProductId() == null) {
-            return CommonResult.badArgument();
+            return CommonResult.badArgumentValue();
         }
         Product product = findProductById(cartItem.getProductId());
         if (product == null) {

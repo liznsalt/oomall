@@ -4,8 +4,6 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import common.oomall.api.CommonResult;
-import common.oomall.component.ERole;
-import common.oomall.util.CookieUtil;
 import common.oomall.util.IpAddressUtil;
 import common.oomall.util.JacksonUtil;
 import common.oomall.util.JwtTokenUtil;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Component;
 import xmu.oomall.service.PrivilegeService;
 import xmu.oomall.util.UriUtil;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -84,8 +81,7 @@ public class MallFilter extends ZuulFilter {
     /**
      * 从 header 中读取 token 并校验
      */
-    private void readTokenFromHeader(RequestContext requestContext,
-                                     HttpServletRequest request) {
+    private void readTokenFromHeader(RequestContext requestContext, HttpServletRequest request) {
         //从 header 中读取
         String headerToken = request.getHeader("token");
         if (StringUtils.isEmpty(headerToken)) {
@@ -96,60 +92,55 @@ public class MallFilter extends ZuulFilter {
     }
 
 
-    private void verifyEmptyToken(RequestContext requestContext,
-                                  HttpServletRequest request) {
+    private void verifyEmptyToken(RequestContext requestContext, HttpServletRequest request) {
         String method = request.getMethod();
         String uri = request.getRequestURI();
         if (!privilegeService.matchAuth(method, uri, 0)) {
             // 不在游客名单内
             System.out.println("不在游客名单内");
-            setUnauthorizedResponse(requestContext);
+            setFailedResponse(requestContext, CommonResult.unLogin());
         }
     }
 
     /**
      * TODO 校验token
      */
-    private void verifyToken(RequestContext requestContext,
-                             HttpServletRequest request,
-                             String token) {
+    private void verifyToken(RequestContext requestContext, HttpServletRequest request, String token) {
         String host = request.getRemoteHost();
         String method = request.getMethod();
         String uri = request.getRequestURI();
-        String methodAndUri = UriUtil.generateMethodAndUri(method, uri);
         // 解析token，得到用户的id和role
         Map<String, String> tokenMap = JwtTokenUtil.getMapFromToken(token);
         System.out.println("tokenMap:" + tokenMap);
 
         // 检验用户是否够权限访问此uri（method + uri）
         if (tokenMap == null) {
-            setUnauthorizedResponse(requestContext);
+            setFailedResponse(requestContext, CommonResult.unauthorized("无效token，请重新登录"));
             return;
         }
         // FIXME 用户角色
         String roleId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_ROLEID);
         if (roleId == null) {
             // 角色都没有
-            setUnauthorizedResponse(requestContext);
+            setFailedResponse(requestContext, CommonResult.unauthorized("无效token，请重新登录"));
             return;
         }
         if (!privilegeService.matchAuth(method, uri, Integer.valueOf(roleId))) {
             // 不在用户权限名单内
             System.out.println("不在角色权限名单内");
-            setUnauthorizedResponse(requestContext);
+            setFailedResponse(requestContext, CommonResult.unauthorized());
         } else {
             // 验证以及刷新token
             String newToken = JwtTokenUtil.refreshHeadToken(token);
             if (newToken == null) {
                 // 没有钥匙？
-                setUnauthorizedResponse(requestContext);
+                setFailedResponse(requestContext, CommonResult.updatedDateExpired("token私钥已经修改，请重新登录"));
                 return;
             }
 
             // 修改header，加上userId和ip
             String userId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID);
-            UriUtil.changeHeader(requestContext, request,
-                    userId, roleId,
+            UriUtil.changeHeader(requestContext, request, userId, roleId,
                     IpAddressUtil.getIpAddress(request), newToken);
         }
     }
@@ -157,13 +148,13 @@ public class MallFilter extends ZuulFilter {
     /**
      * 设置 401 无权限状态
      */
-    private void setUnauthorizedResponse(RequestContext requestContext) {
-        requestContext.getResponse().setContentType("text/html;charset=UTF-8");
+    private void setFailedResponse(RequestContext requestContext, Object result) {
+        requestContext.getResponse().setContentType("application/json;charset=UTF-8");
         requestContext.setSendZuulResponse(false);
+        requestContext.set("sendForwardFilter.ran", true);
         requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
         requestContext.set("isSuccess", false);
-        CommonResult result = CommonResult.unauthorized(null);
-        requestContext.setResponseBody(result.toString());
+        requestContext.setResponseBody(JacksonUtil.toJson(result));
     }
 
 }

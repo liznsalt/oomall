@@ -136,4 +136,9 @@ public class AdminServiceImpl implements AdminService {
     public List<MallAdmin> list() {
         return adminMapper.getAllAdmins();
     }
+
+    @Override
+    public List<MallAdmin> list(String adminName, Integer page, Integer limit) {
+        return adminMapper.getByCondition(adminName, page, limit);
+    }
 }

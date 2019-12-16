@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import standard.oomall.domain.Log;
+import xmu.oomall.service.impl.LogServiceFactory;
 import xmu.oomall.service.impl.LogServiceFallback;
 
 /**
@@ -15,7 +16,7 @@ import xmu.oomall.service.impl.LogServiceFallback;
 @Component
 @FeignClient(name = "oomall-log",
         decode404 = true,
-        fallbackFactory = LogServiceFallback.class,
+        fallbackFactory = LogServiceFactory.class,
         configuration = FeignClientsConfiguration.class)
 @RequestMapping("/logService")
 public interface LogService {

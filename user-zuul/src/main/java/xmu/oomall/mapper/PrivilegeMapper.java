@@ -13,4 +13,5 @@ import java.util.List;
 @Mapper
 public interface PrivilegeMapper {
     List<MallPrivilege> getAll();
+    int addPrivileges(List<MallPrivilege> privileges);
 }

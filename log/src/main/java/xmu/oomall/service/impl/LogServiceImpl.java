@@ -35,4 +35,9 @@ public class LogServiceImpl implements LogService {
     public List<MallLog> findLogsByCondition(Integer page, Integer limit) {
         return logMapper.findLogsByCondition(page, limit);
     }
+
+    @Override
+    public List<MallLog> findByAdminId(Integer page, Integer limit, Integer adminId) {
+        return logMapper.findLogsByAdminId(page, limit, adminId);
+    }
 }

@@ -1,13 +1,13 @@
 server:
-  port: 8888
+  port: 8888 # TODO 自己定
 spring:
   application:
-    name: userInfoService
+    name: oomall-user # TODO 自己定
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://101.132.152.28:3306/oomall
-    username: oomall
-    password: OOAD3-4wmtnl
+    url: jdbc:mysql://101.132.152.28:3306/oomall # TODO 自己定
+    username: oomall # 自己定
+    password: OOAD3-4wmtnl # 自己定
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
@@ -36,8 +36,8 @@ spring:
           slow-sql-millis: 100
       validation-query: select 1
   redis:
-    host: 101.132.152.28
-    password: hyt123
+    host: 101.132.152.28 # TODO 自己定
+    password: hyt123 # TODO 自己定
     jedis:
       pool:
         max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
@@ -51,9 +51,10 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/
+      defaultZone: http://ooad33.top:8081/eureka/ # TODO 自己定
 
 # 接下来都是zuul，其它配置请放上面
+# TODO 自己定
 serviceUrl: # 各模块地址，方便修改
   log: http://101.132.152.28:8082
   topic: http://101.132.152.28:8084
@@ -61,6 +62,7 @@ serviceUrl: # 各模块地址，方便修改
   ad: http://101.132.152.28:8086
 
 
+# 下面不用改
 zuul:
   host:
     max-total-connections: 10000
@@ -82,4 +84,5 @@ zuul:
       path: /**/adService/**
       url: ${serviceUrl.ad}
   sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤
+  ignored-services: '*'
   add-host-header: true

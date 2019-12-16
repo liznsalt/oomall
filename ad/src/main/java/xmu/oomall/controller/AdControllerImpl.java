@@ -3,7 +3,6 @@ package xmu.oomall.controller;
 import common.oomall.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import standard.oomall.domain.Ad;
 import standard.oomall.domain.Log;
 import xmu.oomall.domain.MallAd;
 import xmu.oomall.service.AdService;
@@ -25,10 +24,10 @@ public class AdControllerImpl {
     @Autowired
     private LogService logService;
 
-    private final static Integer INSERT = 0;
-    private final static Integer DELETE = 1;
+    private final static Integer INSERT = 1;
+    private final static Integer DELETE = 3;
     private final static Integer UPDATE = 2;
-    private final static Integer SELECT = 3;
+    private final static Integer SELECT = 0;
     private void writeLog(Integer adminId, String ip, Integer type,
                           String action, Integer statusCode, Integer actionId) {
         Log log = new Log();
@@ -60,7 +59,7 @@ public class AdControllerImpl {
         String ip = request.getHeader("ip");
 
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            return CommonResult.badArgument();
+            return CommonResult.badArgumentValue();
         }
 
         List<MallAd> ads = adService.adminList(adTitle, adContent, page, limit);
@@ -77,7 +76,7 @@ public class AdControllerImpl {
         String ip = request.getHeader("ip");
 
         if (ad == null) {
-            return CommonResult.badArgument("ad 为空");
+            return CommonResult.badArgumentValue("ad 为空");
         }
 
         MallAd newAd = adService.add(ad);
@@ -94,7 +93,7 @@ public class AdControllerImpl {
         String ip = request.getHeader("ip");
 
         if (id == null) {
-            return CommonResult.badArgument("id 为空");
+            return CommonResult.badArgumentValue("id 为空");
         }
 
         writeLog(adminId, ip, SELECT, "查看广告", 1, id);
@@ -111,7 +110,7 @@ public class AdControllerImpl {
         String ip = request.getHeader("ip");
 
         if (id == null) {
-            return CommonResult.badArgument("id 为空");
+            return CommonResult.badArgumentValue("id 为空");
         }
 
         ad.setId(id);
@@ -127,12 +126,17 @@ public class AdControllerImpl {
         String ip = request.getHeader("ip");
 
         if (id == null) {
-            return CommonResult.badArgument("id 为空");
+            return CommonResult.badArgumentValue("id 为空");
         }
 
         boolean ok = adService.deleteById(id);
-        writeLog(adminId, ip, DELETE, "删除广告", 1, id);
-        return CommonResult.success(ok);
+        if (ok) {
+            writeLog(adminId, ip, DELETE, "删除广告", 1, id);
+            return CommonResult.success();
+        } else {
+            writeLog(adminId, ip, DELETE, "删除广告", 0, id);
+            return CommonResult.failed();
+        }
     }
 
     @GetMapping("/ads")

@@ -1,17 +1,26 @@
-package xmu.oomall.VO;
+package xmu.oomall.vo;
 
 /**
- * 重置密码和重置手机号码的Vo，这里不需要username和userId，因为telephone对每一个用户唯一
- * 而且你可能就是因为忘记用户名才要重置密码的^_^
+ * 重置手机号的vo
  * @author liznsalt
  */
-public class ResetVo {
+public class ResetPhoneVo {
+    /**
+     * 原来的手机号
+     */
     private String telephone;
+    /**
+     * 你的密码
+     */
     private String password;
     /**
      * 验证码
      */
     private String code;
+    /**
+     * 新的手机号
+     */
+    private String newTelephone;
 
     public String getTelephone() {
         return telephone;
@@ -37,12 +46,21 @@ public class ResetVo {
         this.code = code;
     }
 
+    public String getNewTelephone() {
+        return newTelephone;
+    }
+
+    public void setNewTelephone(String newTelephone) {
+        this.newTelephone = newTelephone;
+    }
+
     @Override
     public String toString() {
         return "ResetPhoneVo{" +
                 "telephone='" + telephone + '\'' +
                 ", password='" + password + '\'' +
                 ", code='" + code + '\'' +
+                ", newTelephone='" + newTelephone + '\'' +
                 '}';
     }
 }

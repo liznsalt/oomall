@@ -43,7 +43,7 @@
     </update>
 
     <select id="findById" parameterType="Integer" resultMap="mallAdminMap">
-        select id, gmt_modified, gmt_modified, username, password, role_id, is_deleted
+        select id, gmt_create, gmt_modified, username, password, role_id, is_deleted
         from oomall_admin
         where id = #{id}
     </select>
@@ -75,6 +75,13 @@
     <select id="getAllAdmins" resultMap="mallAdminMap">
         select id, gmt_create, gmt_modified, username, password, role_id, is_deleted
         from oomall_admin
+    </select>
+
+    <select id="getByCondition" resultMap="mallAdminMap">
+        select id, gmt_create, gmt_modified, username, password, role_id, is_deleted
+        from oomall_admin
+        where username like '%${adminName}%'
+        limit ${limit * page - limit}, ${limit * page}
     </select>
 
 </mapper>

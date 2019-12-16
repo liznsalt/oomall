@@ -12,6 +12,23 @@ import java.util.Map;
  * @author liznsalt
  */
 public class UriUtil {
+    /**
+     * @deprecated
+     * 自检验key
+     */
+    public static String PASS_KEY = "pass-key-oomall-3130199";
+    /**
+     * @deprecated
+     * 自检验value
+     */
+    public static String PASS_VALUE = "oomall-pass-key-12345313";
+
+    /**
+     * @deprecated
+     * @param method 方法
+     * @param uri url
+     * @return /
+     */
     public static String generateMethodAndUri(String method, String uri) {
         return (method.toLowerCase() + " " + uri).trim();
     }
@@ -25,6 +42,7 @@ public class UriUtil {
         // 1 修改参数
         Map<String, List<String>> map = new HashMap<>(5);
         map.put("opId", Collections.singletonList(userId));
+        map.put("roleId", Collections.singletonList(roleId));
         map.put("ip", Collections.singletonList(ip));
         requestContext.setRequestQueryParams(map);
 

@@ -9,5 +9,14 @@
     <select id="getAll" resultMap="mallPrivilegeMap">
         select id, role_id, url, method, gmt_create, gmt_modified, is_deleted
         from oomall_privilege
+        where is_deleted = 0
     </select>
+
+    <insert id="addPrivileges" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into oomall_privilege(role_id, url, method, gmt_create, gmt_modified, is_deleted)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId}, #{item.url}, #{item.method}, sysdate(), sysdate(), #{item.beDeleted})
+        </foreach>
+    </insert>
 </mapper>

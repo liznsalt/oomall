@@ -1,7 +1,6 @@
 package xmu.oomall.controller;
 
 import common.oomall.api.CommonResult;
-import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import xmu.oomall.service.LogService;
 import xmu.oomall.service.TopicService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -64,12 +62,12 @@ public class TopicControllerImpl {
             return CommonResult.unLogin();
         }
 
-        //参数校验
-        if(page==null){
-            return CommonResult.badArgument("page为空");
+        // 参数校验
+        if (page == null) {
+            return CommonResult.badArgumentValue("page为空");
         }
-        if(limit==null){
-            return CommonResult.badArgument("limit为空");
+        if (limit == null) {
+            return CommonResult.badArgumentValue("limit为空");
         }
 
         List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
@@ -77,24 +75,23 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/topics/{id}")
-    public Object detail(@PathVariable("id") Integer id,
-                         HttpServletRequest request) {
+    public Object detail(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
             return CommonResult.unLogin();
         }
 
-        //参数校验
-        if(id==null){
-            return CommonResult.badArgument("id为空");
+        // 参数校验
+        if (id == null) {
+            return CommonResult.badArgumentValue("id为空");
         }
+
         MallTopic topic = topicService.findNotDeletedTopicById(id);
         return CommonResult.success(topic);
     }
 
     @PostMapping("/topics")
-    public Object create(@RequestBody MallTopic topic,
-                         HttpServletRequest request) {
+    public Object create(@RequestBody MallTopic topic, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
             return CommonResult.unLogin();
@@ -137,7 +134,7 @@ public class TopicControllerImpl {
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
         topic.setId(id);
-        try{
+        try {
             Boolean result = topicService.updateTopic((MallTopic) topic);
             if (result) {
                 writeLog(adminId, ip, UPDATE, "修改专题", 1, id);
@@ -145,11 +142,9 @@ public class TopicControllerImpl {
             }
             else {
                 writeLog(adminId, ip, UPDATE, "修改专题", 0, id);
-                return CommonResult.updatedDateExpired();
+                return CommonResult.updatedDataFailed();
             }
-        }
-        catch(Exception e)
-        {
+        } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
             return CommonResult.updatedDataFailed();
         }
@@ -163,28 +158,26 @@ public class TopicControllerImpl {
             return CommonResult.unLogin();
         }
 
-        //参数校验
-        if(id==null){
+        // 参数校验
+        if (id == null) {
             return CommonResult.badArgument("id为空");
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
 
-        try{
+        try {
             Boolean result = topicService.deleteTopicById(id);
             if (result) {
                 writeLog(adminId, ip, DELETE, "删除专题", 1, id);
-                return CommonResult.success(true);
+                return CommonResult.success();
             } else {
                 writeLog(adminId, ip, DELETE, "删除专题", 0, id);
-                return CommonResult.updatedDateExpired();
+                return CommonResult.failed();
             }
-        }
-        catch(Exception e)
-        {
+        } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
-            return CommonResult.updatedDataFailed();
+            return CommonResult.failed();
         }
     }
 }
