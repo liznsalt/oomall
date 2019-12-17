@@ -54,7 +54,7 @@ public class CartControllerImpl {
                 || cartItem.getProductId() == null
                 || cartItem.getProductId() < 0
                 || cartItem.getNumber() == null
-                || cartItem.getNumber() < 0) {
+                || cartItem.getNumber() <= 0) {
             return false;
         }
         Product product = findProductById(cartItem.getProductId());
@@ -128,7 +128,7 @@ public class CartControllerImpl {
         if (cartItem == null) {
             return CommonResult.success(null);
         }
-        if (userId.equals(cartItem.getUserId())) {
+        if (!userId.equals(cartItem.getUserId())) {
             return CommonResult.unauthorized();
         }
         Product product = findProductById(cartItem.getProductId());
@@ -195,6 +195,7 @@ public class CartControllerImpl {
         if (userId == null || userId < 0) {
             return CommonResult.unLogin();
         }
+        cart.setUserId(userId);
         // 参数校验
         if (id == null || id < 0) {
             return CommonResult.badArgumentValue();
