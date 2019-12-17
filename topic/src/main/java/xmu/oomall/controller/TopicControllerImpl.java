@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import standard.oomall.domain.Log;
 import standard.oomall.domain.Topic;
+import standard.oomall.domain.TopicPo;
 import xmu.oomall.domain.MallTopic;
 import xmu.oomall.service.LogService;
 import xmu.oomall.service.TopicService;
@@ -18,7 +19,6 @@ import java.util.List;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/topicService")
 public class TopicControllerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(TopicControllerImpl.class);
@@ -74,6 +74,27 @@ public class TopicControllerImpl {
         return CommonResult.success(topicList);
     }
 
+    @GetMapping("/admin/topics")
+    public Object adminlist(@RequestParam(defaultValue = "1") Integer page,
+                       @RequestParam(defaultValue = "10") Integer limit,
+                       HttpServletRequest request) {
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
+
+        // 参数校验
+        if (page == null || page < 0) {
+            return CommonResult.badArgumentValue();
+        }
+        if (limit == null || limit < 0) {
+            return CommonResult.badArgumentValue();
+        }
+
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
+        return CommonResult.success(topicList);
+    }
+
     @GetMapping("/topics/{id}")
     public Object detail(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer userId = getUserId(request);
@@ -90,15 +111,31 @@ public class TopicControllerImpl {
         return CommonResult.success(topic);
     }
 
+    @GetMapping("/admin/topics/{id}")
+    public Object admindetail(@PathVariable("id") Integer id, HttpServletRequest request) {
+        Integer userId = getUserId(request);
+        if (userId == null) {
+            return CommonResult.unLogin();
+        }
+
+        // 参数校验
+        if (id == null || id < 0) {
+            return CommonResult.badArgumentValue();
+        }
+
+        MallTopic topic = topicService.findNotDeletedTopicById(id);
+        return CommonResult.success(topic);
+    }
+
     @PostMapping("/topics")
-    public Object create(@RequestBody MallTopic topic, HttpServletRequest request) {
+    public Object create(@RequestBody TopicPo topicPo, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
             return CommonResult.unLogin();
         }
 
         //参数校验
-        if((topic.getId()==null)||(topic.getPicUrlList()==null)||(topic.getContent()==null)||(topic.getPictures()==null)) {
+        if((topicPo.getPicUrlList()==null)||(topicPo.getContent()==null)) {
             return CommonResult.badArgument();
         }
 
@@ -106,9 +143,10 @@ public class TopicControllerImpl {
         String ip = request.getHeader("ip");
 
         try {
-            MallTopic resTopic = topicService.addTopic(topic);
+            MallTopic mallTopic=new MallTopic(topicPo);
+            MallTopic resTopic = topicService.addTopic(mallTopic);
             writeLog(adminId, ip, INSERT, "添加专题", 1, resTopic.getId());
-            return CommonResult.success(resTopic);
+            return CommonResult.success(resTopic.toTopicPo());
         } catch (Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
             return CommonResult.updatedDataFailed();
@@ -116,7 +154,7 @@ public class TopicControllerImpl {
     }
 
     @PutMapping("/topics/{id}")
-    public Object update(@RequestBody Topic topic, @PathVariable Integer id,
+    public Object update(@RequestBody TopicPo topicPo, @PathVariable Integer id,
                          HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
@@ -124,7 +162,7 @@ public class TopicControllerImpl {
         }
 
         //参数校验
-        if((topic.getId()==null)||(topic.getPicUrlList()==null)||(topic.getContent()==null)||(topic.getPictures()==null)) {
+        if((topicPo.getPicUrlList()==null)||(topicPo.getContent()==null)) {
             return CommonResult.badArgument();
         }
         if(id==null || id < 0){
@@ -133,12 +171,12 @@ public class TopicControllerImpl {
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
         String ip = request.getHeader("ip");
-        topic.setId(id);
+        topicPo.setId(id);
         try {
-            Boolean result = topicService.updateTopic((MallTopic) topic);
-            if (result) {
+            MallTopic result=topicService.updateTopic(new MallTopic(topicPo));
+            if (result!=null) {
                 writeLog(adminId, ip, UPDATE, "修改专题", 1, id);
-                return CommonResult.success(true);
+                return CommonResult.success(result.toTopicPo());
             }
             else {
                 writeLog(adminId, ip, UPDATE, "修改专题", 0, id);

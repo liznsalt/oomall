@@ -21,7 +21,7 @@ public interface TopicService {
      * @param topic 专题信息
      * @return 更新是否成功
      */
-    Boolean updateTopic(MallTopic topic) throws Exception;
+    MallTopic updateTopic(MallTopic topic) throws Exception;
 
     /**
      * 删除专题

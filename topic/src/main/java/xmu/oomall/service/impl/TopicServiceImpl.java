@@ -2,6 +2,7 @@ package xmu.oomall.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xmu.oomall.dao.TopicDao;
 import xmu.oomall.domain.MallTopic;
 import xmu.oomall.mapper.TopicMapper;
 import xmu.oomall.service.TopicService;
@@ -17,24 +18,23 @@ import java.util.List;
 public class TopicServiceImpl implements TopicService{
 
     @Autowired
-    private TopicMapper topicMapper;
+    private TopicDao topicDao;
+
 
     @Override
     public MallTopic addTopic(MallTopic topic) throws Exception{
-        topic.setBeDeleted(false);
-        topicMapper.addTopic(topic);
+        topicDao.addTopic(topic);
         return topic;
     }
 
     @Override
-    public Boolean updateTopic(MallTopic topic) throws Exception{
-        int result = topicMapper.updateTopic(topic);
-        return result >= 1;
+    public MallTopic updateTopic(MallTopic topic) throws Exception{
+        return topicDao.updateTopic(topic);
     }
 
     @Override
     public Boolean deleteTopicById(Integer id) throws Exception{
-        int result = topicMapper.deleteTopicById(id);
+        int result = topicDao.deleteTopicById(id);
         return result >= 1;
     }
 
@@ -43,7 +43,7 @@ public class TopicServiceImpl implements TopicService{
         if (id == null) {
             return null;
         }
-        return topicMapper.findTopicById(id);
+        return topicDao.findTopicById(id);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TopicServiceImpl implements TopicService{
         if (id == null) {
             return null;
         }
-        return topicMapper.findNotDeletedTopicById(id);
+        return topicDao.findNotDeletedTopicById(id);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class TopicServiceImpl implements TopicService{
             return null;
         }
         try {
-            return topicMapper.findTopicsByCondition(page, limit);
+            return topicDao.findTopicsByCondition(page, limit);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -73,7 +73,7 @@ public class TopicServiceImpl implements TopicService{
             return null;
         }
         try {
-            return topicMapper.findNotDeletedTopicsByCondition(page, limit);
+            return topicDao.findNotDeletedTopicsByCondition(page, limit);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
