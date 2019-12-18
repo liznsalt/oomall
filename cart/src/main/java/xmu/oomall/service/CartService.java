@@ -15,4 +15,5 @@ public interface CartService {
     boolean delete(Integer id);
     int goodsCount(Integer userId);
     boolean clear(Integer userId);
+    MallCartItem findCartItemById(Integer id);
 }

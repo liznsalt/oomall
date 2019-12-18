@@ -2,6 +2,7 @@ package xmu.oomall.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
+import standard.oomall.domain.TopicPo;
 import xmu.oomall.domain.MallTopic;
 
 import java.util.List;
