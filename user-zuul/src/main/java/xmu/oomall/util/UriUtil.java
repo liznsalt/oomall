@@ -36,6 +36,8 @@ public class UriUtil {
     public static final String WHITE_URL_KEY_PREFIX = "Oomall_White_Urls:";
     public static final Long WHITE_URL_TIME = 12L * 60 * 60;
 
+    public static final String TOKEN_NAME = "authorization";
+
     /**
      * @deprecated
      * @param method 方法
@@ -61,6 +63,7 @@ public class UriUtil {
 
         // 2 修改头部
         requestContext.addZuulRequestHeader("token", token);
+        requestContext.addZuulRequestHeader(TOKEN_NAME, token);
         requestContext.addZuulRequestHeader("userId", userId);
         requestContext.addZuulRequestHeader("roleId", roleId);
         requestContext.addZuulRequestHeader("ip", ip);

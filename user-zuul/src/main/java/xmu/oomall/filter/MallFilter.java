@@ -7,6 +7,7 @@ import common.oomall.api.CommonResult;
 import common.oomall.util.IpAddressUtil;
 import common.oomall.util.JacksonUtil;
 import common.oomall.util.JwtTokenUtil;
+import common.oomall.util.ResponseUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,7 @@ public class MallFilter extends ZuulFilter {
      */
     private void readTokenFromHeader(RequestContext requestContext, HttpServletRequest request) {
         // 从 header 中读取
-        String headerToken = request.getHeader("token");
+        String headerToken = request.getHeader(UriUtil.TOKEN_NAME);
         LOGGER.debug("token:" + headerToken);
         if (StringUtils.isEmpty(headerToken)) {
             verifyEmptyToken(requestContext, request);
@@ -104,19 +105,11 @@ public class MallFilter extends ZuulFilter {
                 if (roleId != null && hasMethodUrlInRedis(request, roleId)) {
                     LOGGER.info("method+url在redis中");
                     // 这个method+url近期被访问过，还在redis里面
-                    // 1 验证以及刷新token
-                    String newToken = JwtTokenUtil.refreshHeadToken(headerToken);
-                    // 2 pan duan
-                    if (newToken == null) {
-                        // 没有钥匙？
-                        setFailedResponse(requestContext, CommonResult.upSupport());
-                        return;
-                    }
-                    // 3 修改header，加上userId和ip
+                    //  修改header，加上userId和ip
                     LOGGER.info("网关通行，不存redis");
                     String userId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID);
                     UriUtil.changeHeader(requestContext, request, userId, roleId,
-                            IpAddressUtil.getIpAddress(request), newToken);
+                            IpAddressUtil.getIpAddress(request), headerToken);
                     LOGGER.info("结束");
                     return;
                 }
@@ -133,7 +126,7 @@ public class MallFilter extends ZuulFilter {
         if (!privilegeService.matchAuth(method, uri, MallRole.VISITOR)) {
             // 不在游客名单内
             LOGGER.info("不在游客名单内");
-            setFailedResponse(requestContext, CommonResult.unLogin());
+            setFailedResponse(requestContext, 660, "用户未登录");
         }
     }
 
@@ -160,7 +153,7 @@ public class MallFilter extends ZuulFilter {
         // 检验用户是否够权限访问此uri（method + uri）
         if (tokenMap == null) {
             LOGGER.info("tokenMap为空");
-            setFailedResponse(requestContext, CommonResult.unauthorized("无效token，请重新登录"));
+            setFailedResponse(requestContext, 660, "用户未登录");
             return;
         }
         // FIXME 用户角色
@@ -168,27 +161,23 @@ public class MallFilter extends ZuulFilter {
         if (roleId == null) {
             LOGGER.info("roleId为空");
             // 角色都没有
-            setFailedResponse(requestContext, CommonResult.unauthorized("无效token，请重新登录"));
+            setFailedResponse(requestContext, 660, "用户未登录");
             return;
         }
         if (!privilegeService.matchAuth(method, uri, Integer.valueOf(roleId))) {
             // 不在用户权限名单内
             LOGGER.info("不在角色权限名单内");
-            setFailedResponse(requestContext, CommonResult.unauthorized());
-        } else {
-            // 验证以及刷新token
-            String newToken = JwtTokenUtil.refreshHeadToken(token);
-            if (newToken == null) {
-                // 没有钥匙？
-                setFailedResponse(requestContext, CommonResult.upSupport());
-                return;
+            if (Integer.valueOf(roleId).equals(MallRole.USER)) {
+                setFailedResponse(requestContext, 665, "用户无操作权限");
+            } else {
+                setFailedResponse(requestContext, 674, "管理员无权限");
             }
-
+        } else {
             LOGGER.info("修改header");
             // 修改header，加上userId和ip
             String userId = tokenMap.get(JwtTokenUtil.CLAIM_KEY_USERID);
             UriUtil.changeHeader(requestContext, request, userId, roleId,
-                    IpAddressUtil.getIpAddress(request), newToken);
+                    IpAddressUtil.getIpAddress(request), token);
 
             LOGGER.info("网关通行，存在redis里面");
             // 网关通行
@@ -203,14 +192,14 @@ public class MallFilter extends ZuulFilter {
     /**
      * 设置 401 无权限状态
      */
-    private void setFailedResponse(RequestContext requestContext, Object result) {
-        LOGGER.info("设置失败");
+    private void setFailedResponse(RequestContext requestContext, int code, String message) {
+        LOGGER.info("网关通行失败");
         requestContext.getResponse().setContentType("application/json;charset=UTF-8");
         requestContext.setSendZuulResponse(false);
         requestContext.set("sendForwardFilter.ran", true);
-        requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
+        requestContext.setResponseStatusCode(code);
         requestContext.set("isSuccess", false);
-        requestContext.setResponseBody(JacksonUtil.toJson(result));
+        requestContext.setResponseBody(JacksonUtil.toJson(ResponseUtil.fail(code, message)));
     }
 
 }

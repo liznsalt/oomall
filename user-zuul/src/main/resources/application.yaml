@@ -1,6 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active: jicheng
+  http:
+    cloud:
+      loadbalancer:
+        retry:
+          enabled: true
 
 management:
   endpoint:
@@ -41,17 +46,6 @@ logging:
 #    path: C:\Users\liznsalt\log
   config: classpath:logback-spring.xml
 
-
-feign:
-  hystrix:
-    enabled: true
-    command:
-      default:
-        execution:
-          isolation:
-            thread:
-              timeoutInMilliseconds: 60000
-
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
   secret: mall-secret #JWT加解密使用的密钥
@@ -75,13 +69,26 @@ redis:
 
 ######################################
 
-#设置熔断是为6秒
+feign:
+  hystrix:
+    enabled: true
+#  client:
+#    config:
+#      share:
+#        connectTimeout: 120000
+#        readTimeout: 120000
+#  compression:
+#    request:
+#      enabled: true
+#      mime-types: text/html,application/xml,application/json
+#      min-request-size: 2048
+#    response:
+#      enabled: true
+
 ribbon:
   ConnectTimeout: 60000
   ReadTimeout: 60000
-  eureka:
-    enabled: true
-#关闭超时时间
+
 hystrix:
   command:
     default:
