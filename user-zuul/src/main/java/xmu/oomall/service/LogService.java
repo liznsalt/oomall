@@ -12,9 +12,8 @@ import xmu.oomall.service.impl.LogServiceFallBackImpl;
  * @author liznsalt
  */
 @Component
-@RequestMapping("/logService")
 @FeignClient(
-        name = "oomall-log",
+        name = "logService",
         decode404 = true,
         fallbackFactory = LogServiceFactory.class,
         configuration = FeignClientsConfiguration.class

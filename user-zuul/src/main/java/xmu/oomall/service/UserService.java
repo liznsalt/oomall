@@ -20,20 +20,31 @@ public interface UserService {
 
     @Transactional
     CommonResult register(String username, String password, String telephone, String authCode);
+
+    /**
+     * @deprecated
+     */
     @Transactional
     CommonResult register(MallUser user, String authCode);
+
     String generateAuthCode(String telephone);
+
     @Transactional
     CommonResult updatePassword(String telephone, String password, String authCode);
+
     @Transactional
     CommonResult updateTelephone(String telephone, String password, String authCode, String newPhone);
+
     @Transactional
     CommonResult updateRebate(Integer userId, Integer rebate);
+
     String login(String username, String password, HttpServletRequest request);
+
     String refreshToken(String token);
 
     MallMemberDetails findDetailsByName(String username);
     MallMember findMemberByName(String username);
 
     List<MallUser> list();
+    List<MallUser> listByCondition(String username, Integer page, Integer limit);
 }

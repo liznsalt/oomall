@@ -97,6 +97,10 @@ public class CommonResult<T> {
         return failed(ResultCode.UNSUPPORT);
     }
 
+    public static <T> CommonResult<T> codeError() {
+        return failed(ResultCode.CODEERROR);
+    }
+
     /**
      * @deprecated
      */
@@ -119,6 +123,9 @@ public class CommonResult<T> {
 
     public static <T> CommonResult<T> illegal() {
         return failed(ResultCode.ILLEGAL);
+    }
+    public static <T> CommonResult<T> illegal(String message) {
+        return new CommonResult<T>(ResultCode.ILLEGAL.getCode(), message, null);
     }
 
     /**

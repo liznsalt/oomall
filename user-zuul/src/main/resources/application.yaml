@@ -50,7 +50,7 @@ feign:
         execution:
           isolation:
             thread:
-              timeoutInMilliseconds: 30000
+              timeoutInMilliseconds: 60000
 
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
@@ -75,12 +75,12 @@ redis:
 
 ######################################
 
-#设置熔断是为3秒
+#设置熔断是为6秒
 ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 3000
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
   eureka:
-    enabled: false
+    enabled: true
 #关闭超时时间
 hystrix:
   command:

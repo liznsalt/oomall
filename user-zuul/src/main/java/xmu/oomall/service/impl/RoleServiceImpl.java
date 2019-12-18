@@ -7,7 +7,9 @@ import xmu.oomall.domain.MallPrivilege;
 import xmu.oomall.domain.MallRole;
 import xmu.oomall.mapper.PrivilegeMapper;
 import xmu.oomall.mapper.RoleMapper;
+import xmu.oomall.service.RedisService;
 import xmu.oomall.service.RoleService;
+import xmu.oomall.util.UriUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +26,9 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private PrivilegeMapper privilegeMapper;
 
+    @Autowired
+    private RedisService redisService;
+
     @Override
     public MallRole insert(MallRole role) {
         role.setGmtCreate(LocalDateTime.now());
@@ -36,10 +41,21 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public boolean deleteById(Integer id) {
+        if (MallRole.isCannotDelete(id)) {
+            return false;
+        }
         // 删掉角色下所有权限
         roleMapper.deletePrivilegesByRoleId(id);
+        // 删掉角色下所有管理员
+        roleMapper.deleteAdminsByRoleId(id);
         int count = roleMapper.deleteById(id);
-        return count >= 1;
+        if (count == 0) {
+            return false;
+        } else {
+            // FIXME 去掉redis中存在的记录
+            redisService.deleteByPrefix(UriUtil.METHOD_URL_PREFIX);
+            return true;
+        }
     }
 
     @Override
@@ -79,7 +95,11 @@ public class RoleServiceImpl implements RoleService {
         for (MallPrivilege privilege : privileges) {
             privilege.setRoleId(id);
         }
-        privilegeMapper.addPrivileges(privileges);
+        if (privileges.size() != 0) {
+            privilegeMapper.addPrivileges(privileges);
+        }
+        // FIXME 去掉redis中存在的记录
+        redisService.deleteByPrefix(UriUtil.METHOD_URL_PREFIX);
         return privileges;
     }
 }

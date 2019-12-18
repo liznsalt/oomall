@@ -1,0 +1,17 @@
+server:
+  port: 8012
+spring:
+  application:
+    name: logService
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.103.29.203:3306/ooad
+    username: root
+    password: 123456
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://47.103.29.203:6379/eureka/

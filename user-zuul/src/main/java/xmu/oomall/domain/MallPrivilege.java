@@ -1,5 +1,6 @@
 package xmu.oomall.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.ibatis.type.Alias;
 import standard.oomall.domain.Privilege;
 

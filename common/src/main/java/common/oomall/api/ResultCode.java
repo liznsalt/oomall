@@ -20,6 +20,7 @@ public enum ResultCode implements IErrorCode {
     UPDATEDDATAFAILED(505, "更新数据失败"),
     UNAUTHZ(506, "无操作权限"),
     ILLEGAL(507, "非法操作"),
+    CODEERROR(206, "验证码错误"),
 
     FAILED(-1, "错误");
 //    VALIDATE_FAILED(404, "参数检验失败"),

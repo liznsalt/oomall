@@ -16,7 +16,20 @@
         insert into oomall_privilege(role_id, url, method, gmt_create, gmt_modified, is_deleted)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.roleId}, #{item.url}, #{item.method}, sysdate(), sysdate(), #{item.beDeleted})
+            (
+             #{item.roleId},
+             #{item.url},
+             #{item.method},
+             sysdate(),
+             sysdate(),
+             0
+            )
         </foreach>
     </insert>
+
+    <select id="getWhiteUrlList" resultMap="mallPrivilegeMap">
+        select id, role_id, url, method, gmt_create, gmt_modified, is_deleted
+        from oomall_privilege
+        where is_deleted = 0 and role_id = 0
+    </select>
 </mapper>

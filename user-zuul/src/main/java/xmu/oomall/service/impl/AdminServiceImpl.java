@@ -2,6 +2,7 @@ package xmu.oomall.service.impl;
 
 import common.oomall.api.CommonResult;
 import common.oomall.util.JwtTokenUtil;
+import common.oomall.util.Md5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import xmu.oomall.domain.MallAdmin;
 import xmu.oomall.domain.MallMember;
+import xmu.oomall.domain.MallRole;
 import xmu.oomall.domain.details.MallMemberDetails;
 import xmu.oomall.mapper.AdminMapper;
 import xmu.oomall.service.AdminService;
 import xmu.oomall.service.RedisService;
+import xmu.oomall.service.RoleService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,6 +37,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Value("${redis.key.admin.prefix.authCode}")
     private String REDIS_KEY_PREFIX_AUTH_CODE;
@@ -87,6 +94,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public MallAdmin update(Integer id, MallAdmin admin) {
         admin.setId(id);
+        // 查看role id是否存在
+        if (admin.getRoleId() != null) {
+            MallRole role = roleService.findById(admin.getId());
+            // role不存在
+            if (role == null) {
+                return null;
+            }
+        }
+        // 更新
         int count = adminMapper.updateAdmin(admin);
         return count == 0 ? null : admin;
     }
@@ -96,8 +112,19 @@ public class AdminServiceImpl implements AdminService {
         MallAdmin mallAdmin = findByName(admin.getUsername());
         if (mallAdmin != null) {
             // 已经存在此用户
+            LOGGER.info("已经存在该用户");
             return null;
         }
+        // 检查role是否存在
+        MallRole role = roleService.findById(admin.getRoleId());
+        if (role == null) {
+            LOGGER.info("角色不存在");
+            return null;
+        }
+        // 加密密码
+        admin.setPassword(Md5Util.encode(admin.getPassword()));
+        admin.setGmtCreate(LocalDateTime.now());
+        admin.setBeDeleted(false);
         int count = adminMapper.addAdmin(admin);
         return count == 0 ? null : admin;
     }
@@ -108,7 +135,7 @@ public class AdminServiceImpl implements AdminService {
         // try ..
         try {
             MallMember member = findMemberByName(username);
-            if (!password.equals(member.getPassword())) {
+            if (!member.getPassword().equals(Md5Util.encode(password))) {
                 throw new BadCredentialsException("密码不正确");
             }
             UsernamePasswordAuthenticationToken authentication =

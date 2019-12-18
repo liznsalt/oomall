@@ -2,13 +2,18 @@ package xmu.oomall.service.impl;
 
 import common.oomall.component.ERole;
 import common.oomall.util.JacksonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import standard.oomall.domain.Privilege;
 import xmu.oomall.domain.MallPrivilege;
+import xmu.oomall.domain.MallRole;
 import xmu.oomall.mapper.PrivilegeMapper;
 import xmu.oomall.service.PrivilegeService;
+import xmu.oomall.service.RedisService;
 import xmu.oomall.service.RoleService;
+import xmu.oomall.util.UriUtil;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -19,11 +24,16 @@ import java.util.regex.Pattern;
 @Service
 public class PrivilegeServiceImpl implements PrivilegeService {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private PrivilegeMapper privilegeMapper;
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public List<MallPrivilege> getAll() {
@@ -59,29 +69,54 @@ public class PrivilegeServiceImpl implements PrivilegeService {
     }
 
     @Override
-    public boolean matchAuth(String method, String url, Integer roleId) {
-        // FIXME
-        //Map<Integer, List<MallPrivilege>> privilegesMap = getAllPrivileges();
-        //List<MallPrivilege> rolePrivilegeList = privilegesMap.getOrDefault(roleId, null);
+    public List<MallPrivilege> getWhiteUrlList() {
+        return new ArrayList<>(0);
+//        List<MallPrivilege> privileges = redisService.getPrivilegeList(UriUtil.WHITE_URL_KEY_PREFIX);
+//        if (privileges == null || privileges.size() == 0) {
+//            System.out.println("buzairedis");
+//            privileges = privilegeMapper.getWhiteUrlList();
+//            // 白名单存在redis里面
+////            redisService.setPrivilegeList(UriUtil.WHITE_URL_KEY_PREFIX, privileges);
+//            System.out.println("..");
+////            redisService.expire(UriUtil.WHITE_URL_KEY_PREFIX, UriUtil.WHITE_URL_TIME);
+//        }
+//        return privileges;
+    }
 
+    @Override
+    public boolean matchAuth(String method, String url, Integer roleId) {
         List<MallPrivilege> rolePrivilegeList = roleService.getPrivilegesByRoleId(roleId);
 
         if (rolePrivilegeList == null) {
             return false;
         }
         for (MallPrivilege p : rolePrivilegeList) {
-            String pMethod = p.getMethod();
-            String pUrl = p.getUrl();
-            if (pUrl == null) {
-                continue;
+            if (isMatch(p, method, url)) {
+                logger.info("matchAuth：method+url匹配");
+                return true;
             }
-            // 修改成正则表达式
-            pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
-            if (pMethod == null) {
-                continue;
-            }
-            if (method.toLowerCase().equals(method)  || Pattern.matches(pUrl, url)) {
-                System.out.println("匹配成功");
+        }
+        return false;
+    }
+
+    private boolean isMatch(MallPrivilege privilege, String method, String url) {
+        String pMethod = privilege.getMethod();
+        String pUrl = privilege.getUrl();
+        if (pUrl == null || pMethod == null || method == null || url == null) {
+            return false;
+        }
+        // 修改成正则表达式
+        pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
+        return pMethod.toLowerCase().equals(method.toLowerCase())
+                && Pattern.matches(pUrl, url);
+    }
+
+    @Override
+    public boolean isWhiteUrl(String method, String url) {
+        List<MallPrivilege> privileges = getWhiteUrlList();
+        for (MallPrivilege privilege : privileges) {
+            if (isMatch(privilege, method, url)) {
+                logger.info("isWhiteUrl：method+url匹配");
                 return true;
             }
         }

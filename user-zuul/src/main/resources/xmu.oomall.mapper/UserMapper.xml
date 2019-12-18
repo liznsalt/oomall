@@ -8,7 +8,7 @@
 
     <insert id="addUser" parameterType="mallUser" useGeneratedKeys="true" keyProperty="id">
         insert into oomall_user(password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted, role_id)
-        values (#{password}, #{name}, #{gender}, #{birthday}, #{mobile}, #{nickname}, #{rebate}, #{avatar}, #{lastLoginTime}, #{lastLoginIp}, #{userLevel}, #{wxOpenId}, #{sessionKey}, #{gmtCreate}, #{gmtModified}, #{beDeleted}, #{roleId})
+        values (#{password}, #{name}, #{gender}, #{birthday}, #{mobile}, #{nickname}, #{rebate}, #{avatar}, #{lastLoginTime}, #{lastLoginIp}, #{userLevel}, #{wxOpenId}, #{sessionKey}, sysdate(), sysdate(), 0, #{roleId})
     </insert>
 
     <update id="deleteById" parameterType="Integer">
@@ -72,35 +72,44 @@
                 </otherwise>
             </choose>
         </trim>
-        where id = #{id}
+        where id = #{id} and is_deleted = 0
     </update>
 
     <select id="findById" parameterType="Integer" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
         from oomall_user
-        where id = #{id}
+        where id = #{id} and is_deleted = 0
     </select>
 
     <select id="findByCondition" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
         from oomall_user
+        where is_deleted = 0
         limit ${limit * page - limit}, ${limit * page}
     </select>
 
     <select id="findByName" resultMap="mallUserMap" parameterType="String">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
         from oomall_user
-        where name = #{name}
+        where name = #{name} and is_deleted = 0
     </select>
 
     <select id="findByTelephone" resultMap="mallUserMap" parameterType="String">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
         from oomall_user
-        where mobile = #{telephone}
+        where mobile = #{telephone} and is_deleted = 0
     </select>
 
     <select id="getAllUsers" resultMap="mallUserMap">
         select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
         from oomall_user
+        where is_deleted = 0
+    </select>
+
+    <select id="getUsersByCondition" resultMap="mallUserMap">
+        select id, password, name, gender, birthday, mobile, nickname, rebate, avatar, last_login_time, last_login_ip, user_level, role_id, wx_open_id, session_key, gmt_create, gmt_modified, is_deleted
+        from oomall_user
+        where name = #{username} and is_deleted = 0
+        limit ${limit * page - limit}, ${limit * page}
     </select>
 </mapper>

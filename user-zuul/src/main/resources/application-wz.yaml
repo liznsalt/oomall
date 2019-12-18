@@ -1,0 +1,104 @@
+server:
+  port: 8019
+spring:
+  application:
+    name: user
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.103.29.203/ooad
+    username: root
+    password: 123456
+
+  redis:
+    host: 129.204.57.249
+    password: 123456
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://47.103.29.203:6379/eureka/
+
+# 接下来都是zuul，其它配置请放上面
+serviceUrl: # 各模块地址，方便修改
+  log: http://47.103.29.203:8012
+  ad: http://47.103.29.203:8013
+  aftersales: http://47.103.29.203:8026
+  payment: http://47.103.29.203:8024
+  discount: http://47.103.29.203:8025
+  collection: http://47.103.29.203:8015
+  comment: http://47.103.29.203:8016
+  goodsinfo: http://47.103.29.203:8018
+  topic: http://47.103.29.203:8019
+  footprint: http://47.103.29.203:8017
+  order: http://47.103.29.203:8010
+  cart:  http://101.132.152.28:8014
+  share: http://47.103.29.203:8009
+  freight: http://47.103.29.203:8020
+  address: http://47.103.29.203:8021
+  logistics: http://47.103.29.203:8022
+  wxpayment: http://47.103.29.203:8023
+
+zuul:
+  host:
+    max-total-connections: 10000
+    max-per-route-connections: 50
+  routes: #给服务配置路由
+    user-service:
+      path: /**/userInfoService/**
+      url: forward:/
+    log-service:
+      path: /**/logService/**
+      url: ${serviceUrl.log}
+    ad-service:
+      path: /**/adService/**
+      url: ${serviceUrl.ad}
+    aftersales-service:
+      path: /**/afterSaleService/**
+      url: ${serviceUrl.aftersales}
+    payment-service:
+      path: /**/paymentService/**
+      url: ${serviceUrl.payment}
+    discount-service:
+      path: /**/discountService/**
+      url: ${serviceUrl.discount}
+    collection-service:
+      path: /**/collectionService/**
+      url: ${serviceUrl.collection}
+    comment-service:
+      path: /**/commentService/**
+      url: ${serviceUrl.comment}
+    goods-service:
+      path: /**/goodsInfoService/**
+      url: ${serviceUrl.goodsinfo}
+    topic-service:
+      path: /**/topicService/**
+      url: ${serviceUrl.topic}
+    footprint-service:
+      path: /**/footprintService/**
+      url: ${serviceUrl.footprint}
+    order-service:
+      path: /**/orderService/**
+      url: ${serviceUrl.order}
+    cart-service:
+      path: /**/cartService/**
+      url: ${serviceUrl.cart}
+    share-service:
+      path: /**/shareService/**
+      url: ${serviceUrl.share}
+    freight-service:
+      path: /**/freightService/**
+      url: ${serviceUrl.freight}
+    address-service:
+      path: /**/addressService/**
+      url: ${serviceUrl.address}
+    logistics-service:
+      path: /**/logisticsService/**
+      url: ${serviceUrl.logistics}
+    wxpayment-service:
+      path: /**/wxPaymentService/**
+      url: ${serviceUrl.wxpayment}
+  sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤
+  add-host-header: true

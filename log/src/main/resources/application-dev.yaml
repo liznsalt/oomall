@@ -44,4 +44,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://liznsalt:123456@localhost:9000/eureka/
+      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/

@@ -24,6 +24,19 @@ public class UriUtil {
     public static String PASS_VALUE = "oomall-pass-key-12345313";
 
     /**
+     * @see UriUtil#generateRedisKey(String, String)
+     * 存method+url的前缀
+     */
+    public static final String METHOD_URL_PREFIX = "Oomall_Method_Url:";
+    /**
+     * 存放时间 1min
+     */
+    public static final Long METHOD_URL_TIME = 60L * 10;
+
+    public static final String WHITE_URL_KEY_PREFIX = "Oomall_White_Urls:";
+    public static final Long WHITE_URL_TIME = 12L * 60 * 60;
+
+    /**
      * @deprecated
      * @param method 方法
      * @param uri url
@@ -51,5 +64,12 @@ public class UriUtil {
         requestContext.addZuulRequestHeader("userId", userId);
         requestContext.addZuulRequestHeader("roleId", roleId);
         requestContext.addZuulRequestHeader("ip", ip);
+    }
+
+    /**
+     * 生成存放在redis中的method+url
+     */
+    public static String generateRedisKey(String method, String url) {
+        return METHOD_URL_PREFIX + method + url;
     }
 }
