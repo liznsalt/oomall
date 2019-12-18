@@ -14,13 +14,28 @@ import javax.servlet.http.HttpServletRequest;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/logService")
 public class LogController {
 
     private static final Logger logger = LoggerFactory.getLogger(LogController.class);
 
     @Autowired
     private LogService logService;
+
+    private final static Integer INSERT = 1;
+    private final static Integer DELETE = 3;
+    private final static Integer UPDATE = 2;
+    private final static Integer SELECT = 0;
+    private void writeLog(Integer adminId, String ip, Integer type,
+                          String actions, Integer statusCode, Integer actionId) {
+        MallLog log = new MallLog();
+        log.setAdminId(adminId);
+        log.setIp(ip);
+        log.setType(type);
+        log.setActions(actions);
+        log.setStatusCode(statusCode);
+        log.setActionId(actionId);
+        logService.addLog(log);
+    }
 
     private Integer getUserId(HttpServletRequest request) {
         String userIdStr = request.getHeader("userId");
@@ -63,5 +78,6 @@ public class LogController {
         } else {
             return CommonResult.success(logService.findByAdminId(page, limit, adminId));
         }
+
     }
 }
