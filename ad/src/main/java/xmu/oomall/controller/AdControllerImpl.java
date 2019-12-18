@@ -1,6 +1,7 @@
 package xmu.oomall.controller;
 
 import common.oomall.api.CommonResult;
+import common.oomall.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import standard.oomall.domain.Log;
@@ -55,50 +56,51 @@ public class AdControllerImpl {
                                   HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
         String ip = request.getHeader("ip");
 
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(680,"获取广告失败");
         }
 
         List<MallAd> ads = adService.adminList(adTitle, adContent, page, limit);
         writeLog(adminId, ip, SELECT, "查看广告列表", 1, null);
-        return CommonResult.success(ads);
+        return ResponseUtil.ok(ads);
     }
 
-    @PostMapping("/admin/ads")
+    @PostMapping("/ads")
     public Object adminCreateAad(@RequestBody MallAd ad, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
         String ip = request.getHeader("ip");
 
         if (ad == null) {
-            return CommonResult.badArgumentValue("ad 为空");
+            return ResponseUtil.fail(681,"创建广告失败");
         }
 
         MallAd newAd = adService.add(ad);
         writeLog(adminId, ip, INSERT, "创建广告", 1, newAd.getId());
-        return CommonResult.success(newAd);
+        return ResponseUtil.ok(newAd);
     }
 
     @GetMapping("/ads/{id}")
     public Object adminFindAd(@PathVariable Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
         String ip = request.getHeader("ip");
 
         if (id == null || id<=0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(680,"获取广告失败");
         }
 
         writeLog(adminId, ip, SELECT, "查看广告", 1, id);
-        return CommonResult.success(adService.find(id));
+        MallAd ad = adService.find(id);
+        return ResponseUtil.ok(ad);
     }
 
     @PutMapping("/ads/{id}")
@@ -106,18 +108,18 @@ public class AdControllerImpl {
                                 HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
         String ip = request.getHeader("ip");
 
         if (id == null || id<=0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(682,"修改广告失败");
         }
 
         ad.setId(id);
         ad = adService.update(ad);
         writeLog(adminId, ip,UPDATE, "修改广告", 1, id);
-        return CommonResult.success(ad);
+        return ResponseUtil.ok(ad);
     }
 
     @DeleteMapping("/ads/{id}")
@@ -125,27 +127,27 @@ public class AdControllerImpl {
                                 HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
         String ip = request.getHeader("ip");
 
         if (id == null || id <= 0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(683,"删除广告失败");
         }
 
         boolean ok = adService.deleteById(id);
         if (ok) {
             writeLog(adminId, ip, DELETE, "删除广告", 1, id);
-            return CommonResult.success();
+            return ResponseUtil.ok();
         } else {
             writeLog(adminId, ip, DELETE, "删除广告", 0, id);
-            return CommonResult.failed();
+            return ResponseUtil.fail(683,"删除广告失败");
         }
     }
 
     @GetMapping("/ads")
     public Object userFindAd() {
         List<MallAd> ads = adService.userList();
-        return CommonResult.success(ads);
+        return ResponseUtil.ok(ads);
     }
 }
