@@ -1,6 +1,8 @@
 package xmu.oomall.controller;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import common.oomall.api.CommonResult;
+import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,89 +56,75 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/topics")
-    public Object list(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer limit,
-                       HttpServletRequest request) {
+    public Object list(HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(660,"用户未登录");
         }
 
-        // 参数校验
-        if (page == null || page < 0) {
-            return CommonResult.badArgumentValue();
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
+        if(topicList==null){
+            return ResponseUtil.fail(650,"该话题是无效话题");
         }
-        if (limit == null || limit < 0) {
-            return CommonResult.badArgumentValue();
-        }
-
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
-        return CommonResult.success(topicList);
+        return ResponseUtil.ok(topicList);
     }
 
     @GetMapping("/admin/topics")
-    public Object adminlist(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer limit,
-                       HttpServletRequest request) {
+    public Object adminlist(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
-        // 参数校验
-        if (page == null || page < 0) {
-            return CommonResult.badArgumentValue();
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
+        if(topicList==null){
+            return ResponseUtil.fail(650,"该话题是无效话题");
         }
-        if (limit == null || limit < 0) {
-            return CommonResult.badArgumentValue();
-        }
-
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
-        return CommonResult.success(topicList);
+        return ResponseUtil.ok(topicList);
     }
 
     @GetMapping("/topics/{id}")
     public Object detail(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(660,"用户未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(650,"该话题是无效话题");
         }
 
         MallTopic topic = topicService.findNotDeletedTopicById(id);
-        return CommonResult.success(topic);
+        return ResponseUtil.ok(topic);
     }
 
     @GetMapping("/admin/topics/{id}")
     public Object admindetail(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(650,"该话题是无效话题");
         }
 
         MallTopic topic = topicService.findNotDeletedTopicById(id);
-        return CommonResult.success(topic);
+        return ResponseUtil.ok(topic);
     }
 
     @PostMapping("/topics")
     public Object create(@RequestBody TopicPo topicPo, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
         //参数校验
         if((topicPo.getPicUrlList()==null)||(topicPo.getContent()==null)) {
-            return CommonResult.badArgument();
+            return ResponseUtil.fail(652,"话题添加失败");
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
@@ -146,10 +134,10 @@ public class TopicControllerImpl {
             MallTopic mallTopic=new MallTopic(topicPo);
             MallTopic resTopic = topicService.addTopic(mallTopic);
             writeLog(adminId, ip, INSERT, "添加专题", 1, resTopic.getId());
-            return CommonResult.success(resTopic.toTopicPo());
+            return ResponseUtil.ok(resTopic.toTopicPo());
         } catch (Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
-            return CommonResult.updatedDataFailed();
+            return ResponseUtil.fail(652,"话题添加失败");
         }
     }
 
@@ -158,15 +146,15 @@ public class TopicControllerImpl {
                          HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
         //参数校验
         if((topicPo.getPicUrlList()==null)||(topicPo.getContent()==null)) {
-            return CommonResult.badArgument();
+            return ResponseUtil.fail(651,"话题更新失败");
         }
         if(id==null || id < 0){
-            return CommonResult.badArgument();
+            return ResponseUtil.fail(651,"话题更新失败");
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
@@ -176,15 +164,15 @@ public class TopicControllerImpl {
             MallTopic result=topicService.updateTopic(new MallTopic(topicPo));
             if (result!=null) {
                 writeLog(adminId, ip, UPDATE, "修改专题", 1, id);
-                return CommonResult.success(result.toTopicPo());
+                return ResponseUtil.ok(result.toTopicPo());
             }
             else {
                 writeLog(adminId, ip, UPDATE, "修改专题", 0, id);
-                return CommonResult.updatedDataFailed();
+                return ResponseUtil.fail(651,"话题更新失败");
             }
         } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
-            return CommonResult.updatedDataFailed();
+            return ResponseUtil.fail(651,"话题更新失败");
         }
     }
 
@@ -193,12 +181,12 @@ public class TopicControllerImpl {
                          HttpServletRequest request){
         Integer userId = getUserId(request);
         if (userId == null) {
-            return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return CommonResult.badArgument();
+            return ResponseUtil.fail(653,"话题删除失败");
         }
 
         Integer adminId = Integer.valueOf(request.getHeader("userId"));
@@ -208,14 +196,14 @@ public class TopicControllerImpl {
             Boolean result = topicService.deleteTopicById(id);
             if (result) {
                 writeLog(adminId, ip, DELETE, "删除专题", 1, id);
-                return CommonResult.success();
+                return ResponseUtil.ok();
             } else {
                 writeLog(adminId, ip, DELETE, "删除专题", 0, id);
-                return CommonResult.failed();
+                return ResponseUtil.fail(653,"话题删除失败");
             }
         } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
-            return CommonResult.failed();
+            return ResponseUtil.fail(653,"话题删除失败");
         }
     }
 }

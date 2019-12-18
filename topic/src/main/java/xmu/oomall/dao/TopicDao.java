@@ -51,43 +51,19 @@ public class TopicDao {
     }
 
     /**
-     * 根据 id 查找专题
-     * @param id 专题 id
-     * @return 专题信息
-     */
-    public MallTopic findTopicById(Integer id){
-        return topicMapper.findTopicById(id);
-    }
-
-    /**
      * 根据 id 查找未删除的专题
      * @param id 专题 id
      * @return 专题信息
      */
     public MallTopic findNotDeletedTopicById(Integer id){
-        return topicMapper.findNotDeletedTopicById(id);
-    }
-
-    /**
-     * 根据分页条件查找专题信息
-     * @param page 当前页数
-     * @param limit 每页记录条数
-     * @return 专题信息列表
-     */
-    public List<MallTopic> findTopicsByCondition(Integer page, Integer limit){
-        return topicMapper.findTopicsByCondition(page, limit);
+        return topicMapper.findNotDeletedTopicById(id).picturesset();
     }
 
     /**
      * 根据分页条件查找未删除的专题信息
-     * @param page 当前页数
-     * @param limit 每页记录条数
      * @return 专题信息列表
      */
-    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit){
-        return topicMapper.findNotDeletedTopicsByCondition(page, limit);
+    public List<MallTopic> findNotDeletedTopicsByCondition(){
+        return topicMapper.findNotDeletedTopicsByCondition().stream().map(MallTopic::picturesset).collect(Collectors.toList());
     }
-
-
-
 }

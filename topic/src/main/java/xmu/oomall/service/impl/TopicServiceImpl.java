@@ -39,14 +39,6 @@ public class TopicServiceImpl implements TopicService{
     }
 
     @Override
-    public MallTopic findTopicById(Integer id) {
-        if (id == null) {
-            return null;
-        }
-        return topicDao.findTopicById(id);
-    }
-
-    @Override
     public MallTopic findNotDeletedTopicById(Integer id) {
         if (id == null) {
             return null;
@@ -55,25 +47,9 @@ public class TopicServiceImpl implements TopicService{
     }
 
     @Override
-    public List<MallTopic> findTopicsByCondition(Integer page, Integer limit) {
-        if (page <= 0 && limit <= 0) {
-            return null;
-        }
+    public List<MallTopic> findNotDeletedTopicsByCondition() {
         try {
-            return topicDao.findTopicsByCondition(page, limit);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit) {
-        if (page <= 0 && limit <= 0) {
-            return null;
-        }
-        try {
-            return topicDao.findNotDeletedTopicsByCondition(page, limit);
+            return topicDao.findNotDeletedTopicsByCondition();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
