@@ -1,6 +1,7 @@
 package xmu.oomall.controller;
 
 import common.oomall.api.CommonResult;
+import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +66,14 @@ public class LogController {
                        HttpServletRequest request) {
         Integer loginAdminId = getUserId(request);
         if (loginAdminId == null) {
-            return CommonResult.unLogin();
+            //return CommonResult.unLogin();
+            return ResponseUtil.fail(668,"管理员未登录");
         }
 
         // 参数校验
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            return CommonResult.badArgumentValue();
+            //return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(901,"查看日志失败");
         }
 
         if (adminId == null) {
