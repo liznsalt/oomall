@@ -18,7 +18,6 @@ import xmu.oomall.service.impl.LogServiceFallback;
         decode404 = true,
         fallbackFactory = LogServiceFactory.class,
         configuration = FeignClientsConfiguration.class)
-@RequestMapping("/logService")
 public interface LogService {
     /**
      * 添加日志

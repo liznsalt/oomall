@@ -15,7 +15,6 @@ import java.util.List;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/adService")
 public class AdControllerImpl {
 
     @Autowired
@@ -49,8 +48,10 @@ public class AdControllerImpl {
     }
 
     @GetMapping("/admin/ads")
-    public Object adminFindAdList(String adTitle, String adContent,
-                                  Integer page, Integer limit,
+    public Object adminFindAdList(@RequestParam String adTitle,
+                                  @RequestParam String adContent,
+                                  @RequestParam Integer page,
+                                  @RequestParam Integer limit,
                                   HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
@@ -68,7 +69,7 @@ public class AdControllerImpl {
     }
 
     @PostMapping("/admin/ads")
-    public Object adminCreateAad(MallAd ad, HttpServletRequest request) {
+    public Object adminCreateAad(@RequestBody MallAd ad, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
             return CommonResult.unLogin();
@@ -92,8 +93,8 @@ public class AdControllerImpl {
         }
         String ip = request.getHeader("ip");
 
-        if (id == null) {
-            return CommonResult.badArgumentValue("id 为空");
+        if (id == null || id<=0) {
+            return CommonResult.badArgumentValue();
         }
 
         writeLog(adminId, ip, SELECT, "查看广告", 1, id);
@@ -109,8 +110,8 @@ public class AdControllerImpl {
         }
         String ip = request.getHeader("ip");
 
-        if (id == null) {
-            return CommonResult.badArgumentValue("id 为空");
+        if (id == null || id<=0) {
+            return CommonResult.badArgumentValue();
         }
 
         ad.setId(id);
@@ -122,11 +123,14 @@ public class AdControllerImpl {
     @DeleteMapping("/ads/{id}")
     public Object adminDeleteAd(@PathVariable Integer id,
                                 HttpServletRequest request) {
-        Integer adminId = Integer.valueOf(request.getHeader("userId"));
+        Integer adminId = getUserId(request);
+        if (adminId == null) {
+            return CommonResult.unLogin();
+        }
         String ip = request.getHeader("ip");
 
-        if (id == null) {
-            return CommonResult.badArgumentValue("id 为空");
+        if (id == null || id <= 0) {
+            return CommonResult.badArgumentValue();
         }
 
         boolean ok = adService.deleteById(id);
