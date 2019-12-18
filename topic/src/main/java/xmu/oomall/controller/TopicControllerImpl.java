@@ -56,20 +56,13 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/topics")
-    public Object list(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer limit,
-                       HttpServletRequest request) {
+    public Object list(HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
             return ResponseUtil.fail(660,"用户未登录");
         }
 
-//        // 参数校验
-//        if (page == null || page < 0 || limit == null || limit < 0) {
-//            return ResponseUtil.fail(650, "该话题是无效话题");
-//        }
-
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
         if(topicList==null){
             return ResponseUtil.fail(650,"该话题是无效话题");
         }
@@ -77,20 +70,13 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/admin/topics")
-    public Object adminlist(@RequestParam(defaultValue = "1") Integer page,
-                       @RequestParam(defaultValue = "10") Integer limit,
-                       HttpServletRequest request) {
+    public Object adminlist(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
             return ResponseUtil.fail(668,"管理员未登录");
         }
 
-        // 参数校验
-        if (page == null || page < 0 || limit == null || limit < 0) {
-            return ResponseUtil.fail(650, "该话题是无效话题");
-        }
-
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
         if(topicList==null){
             return ResponseUtil.fail(650,"该话题是无效话题");
         }
