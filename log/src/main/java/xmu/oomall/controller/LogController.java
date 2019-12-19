@@ -1,6 +1,5 @@
 package xmu.oomall.controller;
 
-import common.oomall.api.CommonResult;
 import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +50,12 @@ public class LogController {
     @PostMapping("/log")
     public Object addLog(@RequestBody MallLog log) {
         if (log == null) {
-            return CommonResult.badArgumentValue("log不能为空");
+            //return CommonResult.badArgumentValue("log不能为空");
+            return ResponseUtil.fail(000,"xxx");
+            //TODO:难顶啊，没有错误码，标准组地说会补一个
         }
         MallLog newLog = logService.addLog(log);
-        return CommonResult.success(newLog);
+        return ResponseUtil.ok(newLog);
     }
 
     // 外部接口
@@ -66,20 +67,18 @@ public class LogController {
                        HttpServletRequest request) {
         Integer loginAdminId = getUserId(request);
         if (loginAdminId == null) {
-            //return CommonResult.unLogin();
             return ResponseUtil.fail(668,"管理员未登录");
         }
 
         // 参数校验
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            //return CommonResult.badArgumentValue();
             return ResponseUtil.fail(901,"查看日志失败");
         }
 
         if (adminId == null) {
-            return CommonResult.success(logService.findLogsByCondition(page, limit));
+            return ResponseUtil.ok(logService.findLogsByCondition(page, limit));
         } else {
-            return CommonResult.success(logService.findByAdminId(page, limit, adminId));
+            return ResponseUtil.ok(logService.findByAdminId(page, limit,adminId));
         }
 
     }
