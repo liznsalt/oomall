@@ -3,6 +3,8 @@ package xmu.oomall.service.impl;
 import common.oomall.api.CommonResult;
 import common.oomall.util.IpAddressUtil;
 import common.oomall.util.JwtTokenUtil;
+import common.oomall.util.Md5Util;
+import common.oomall.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import xmu.oomall.domain.MallMember;
+import xmu.oomall.domain.MallRole;
 import xmu.oomall.domain.MallUser;
 import xmu.oomall.domain.details.MallMemberDetails;
 import xmu.oomall.mapper.UserMapper;
@@ -23,7 +27,9 @@ import xmu.oomall.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -32,6 +38,11 @@ import java.util.Random;
 @Service
 public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
 
     @Autowired
     private UserMapper userMapper;
@@ -46,32 +57,36 @@ public class UserServiceImpl implements UserService {
     private Long AUTH_CODE_EXPIRE_SECONDS;
 
     @Override
-    public CommonResult register(String username, String password, String telephone, String authCode) {
+    public Object register(String username, String password, String telephone, String authCode) {
         // 验证验证码
         if (!verifyAuthCode(authCode, telephone)) {
-            return CommonResult.badArgumentValue("验证码错误");
+            return ResponseUtil.fail(666, "验证码错误");
         }
         // 查询是否已经有该用户
         MallUser user1 = findByName(username);
         if (user1 != null) {
-            return CommonResult.badArgumentValue("该用户名已被占用");
+            return ResponseUtil.fail(661, "用户名已被注册");
         }
         MallUser user2 = findByTelephone(telephone);
         if (user2 != null) {
-            return CommonResult.badArgumentValue("该手机已经被注册");
+            return ResponseUtil.fail(662, "手机号已被注册");
         }
-        //没有用户的话进行注册
+        // 没有用户的话进行注册
         MallUser newUser = new MallUser();
         newUser.setName(username);
         newUser.setMobile(telephone);
-        newUser.setPassword(password);
+        newUser.setPassword(Md5Util.encode(password));
+        newUser.setRoleId(MallRole.USER);
+        newUser.setRebate(0);
+        newUser.setUserLevel(0);
+        newUser.setBeDeleted(false);
         // 添加进数据库
         int count = userMapper.addUser(newUser);
         if (count == 0) {
             return CommonResult.serious();
         } else {
             newUser.setPassword(null);
-            return CommonResult.success(newUser, "注册成功");
+            return ResponseUtil.ok(newUser);
         }
     }
 
@@ -79,7 +94,7 @@ public class UserServiceImpl implements UserService {
     public CommonResult register(MallUser user, String authCode) {
         // 验证验证码
         if (!verifyAuthCode(authCode, user.getMobile())) {
-            return CommonResult.failed("验证码错误");
+            return CommonResult.codeError();
         }
         // 查询是否已经有该用户
         MallUser user1 = findByName(user.getName());
@@ -88,8 +103,10 @@ public class UserServiceImpl implements UserService {
             return CommonResult.failed("该用户已经存在");
         }
         // 添加进数据库
+        user.setRebate(0);
         userMapper.addUser(user);
         user.setPassword(null);
+        user.setRoleId(MallRole.USER);
         // 成功
         return CommonResult.success(user, "注册成功");
     }
@@ -108,54 +125,63 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonResult updatePassword(String telephone, String password, String authCode) {
+    public Object updatePassword(String telephone, String password, String authCode) {
         MallUser user = findByTelephone(telephone);
         if (user == null) {
             return CommonResult.badArgumentValue("该手机号没注册过");
         }
         //验证验证码
         if (!verifyAuthCode(authCode,telephone)) {
-            return CommonResult.badArgumentValue("验证码错误");
+            return ResponseUtil.fail(666, "验证码错误");
         }
-        user.setPassword(password);
+        // md5加密
+        user.setPassword(Md5Util.encode(password));
         int count = userMapper.updateUser(user);
         if (count == 0) {
-            return CommonResult.updatedDataFailed("更新失败");
+            return ResponseUtil.fail(664, "修改用户信息失败");
         } else {
             user.setPassword(null);
-            return CommonResult.success(user);
+            return ResponseUtil.ok(user);
         }
     }
 
     @Override
-    public CommonResult updateTelephone(String telephone, String password, String authCode, String newPhone) {
+    public Object updateTelephone(String telephone, String password, String authCode, String newPhone) {
         MallUser user = findByTelephone(telephone);
         if (user == null) {
-            return CommonResult.failed("该手机号没注册过");
+            return CommonResult.illegal("旧手机没注册过");
         }
-        //验证验证码
+        // 验证验证码
         if (!verifyAuthCode(authCode,telephone)) {
-            return CommonResult.failed("验证码错误");
+            return ResponseUtil.fail(666, "验证码错误");
         }
+        // 检查
+        MallUser mallUser = findByTelephone(newPhone);
+        if (mallUser != null) {
+            return ResponseUtil.fail(662, "手机号已被注册");
+        }
+        // 成功
         user.setMobile(newPhone);
         userMapper.updateUser(user);
         user.setPassword(null);
-        return CommonResult.success(user, "手机号码修改成功");
+        return ResponseUtil.ok(user);
     }
 
     @Override
-    public CommonResult updateRebate(Integer userId, Integer rebate) {
+    public Object updateRebate(Integer userId, Integer rebate) {
         MallUser user = findById(userId);
         if (user == null) {
-            return CommonResult.failed("该账号不存在");
+            return CommonResult.updatedDataFailed("该账号不存在");
         }
-        int oldRebate = user.getRebate();
-        user.setRebate(rebate);
+        if (user.getRebate() == null) {
+            user.setRebate(0);
+        }
+        user.setRebate(user.getRebate() + rebate);
         int count = userMapper.updateUser(user);
         if (count >= 1) {
-            return CommonResult.success(rebate);
+            return ResponseUtil.ok(rebate);
         } else {
-            return CommonResult.failed("修改失败");
+            return ResponseUtil.fail(664, "修改用户信息失败");
         }
     }
 
@@ -171,7 +197,8 @@ public class UserServiceImpl implements UserService {
             }
             // security 登录 生成 token
             MallMember member = new MallMember(user);
-            if (!password.equals(member.getPassword())) {
+            // 比较密码摘要
+            if (!member.getPassword().equals(Md5Util.encode(password))) {
                 throw new BadCredentialsException("密码不正确");
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -249,6 +276,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<MallUser> list() {
         return userMapper.getAllUsers();
+    }
+
+    @Override
+    public List<MallUser> listByCondition(String username, Integer page, Integer limit) {
+        return userMapper.getUsersByCondition(username, page, limit);
     }
 
     // util

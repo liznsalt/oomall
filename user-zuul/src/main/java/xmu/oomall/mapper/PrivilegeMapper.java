@@ -14,4 +14,5 @@ import java.util.List;
 public interface PrivilegeMapper {
     List<MallPrivilege> getAll();
     int addPrivileges(List<MallPrivilege> privileges);
+    List<MallPrivilege> getWhiteUrlList();
 }

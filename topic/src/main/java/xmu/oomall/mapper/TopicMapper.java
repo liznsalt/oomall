@@ -50,18 +50,8 @@ public interface TopicMapper {
     MallTopic findNotDeletedTopicById(Integer id);
 
     /**
-     * 根据分页条件查找专题信息
-     * @param page 当前页数
-     * @param limit 每页记录条数
-     * @return 专题信息列表
-     */
-    List<MallTopic> findTopicsByCondition(Integer page, Integer limit);
-
-    /**
      * 根据分页条件查找未删除的专题信息
-     * @param page 当前页数
-     * @param limit 每页记录条数
      * @return 专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit);
+    List<MallTopic> findNotDeletedTopicsByCondition();
 }

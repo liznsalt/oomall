@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: 3400
 spring:
   application:
     name: userInfoService
@@ -11,11 +11,11 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
-      initial-size: 3
+      initial-size: 2
       #最小连接池数量
-      min-idle: 3
+      min-idle: 2
       #最大连接池数量
-      max-active: 10
+      max-active: 2
       #获取连接时最大等待时间
       max-wait: 60000
       #配置监控页面访问登录名及密码
@@ -35,6 +35,7 @@ spring:
           #慢SQL执行时间
           slow-sql-millis: 100
       validation-query: select 1
+
   redis:
     host: 101.132.152.28
     password: hyt123
@@ -51,7 +52,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/
+      defaultZone: http://47.100.91.153:3500/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 101.132.152.28
+    non-secure-port: 3400
 
 # 接下来都是zuul，其它配置请放上面
 zuul:

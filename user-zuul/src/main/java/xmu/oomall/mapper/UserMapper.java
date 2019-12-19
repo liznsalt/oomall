@@ -22,4 +22,5 @@ public interface UserMapper {
     List<MallUser> findByTelephone(String telephone);
 
     List<MallUser> getAllUsers();
+    List<MallUser> getUsersByCondition(String username, Integer page, Integer limit);
 }

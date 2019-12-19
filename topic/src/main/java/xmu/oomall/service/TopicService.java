@@ -31,13 +31,6 @@ public interface TopicService {
     Boolean deleteTopicById(Integer id) throws Exception;
 
     /**
-     * 查找专题
-     * @param id 专题 id
-     * @return 专题信息
-     */
-    MallTopic findTopicById(Integer id);
-
-    /**
      * 查找专题且该专题未被删除
      * @param id 专题 id
      * @return 专题信息
@@ -45,18 +38,8 @@ public interface TopicService {
     MallTopic findNotDeletedTopicById(Integer id);
 
     /**
-     * 通过条件查找专题信息
-     * @param page 当前第几页
-     * @param limit 每页记录条数
-     * @return 符合情况的专题信息列表
-     */
-    List<MallTopic> findTopicsByCondition(Integer page, Integer limit);
-
-    /**
      * 通过条件查找未被删除的专题信息
-     * @param page 当前第几页
-     * @param limit 每页记录条数
      * @return 符合情况且未被删除的专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition(Integer page, Integer limit);
+    List<MallTopic> findNotDeletedTopicsByCondition();
 }

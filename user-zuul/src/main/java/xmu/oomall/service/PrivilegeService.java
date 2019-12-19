@@ -25,6 +25,12 @@ public interface PrivilegeService {
     List<String> getWhiteList();
 
     /**
+     * 白名单
+     * @return 白名单
+     */
+    List<MallPrivilege> getWhiteUrlList();
+
+    /**
      *  检验url+method是否合法
      * @param method
      * @param url
@@ -32,4 +38,12 @@ public interface PrivilegeService {
      * @return
      */
     boolean matchAuth(String method, String url, Integer roleId);
+
+    /**
+     *  检查是否是白名单url
+     * @param method
+     * @param url
+     * @return
+     */
+    boolean isWhiteUrl(String method, String url);
 }

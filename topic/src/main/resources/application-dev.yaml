@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: oomall-topic
+    name: topicService
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://101.132.152.28:3306/oomall

@@ -1,5 +1,9 @@
 package xmu.oomall.service;
 
+import xmu.oomall.domain.MallPrivilege;
+
+import java.util.List;
+
 /**
  * @author liznsalt
  */
@@ -30,4 +34,27 @@ public interface RedisService {
      */
     Long increment(String key, long delta);
 
+    // 对象redis
+
+    /**
+     * 存储权限列表
+     * @param key k
+     * @param privileges 权限列表
+     */
+    void setPrivilegeList(String key, List<MallPrivilege> privileges);
+
+    /**
+     * 获取权限列表
+     * @param key k
+     * @return 权限列表
+     */
+    List<MallPrivilege> getPrivilegeList(String key);
+
+    // 额外
+
+    /**
+     * 删除前缀
+     * @param prefix 前缀key
+     */
+    void deleteByPrefix(String prefix);
 }

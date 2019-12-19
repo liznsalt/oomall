@@ -24,4 +24,5 @@ public interface RoleMapper {
 
     List<MallPrivilege> getPrivilegesByRoleId(Integer id);
     int deletePrivilegesByRoleId(Integer id);
+    int deleteAdminsByRoleId(Integer id);
 }
