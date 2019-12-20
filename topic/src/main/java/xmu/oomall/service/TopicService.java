@@ -13,6 +13,7 @@ public interface TopicService {
      * 添加专题
      * @param topic 专题
      * @return 添加后的专题
+     * @throws Exception
      */
     MallTopic addTopic(MallTopic topic) throws Exception;
 
@@ -20,6 +21,7 @@ public interface TopicService {
      * 更新专题信息
      * @param topic 专题信息
      * @return 更新是否成功
+     * @throws Exception
      */
     MallTopic updateTopic(MallTopic topic) throws Exception;
 
@@ -27,6 +29,7 @@ public interface TopicService {
      * 删除专题
      * @param id 删除专题的 id
      * @return 删除是否成功
+     * @throws Exception
      */
     Boolean deleteTopicById(Integer id) throws Exception;
 
