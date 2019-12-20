@@ -44,6 +44,7 @@ public interface LogMapper {
      * 根据Example条件进行查询
      * @param page 页数
      * @param limit 每页行数
+     * @param adminId 管理员id
      * @return 日志列表
      */
     List<MallLog> findLogsByAdminId(Integer page, Integer limit, Integer adminId);
