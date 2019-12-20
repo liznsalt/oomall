@@ -42,7 +42,7 @@ public class CartControllerImpl {
             if (product == null) {
                 Integer errno = JacksonUtil.parseInteger(JacksonUtil.toJson(object),
                         "errno");
-                Integer ok = 200;
+                Integer ok = 0;
                 if (errno != null && errno.equals(ok)) {
                     return new Product();
                 } else {
