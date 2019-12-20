@@ -22,11 +22,13 @@ public class MallTopic extends Topic {
         this.setBeDeleted(topicPo.getBeDeleted());
         this.setContent(topicPo.getContent());
         String[] arr=this.getPicUrlList().split(",");
-        if(arr[0].startsWith("{\"pictures\":[")){
-            arr[0]=arr[0].replace("{\"pictures\":[","");
+        String head="{\"pictures\":[";
+        String tail="]}";
+        if(arr[0].startsWith(head)){
+            arr[0]=arr[0].replace(head,"");
         }
-        if(arr[arr.length-1].endsWith("]}")){
-            arr[arr.length-1]=arr[arr.length-1].replace("]}","");
+        if(arr[arr.length-1].endsWith(tail)){
+            arr[arr.length-1]=arr[arr.length-1].replace(tail,"");
         }
         List<String> list= Arrays.asList(arr);
         this.setPictures(list);
@@ -43,11 +45,13 @@ public class MallTopic extends Topic {
     }
     public MallTopic picturesset(){
         String[] arr=this.getPicUrlList().split(",");
-        if(arr[0].startsWith("{\"pictures\":[")){
-            arr[0]=arr[0].replace("{\"pictures\":[","");
+        String head="{\"pictures\":[";
+        String tail="]}";
+        if(arr[0].startsWith(head)){
+            arr[0]=arr[0].replace(head,"");
         }
-        if(arr[arr.length-1].endsWith("]}")){
-            arr[arr.length-1]=arr[arr.length-1].replace("]}","");
+        if(arr[arr.length-1].endsWith(tail)){
+            arr[arr.length-1]=arr[arr.length-1].replace(tail,"");
         }
         List<String> list= Arrays.asList(arr);
         this.setPictures(list);

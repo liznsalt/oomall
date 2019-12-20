@@ -50,7 +50,6 @@ public class LogController {
     @PostMapping("/log")
     public Object addLog(@RequestBody MallLog log) {
         if (log == null) {
-            //return CommonResult.badArgumentValue("log不能为空");
             return ResponseUtil.fail(000,"xxx");
             //TODO:难顶啊，没有错误码，标准组地说会补一个
         }
