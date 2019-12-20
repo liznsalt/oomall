@@ -77,7 +77,7 @@ public class AdControllerImpl {
         }
         String ip = request.getHeader("ip");
 
-        if (ad == null) {
+        if (ad == null||ad.getStartTime().isAfter(ad.getEndTime())) {
             return ResponseUtil.fail(681,"创建广告失败");
         }
 
@@ -112,7 +112,7 @@ public class AdControllerImpl {
         }
         String ip = request.getHeader("ip");
 
-        if (id == null || id<=0) {
+        if (id == null || id<=0 || ad.getStartTime().isAfter(ad.getEndTime())) {
             return ResponseUtil.fail(682,"修改广告失败");
         }
 

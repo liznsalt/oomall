@@ -4,17 +4,20 @@ import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;
 import xmu.oomall.service.LogService;
 
+/**
+ * @author liznsalt
+ */
 @Component
 public class LogServiceFactory implements FallbackFactory<LogService> {
 
-    private final LogServiceFallback logServiceFallback;
+    private final LogServiceFallbackImpl logServiceFallbackImpl;
 
-    public LogServiceFactory(LogServiceFallback logServiceFallback) {
-        this.logServiceFallback = logServiceFallback;
+    public LogServiceFactory(LogServiceFallbackImpl logServiceFallbackImpl) {
+        this.logServiceFallbackImpl = logServiceFallbackImpl;
     }
 
     @Override
     public LogService create(Throwable throwable) {
-        return logServiceFallback;
+        return logServiceFallbackImpl;
     }
 }
