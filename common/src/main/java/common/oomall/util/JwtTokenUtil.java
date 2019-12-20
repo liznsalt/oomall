@@ -33,7 +33,7 @@ public class JwtTokenUtil {
     public static final String CLAIM_KEY_EXP = "exp";
 
     private static String secret = "mall-secret";
-    private static Long expiration = 604800L;
+    private static Long expiration = 60L * 30;
     private static String tokenHead = "Bearer";
 
     /**
@@ -153,16 +153,8 @@ public class JwtTokenUtil {
         // FIXME 如果token已经过期，返回新token
         if (isTokenExpired(token)) {
             claims.put(CLAIM_KEY_CREATED, new Date());
-            return generateToken(claims);
         }
-
-        //如果token在30分钟之内刚刷新过，返回原token
-        if (tokenRefreshJustBefore(token,30*60)) {
-            return token;
-        } else {
-            claims.put(CLAIM_KEY_CREATED, new Date());
-            return generateToken(claims);
-        }
+        return generateToken(claims);
     }
 
     /**

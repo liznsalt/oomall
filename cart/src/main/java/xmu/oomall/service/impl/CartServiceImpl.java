@@ -31,6 +31,12 @@ public class CartServiceImpl implements CartService {
         cartItem.setUserId(userId);
         cartItem.setGmtModified(LocalDateTime.now());
         if (cartItem.getId() == null) {
+            MallCartItem cartItemInDb = findByUserIdAndProductId(userId, cartItem);
+            if (cartItemInDb != null) {
+                cartItem.setId(cartItemInDb.getId());
+            }
+        }
+        if (cartItem.getId() == null) {
             // new cart
             cartItem.setGmtCreate(LocalDateTime.now());
             cartMapper.insert(cartItem);
@@ -44,27 +50,6 @@ public class CartServiceImpl implements CartService {
             } else {
                 // add cart
                 cartItem.setNumber(cartItem.getNumber() + oldCartItem.getNumber());
-                cartMapper.updateByPrimaryKeySelective(cartItem);
-            }
-        }
-        return cartItem;
-    }
-
-    @Override
-    public MallCartItem fastAdd(Integer userId, MallCartItem cartItem) {
-        cartItem.setUserId(userId);
-        cartItem.setGmtModified(LocalDateTime.now());
-        if (cartItem.getId() == null) {
-            cartItem.setGmtCreate(LocalDateTime.now());
-            cartMapper.insert(cartItem);
-        } else {
-            MallCartItem oldCartItem = cartMapper.selectByPrimaryKey(cartItem.getId());
-            // id 不存在
-            if (oldCartItem == null) {
-                cartItem.setGmtCreate(LocalDateTime.now());
-                cartMapper.insert(cartItem);
-            } else {
-                // 此处不需要修改数量，直接覆盖
                 cartMapper.updateByPrimaryKeySelective(cartItem);
             }
         }
@@ -86,22 +71,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int goodsCount(Integer userId) {
-        Example example = new Example(MallCartItem.class);
-        example.createCriteria().andCondition("user_id = " + userId);
-        return cartMapper.selectCountByExample(example);
-    }
-
-    @Override
-    public boolean clear(Integer userId) {
-        Example example = new Example(MallCartItem.class);
-        example.createCriteria().andCondition("user_id = " + userId);
-        cartMapper.deleteByExample(example);
-        return true;
-    }
-
-    @Override
     public MallCartItem findCartItemById(Integer id) {
         return cartMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public MallCartItem findByUserIdAndProductId(Integer userId, MallCartItem cartItem) {
+        Example example = new Example(MallCartItem.class);
+        example.createCriteria()
+                .andCondition("user_id = " + userId)
+                .andCondition("product_id = " + cartItem.getProductId());
+        List<MallCartItem> cartItemList = cartMapper.selectByExample(example);
+        return cartItemList.size() > 0 ? cartItemList.get(0) : null;
     }
 }

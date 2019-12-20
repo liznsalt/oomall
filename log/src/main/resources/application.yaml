@@ -1,6 +1,11 @@
 spring:
   profiles:
     active: dev
+  http:
+    cloud:
+      loadbalancer:
+        retry:
+          enabled: true
 
 management:
   endpoint:
