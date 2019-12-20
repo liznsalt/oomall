@@ -73,7 +73,7 @@ public class TopicControllerImpl {
     public Object adminlist(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668,"管理员未登录");
+            return ResponseUtil.fail(669,"管理员未登录");
         }
 
         List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
@@ -92,10 +92,13 @@ public class TopicControllerImpl {
 
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(650,"该话题是无效话题");
+            return ResponseUtil.fail(654,"话题查看失败");
         }
 
         MallTopic topic = topicService.findNotDeletedTopicById(id);
+        if(topic==null){
+            return ResponseUtil.fail(650,"该话题是无效话题");
+        }
         return ResponseUtil.ok(topic);
     }
 
@@ -103,15 +106,18 @@ public class TopicControllerImpl {
     public Object admindetail(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return ResponseUtil.fail(668,"管理员未登录");
+            return ResponseUtil.fail(669,"管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(650,"该话题是无效话题");
+            return ResponseUtil.fail(654,"话题查看失败");
         }
 
         MallTopic topic = topicService.findNotDeletedTopicById(id);
+        if(topic==null){
+            return ResponseUtil.fail(650,"该话题是无效话题");
+        }
         return ResponseUtil.ok(topic);
     }
 
@@ -119,7 +125,7 @@ public class TopicControllerImpl {
     public Object create(@RequestBody TopicPo topicPo, HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return ResponseUtil.fail(668,"管理员未登录");
+            return ResponseUtil.fail(669,"管理员未登录");
         }
 
         //参数校验
@@ -146,7 +152,7 @@ public class TopicControllerImpl {
                          HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
-            return ResponseUtil.fail(668,"管理员未登录");
+            return ResponseUtil.fail(669,"管理员未登录");
         }
 
         //参数校验
@@ -168,7 +174,7 @@ public class TopicControllerImpl {
             }
             else {
                 writeLog(adminId, ip, UPDATE, "修改专题", 0, id);
-                return ResponseUtil.fail(651,"话题更新失败");
+                return ResponseUtil.fail(650,"该话题是无效话题");
             }
         } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
@@ -181,7 +187,7 @@ public class TopicControllerImpl {
                          HttpServletRequest request){
         Integer userId = getUserId(request);
         if (userId == null) {
-            return ResponseUtil.fail(668,"管理员未登录");
+            return ResponseUtil.fail(669,"管理员未登录");
         }
 
         // 参数校验
@@ -199,7 +205,7 @@ public class TopicControllerImpl {
                 return ResponseUtil.ok();
             } else {
                 writeLog(adminId, ip, DELETE, "删除专题", 0, id);
-                return ResponseUtil.fail(653,"话题删除失败");
+                return ResponseUtil.fail(650,"该话题是无效话题");
             }
         } catch(Exception e) {
             writeLog(adminId, ip, INSERT, "添加专题", 0, null);
