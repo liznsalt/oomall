@@ -86,7 +86,7 @@ public class CartControllerImpl {
         for (MallCartItem mallCartItem : cartItems) {
             Product product = findProductById(mallCartItem.getProductId());
             if (product == null) {
-                return ResponseUtil.fail(731, "购物车操作失败");
+                return ResponseUtil.fail(744, "购物车明细不存在");
             }
             if (product.getId() == null) {
                 cartService.delete(mallCartItem.getId());
@@ -111,7 +111,7 @@ public class CartControllerImpl {
         for (MallCartItem mallCartItem : cartItems) {
             Product product = findProductById(mallCartItem.getProductId());
             if (product == null) {
-                return ResponseUtil.fail(731, "购物车操作失败");
+                return ResponseUtil.fail(744, "购物车明细不存在");
             }
             if (product.getId() == null) {
                 cartService.delete(mallCartItem.getId());
@@ -132,12 +132,12 @@ public class CartControllerImpl {
 
         // 参数校验
         if (!isValid(cart)) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(741, "购物车明细新增失败");
         }
 
         MallCartItem cartItem = cartService.add(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(741, "购物车明细新增失败");
         } else {
             return ResponseUtil.ok(cartItem);
         }
@@ -153,22 +153,22 @@ public class CartControllerImpl {
         cart.setUserId(userId);
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(742, "购物车明细修改失败");
         }
         MallCartItem dbCartItem = cartService.findCartItemById(id);
         if (dbCartItem == null) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(742, "购物车明细修改失败");
         }
         if (!userId.equals(dbCartItem.getUserId())) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(742, "购物车明细修改失败");
         }
         cart.setId(id);
         if (!isValid(cart)) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(742, "购物车明细修改失败");
         }
         MallCartItem cartItem = cartService.update(userId, cart);
         if (cartItem == null || cartItem.getId() == null) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(742, "购物车明细修改失败");
         } else {
             return ResponseUtil.ok(cartItem);
         }
@@ -183,22 +183,22 @@ public class CartControllerImpl {
 
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(743, "购物车明细删除失败");
         }
 
         MallCartItem cartItem = cartService.findCartItemById(id);
         if (cartItem == null) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(743, "购物车明细删除失败");
         }
         if (!userId.equals(cartItem.getUserId())) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(743, "购物车明细删除失败");
         }
 
         boolean ok = cartService.delete(id);
         if (ok) {
             return ResponseUtil.ok(null);
         } else {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(743, "购物车明细删除失败");
         }
     }
 
@@ -210,11 +210,11 @@ public class CartControllerImpl {
             return ResponseUtil.fail(660, "用户未登录");
         }
         if (!isValid(cartItem)) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(741, "购物车明细新增失败");
         }
         Product product = findProductById(cartItem.getProductId());
         if (product == null) {
-            return ResponseUtil.fail(731, "购物车操作失败");
+            return ResponseUtil.fail(741, "购物车明细新增失败");
         }
         cartItem.setProduct(product);
         return ResponseUtil.ok(cartItem);
