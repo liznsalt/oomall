@@ -12,8 +12,8 @@ import xmu.oomall.service.GoodsService;
 public class GoodsServiceFallback implements GoodsService {
     @Override
     public Object getProductById(Integer id) {
-//        Product product = new Product();
-//        product.setId(1);
-        return ResponseUtil.fail();
+        Product product = new Product();
+        product.setId(-1);
+        return ResponseUtil.ok(product);
     }
 }

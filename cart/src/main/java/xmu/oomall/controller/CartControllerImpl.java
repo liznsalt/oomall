@@ -35,18 +35,25 @@ public class CartControllerImpl {
 
     private Product findProductById(Integer id) {
         Object object = goodsService.getProductById(id);
-        Product product = JacksonUtil.parseObject(JacksonUtil.toJson(object),
-                "data", Product.class);
-        if (product == null) {
-            Integer errno = JacksonUtil.parseInteger(JacksonUtil.toJson(object),
-                    "errno");
-            if (errno != null && errno.equals(200)) {
-                return new Product();
-            } else {
-                return null;        // connect error
+        try {
+            Product product = JacksonUtil.parseObject(JacksonUtil.toJson(object),
+                    "data", Product.class);
+            if (product == null) {
+                Integer errno = JacksonUtil.parseInteger(JacksonUtil.toJson(object),
+                        "errno");
+                if (errno != null && errno.equals(200)) {
+                    return new Product();
+                } else {
+                    return null;        // connect error
+                }
             }
+            if (product.getId() == -1) {
+                return null;
+            }
+            return product;
+        } catch (Exception e) {
+            return null;
         }
-        return product;
     }
 
     public Boolean isValid(MallCartItem cartItem) {
