@@ -51,7 +51,9 @@ public interface TopicMapper {
 
     /**
      * 根据分页条件查找未删除的专题信息
+     * @param limit
+     * @param page
      * @return 专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition();
+    List<MallTopic> findNotDeletedTopicsByCondition(Integer page,Integer limit);
 }

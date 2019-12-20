@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import standard.oomall.domain.Log;
 import standard.oomall.domain.Topic;
 import standard.oomall.domain.TopicPo;
+import sun.management.snmp.AdaptorBootstrap;
 import xmu.oomall.domain.MallTopic;
 import xmu.oomall.service.LogService;
 import xmu.oomall.service.TopicService;
@@ -56,13 +57,15 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/topics")
-    public Object list(HttpServletRequest request) {
+    public Object list(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                       @RequestParam(value = "limit", defaultValue = "10") Integer limit,
+                       HttpServletRequest request) {
         Integer userId = getUserId(request);
         if (userId == null) {
             return ResponseUtil.fail(660,"用户未登录");
         }
 
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
         if(topicList==null){
             return ResponseUtil.fail(650,"该话题是无效话题");
         }
@@ -70,13 +73,15 @@ public class TopicControllerImpl {
     }
 
     @GetMapping("/admin/topics")
-    public Object adminlist(HttpServletRequest request) {
+    public Object adminlist(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                            @RequestParam(value = "limit", defaultValue = "10") Integer limit,
+                            HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
             return ResponseUtil.fail(669,"管理员未登录");
         }
 
-        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition();
+        List<MallTopic> topicList = topicService.findNotDeletedTopicsByCondition(page, limit);
         if(topicList==null){
             return ResponseUtil.fail(650,"该话题是无效话题");
         }

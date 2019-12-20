@@ -64,5 +64,6 @@
         select id, gmt_create, gmt_modified, is_deleted, pic_url_list, content
         from oomall_topic
         where is_deleted = 0
+        limit ${page * limit - limit},${page * limit}
     </select>
 </mapper>

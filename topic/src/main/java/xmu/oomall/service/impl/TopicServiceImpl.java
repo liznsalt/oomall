@@ -47,9 +47,9 @@ public class TopicServiceImpl implements TopicService{
     }
 
     @Override
-    public List<MallTopic> findNotDeletedTopicsByCondition() {
+    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page,Integer limit) {
         try {
-            return topicDao.findNotDeletedTopicsByCondition();
+            return topicDao.findNotDeletedTopicsByCondition(page, limit);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

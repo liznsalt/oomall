@@ -11,10 +11,10 @@ import xmu.oomall.service.LogService;
  */
 @Component
 public class LogServiceFactory implements FallbackFactory<LogService> {
-    private final LogServiceFallback logServiceFallback;
+    private final LogServiceFallbackImpl logServiceFallback;
 
 
-    public LogServiceFactory(LogServiceFallback logServiceFallback) {
+    public LogServiceFactory(LogServiceFallbackImpl logServiceFallback) {
         this.logServiceFallback = logServiceFallback;
     }
 

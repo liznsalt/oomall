@@ -44,5 +44,5 @@ public interface TopicService {
      * 通过条件查找未被删除的专题信息
      * @return 符合情况且未被删除的专题信息列表
      */
-    List<MallTopic> findNotDeletedTopicsByCondition();
+    List<MallTopic> findNotDeletedTopicsByCondition(Integer page,Integer limit);
 }

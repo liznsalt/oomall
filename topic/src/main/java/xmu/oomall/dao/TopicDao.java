@@ -61,9 +61,11 @@ public class TopicDao {
 
     /**
      * 根据分页条件查找未删除的专题信息
+     * @param page
+     * @param limit
      * @return 专题信息列表
      */
-    public List<MallTopic> findNotDeletedTopicsByCondition(){
-        return topicMapper.findNotDeletedTopicsByCondition().stream().map(MallTopic::picturesset).collect(Collectors.toList());
+    public List<MallTopic> findNotDeletedTopicsByCondition(Integer page,Integer limit){
+        return topicMapper.findNotDeletedTopicsByCondition(page, limit).stream().map(MallTopic::picturesset).collect(Collectors.toList());
     }
 }
