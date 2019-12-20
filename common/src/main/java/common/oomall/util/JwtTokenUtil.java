@@ -33,7 +33,7 @@ public class JwtTokenUtil {
     public static final String CLAIM_KEY_EXP = "exp";
 
     private static String secret = "mall-secret";
-    private static Long expiration = 60L * 30;
+    private static Long expiration = 60L * 60 * 24 * 30;
     private static String tokenHead = "Bearer";
 
     /**
