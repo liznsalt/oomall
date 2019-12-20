@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * @author liznsalt
+ * @author yanai
  */
 @RestController
 public class CartControllerImpl {
@@ -41,10 +42,11 @@ public class CartControllerImpl {
             if (product == null) {
                 Integer errno = JacksonUtil.parseInteger(JacksonUtil.toJson(object),
                         "errno");
-                if (errno != null && errno.equals(200)) {
+                Integer ok = 200;
+                if (errno != null && errno.equals(ok)) {
                     return new Product();
                 } else {
-                    return null;        // connect error
+                    return null;
                 }
             }
             if (product.getId() == -1) {
@@ -74,7 +76,6 @@ public class CartControllerImpl {
         return true;
     }
 
-    // 内部接口
     @GetMapping("/cartItem/{userId}")
     public Object userCart(@PathVariable Integer userId) {
         if (userId == null || userId < 0) {
@@ -96,9 +97,6 @@ public class CartControllerImpl {
         }
         return ResponseUtil.ok(resultCartItems);
     }
-
-
-    // 外部接口
 
     @GetMapping("/cartItems")
     public Object cartIndex(HttpServletRequest request) {

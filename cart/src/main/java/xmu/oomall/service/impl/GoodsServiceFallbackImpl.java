@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import standard.oomall.domain.Product;
 import xmu.oomall.service.GoodsService;
 
+/**
+ * @author yanai
+ */
 @Component
 @RequestMapping("/fallback/goods")
-public class GoodsServiceFallback implements GoodsService {
+public class GoodsServiceFallbackImpl implements GoodsService {
     @Override
     public Object getProductById(Integer id) {
         Product product = new Product();

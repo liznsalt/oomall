@@ -4,18 +4,20 @@ import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;
 import xmu.oomall.service.GoodsService;
 
+/**
+ * @author yanai
+ */
 @Component
 public class GoodsServiceFactory implements FallbackFactory<GoodsService> {
 
-    private final GoodsServiceFallback goodsServiceFallback;
+    private final GoodsServiceFallbackImpl goodsServiceFallbackImpl;
 
-    public GoodsServiceFactory(GoodsServiceFallback goodsServiceFallback) {
-        this.goodsServiceFallback = goodsServiceFallback;
+    public GoodsServiceFactory(GoodsServiceFallbackImpl goodsServiceFallbackImpl) {
+        this.goodsServiceFallbackImpl = goodsServiceFallbackImpl;
     }
 
     @Override
     public GoodsService create(Throwable throwable) {
-//        throwable.printStackTrace();
-        return goodsServiceFallback;
+        return goodsServiceFallbackImpl;
     }
 }
