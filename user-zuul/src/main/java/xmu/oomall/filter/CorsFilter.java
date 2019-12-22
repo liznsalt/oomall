@@ -26,11 +26,9 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Expose-Headers", "Location");
 
-        String token = request.getHeader(UriUtil.TOKEN_NAME);
-        // 刷新token
-        String newToken = JwtTokenUtil.refreshHeadToken(token);
+        // @deprecated post 过滤器完成
+        refreshToken(request, response);
 
-        response.setHeader(UriUtil.TOKEN_NAME, newToken);
         chain.doFilter(req, res);
     }
 
@@ -39,5 +37,11 @@ public class CorsFilter implements Filter {
 
     @Override
     public void destroy() {}
+
+    private void refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader(UriUtil.TOKEN_NAME);
+        String newToken = JwtTokenUtil.refreshHeadToken(token);
+        response.setHeader(UriUtil.TOKEN_NAME, newToken);
+    }
 
 }

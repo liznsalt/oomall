@@ -55,16 +55,17 @@ public class UriUtil {
                                     String ip,
                                     String token) {
         // 1 修改参数
-        Map<String, List<String>> map = new HashMap<>(5);
-        map.put("opId", Collections.singletonList(userId));
-        map.put("roleId", Collections.singletonList(roleId));
-        map.put("ip", Collections.singletonList(ip));
-        requestContext.setRequestQueryParams(map);
+//        Map<String, List<String>> map = new HashMap<>(5);
+//        map.put("opId", Collections.singletonList(userId));
+//        map.put("roleId", Collections.singletonList(roleId));
+//        map.put("ip", Collections.singletonList(ip));
+//        requestContext.setRequestQueryParams(map);
 
         // 2 修改头部
-        requestContext.addZuulRequestHeader("token", token);
         requestContext.addZuulRequestHeader(TOKEN_NAME, token);
+        requestContext.addZuulRequestHeader("token", token);
         requestContext.addZuulRequestHeader("userId", userId);
+        System.out.println(userId);
         requestContext.addZuulRequestHeader("roleId", roleId);
         requestContext.addZuulRequestHeader("ip", ip);
     }

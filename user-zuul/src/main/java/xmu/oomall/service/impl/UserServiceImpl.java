@@ -50,17 +50,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisService redisService;
 
-    @Value("${redis.key.user.prefix.authCode}")
-    private String REDIS_KEY_PREFIX_AUTH_CODE;
+//    @Value("${redis.key.user.prefix.authCode}")
+    private String REDIS_KEY_PREFIX_AUTH_CODE = "user:authCode:";
 
-    @Value("${redis.key.user.expire.authCode}")
-    private Long AUTH_CODE_EXPIRE_SECONDS;
+//    @Value("${redis.key.user.expire.authCode}")
+    private Long AUTH_CODE_EXPIRE_SECONDS = 180L;
 
     @Override
     public Object register(String username, String password, String telephone, String authCode) {
         // 验证验证码
         if (!verifyAuthCode(authCode, telephone)) {
-            return ResponseUtil.fail(666, "验证码错误");
+            return ResponseUtil.fail(667, "验证码错误");
         }
         // 查询是否已经有该用户
         MallUser user1 = findByName(username);
@@ -120,6 +120,7 @@ public class UserServiceImpl implements UserService {
         }
         // 验证码绑定手机号并存储到redis
         redisService.set(REDIS_KEY_PREFIX_AUTH_CODE + telephone, sb.toString());
+        LOGGER.debug("generate key:{} code: {} ", REDIS_KEY_PREFIX_AUTH_CODE + telephone, sb.toString());
         redisService.expire(REDIS_KEY_PREFIX_AUTH_CODE + telephone, AUTH_CODE_EXPIRE_SECONDS);
         return sb.toString();
     }
@@ -128,17 +129,17 @@ public class UserServiceImpl implements UserService {
     public Object updatePassword(String telephone, String password, String authCode) {
         MallUser user = findByTelephone(telephone);
         if (user == null) {
-            return CommonResult.badArgumentValue("该手机号没注册过");
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
-        //验证验证码
+        // 验证验证码
         if (!verifyAuthCode(authCode,telephone)) {
-            return ResponseUtil.fail(666, "验证码错误");
+            return ResponseUtil.fail(667, "验证码错误");
         }
         // md5加密
         user.setPassword(Md5Util.encode(password));
         int count = userMapper.updateUser(user);
         if (count == 0) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
+            return ResponseUtil.fail(665, "修改用户信息失败");
         } else {
             user.setPassword(null);
             return ResponseUtil.ok(user);
@@ -149,11 +150,11 @@ public class UserServiceImpl implements UserService {
     public Object updateTelephone(String telephone, String password, String authCode, String newPhone) {
         MallUser user = findByTelephone(telephone);
         if (user == null) {
-            return CommonResult.illegal("旧手机没注册过");
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
         // 验证验证码
         if (!verifyAuthCode(authCode,telephone)) {
-            return ResponseUtil.fail(666, "验证码错误");
+            return ResponseUtil.fail(667, "验证码错误");
         }
         // 检查
         MallUser mallUser = findByTelephone(newPhone);
@@ -171,7 +172,7 @@ public class UserServiceImpl implements UserService {
     public Object updateRebate(Integer userId, Integer rebate) {
         MallUser user = findById(userId);
         if (user == null) {
-            return CommonResult.updatedDataFailed("该账号不存在");
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
         if (user.getRebate() == null) {
             user.setRebate(0);
@@ -181,42 +182,40 @@ public class UserServiceImpl implements UserService {
         if (count >= 1) {
             return ResponseUtil.ok(rebate);
         } else {
-            return ResponseUtil.fail(664, "修改用户信息失败");
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
     }
 
     @Override
-    public String login(String username, String password, HttpServletRequest request) {
+    public String login(String username,
+                        String password,
+                        HttpServletRequest request) throws AuthenticationException {
         String token = null;
-        //密码需要客户端加密后传递
-        try {
-            // 找到用户
-            MallUser user = findByName(username);
-            if (user == null) {
-                throw new UsernameNotFoundException("用户名不存在");
-            }
-            // security 登录 生成 token
-            MallMember member = new MallMember(user);
-            // 比较密码摘要
-            if (!member.getPassword().equals(Md5Util.encode(password))) {
-                throw new BadCredentialsException("密码不正确");
-            }
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    member.getUserDetails(),
-                    null,
-                    member.getUserDetails().getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = JwtTokenUtil.generateToken(member.generateClaims());
-
-            // 生成结束 修改登录时间 ip
-            user.setLastLoginIp(IpAddressUtil.getIpAddress(request));
-            user.setLastLoginTime(LocalDateTime.now());
-            // 更新用户 应该不会失败
-            userMapper.updateUser(user);
-        } catch (AuthenticationException e) {
-            LOGGER.warn("登录异常:{}", e.getMessage());
+        // 找到用户
+        MallUser user = findByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户名不存在");
         }
+        // security 登录 生成 token
+        MallMember member = new MallMember(user);
+        // 比较密码摘要
+        if (!member.getPassword().equals(Md5Util.encode(password))) {
+            throw new BadCredentialsException("密码不正确");
+        }
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                member.getUserDetails(),
+                null,
+                member.getUserDetails().getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        token = JwtTokenUtil.generateToken(member.generateClaims());
+
+        // 生成结束 修改登录时间 ip
+        user.setLastLoginIp(IpAddressUtil.getIpAddress(request));
+        user.setLastLoginTime(LocalDateTime.now());
+        // 更新用户 应该不会失败
+        userMapper.updateUser(user);
+
         return token;
     }
 
@@ -288,11 +287,14 @@ public class UserServiceImpl implements UserService {
     /**
      * 对输入的验证码进行校验
      */
-    private boolean verifyAuthCode(String authCode, String telephone){
-        if(StringUtils.isEmpty(authCode)){
+    private boolean verifyAuthCode(String authCode, String telephone) {
+        if (StringUtils.isEmpty(authCode)) {
+            LOGGER.info("authCode empty");
             return false;
         }
+        LOGGER.debug("code key:{}", REDIS_KEY_PREFIX_AUTH_CODE + telephone);
         String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE + telephone);
+        LOGGER.info("realAuthCode:{}", realAuthCode);
         return authCode.equals(realAuthCode);
     }
 }

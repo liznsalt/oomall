@@ -5,17 +5,17 @@ spring:
     name: userInfoService
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://101.132.152.28:3306/oomall
-    username: oomall
-    password: OOAD3-4wmtnl
+    url: jdbc:mysql://47.52.88.176:3306/DB3_3
+    username: user3_3
+    password: ooad3
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       #初始化时建立物理连接的个数
-      initial-size: 2
+      initial-size: 3
       #最小连接池数量
       min-idle: 2
       #最大连接池数量
-      max-active: 2
+      max-active: 5
       #获取连接时最大等待时间
       max-wait: 60000
       #配置监控页面访问登录名及密码
@@ -57,6 +57,7 @@ eureka:
     prefer-ip-address: true
     ip-address: 101.132.152.28
     non-secure-port: 3400
+#    ip-address: 192.168.1.145
 
 # 接下来都是zuul，其它配置请放上面
 zuul:
@@ -66,57 +67,73 @@ zuul:
   routes: #给服务配置路由
     userInfoService:
       path: /userInfoService/**
-      url: forward:/myUser
+      url: forward:/
     logService:
       path: /logService/**
-      serviceId: logService
+#      serviceId: logService
+      url: http://101.132.152.28:3410
     adService:
       path: /adService/**
-      serviceId: adService
+#      serviceId: adService
+      url: http://101.132.152.28:3420
     afterSaleService:
       path: /afterSaleService/**
       serviceId: afterSaleService
     paymentService:
       path: /paymentService/**
-      serviceId: paymentService
+#      serviceId: paymentService
+      url: http://106.15.249.35:7777
     discountService:
       path: /discountService/**
-      serviceId: discountService
+#      serviceId: discountService
+      url: http://60.205.212.233:3703
     collectionService:
       path: /collectionService/**
-      serviceId: collectionService
+#      serviceId: collectionService
+      url: http://47.100.91.153:3583
     commentService:
       path: /commentService/**
-      serviceId: commentService
+#      serviceId: commentService
+      url: http://47.100.91.153:3450
     goodsInfoService:
       path: /goodsInfoService/**
-      serviceId: goodsInfoService
+#      serviceId: goodsInfoService
+      url: http://47.100.91.153:3090
     topicService:
       path: /topicService/**
-      serviceId: topicService
+#      serviceId: topicService
+      url: http://60.205.212.233:3700
     footprintService:
       path: /footprintService/**
-      serviceId: footprintService
+#      serviceId: footprintService
+      url: http://47.100.91.153:3568
     orderService:
       path: /orderService/**
-      serviceId: orderService
+#      serviceId: orderService
+      url: http://106.15.249.35:3302
     cartService:
       path: /cartService/**
-      serviceId: cartService
+#      serviceId: cartService
+      url: http://47.98.145.177:3525
     shareService:
       path: /shareService/**
-      serviceId: shareService
+#      serviceId: shareService
+      url: http://106.15.249.35:3333
     freightService:
       path: /freightService/**
-      serviceId: freightService
+#      serviceId: freightService
+      url: http://60.205.212.233:3701
     addressService:
       path: /addressService/**
-      serviceId: addressService
+#      serviceId: addressService
+      url: http://47.98.145.177:3300
     logisticsService:
       path: /logisticsService/**
-      serviceId: logisticsService
+#      serviceId: logisticsService
+      url: http://47.98.145.177:3299
     wxPaymentService:
       path: /wxPaymentService/**
-      serviceId: wxPaymentService
+#      serviceId: wxPaymentService
+      url: http://106.15.249.35:7778
   sensitive-headers:  #配置过滤敏感的请求头信息，设置为空就不会过滤
   add-host-header: true

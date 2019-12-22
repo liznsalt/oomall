@@ -18,6 +18,7 @@ import xmu.oomall.domain.MallMember;
 import xmu.oomall.domain.MallRole;
 import xmu.oomall.domain.details.MallMemberDetails;
 import xmu.oomall.mapper.AdminMapper;
+import xmu.oomall.mapper.RoleMapper;
 import xmu.oomall.service.AdminService;
 import xmu.oomall.service.RedisService;
 import xmu.oomall.service.RoleService;
@@ -34,6 +35,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Autowired
     private RedisService redisService;
@@ -95,12 +99,19 @@ public class AdminServiceImpl implements AdminService {
     public MallAdmin update(Integer id, MallAdmin admin) {
         admin.setId(id);
         // 查看role id是否存在
+        // admin role id 为空代表不更新此项，不空则检查
         if (admin.getRoleId() != null) {
-            MallRole role = roleService.findById(admin.getId());
+            MallRole role = roleMapper.findById(admin.getId());
             // role不存在
             if (role == null) {
                 return null;
             }
+        }
+        // 检查用户名是否已经存在
+        List<MallAdmin> dbAdmin = adminMapper.findByName(admin.getUsername());
+        // 数据库中的admin 那么和此项不一样，不更新
+        if (dbAdmin != null && dbAdmin.size() > 0 && !dbAdmin.get(0).getId().equals(id)) {
+            return null;
         }
         // 更新
         int count = adminMapper.updateAdmin(admin);
@@ -132,20 +143,19 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public String login(String username, String password) {
         String token = null;
-        // try ..
-        try {
-            MallMember member = findMemberByName(username);
-            if (!member.getPassword().equals(Md5Util.encode(password))) {
-                throw new BadCredentialsException("密码不正确");
-            }
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(member.getUserDetails(),
-                            null, member.getUserDetails().getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = JwtTokenUtil.generateToken(member.generateClaims());
-        } catch (AuthenticationException e) {
-            LOGGER.warn("登录异常:{}", e.getMessage());
+        MallAdmin admin = findByName(username);
+        if (admin == null) {
+            throw new UsernameNotFoundException("用户名不存在");
         }
+        MallMember member = new MallMember(admin);
+        if (!member.getPassword().equals(Md5Util.encode(password))) {
+            throw new BadCredentialsException("密码不正确");
+        }
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(member.getUserDetails(),
+                        null, member.getUserDetails().getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        token = JwtTokenUtil.generateToken(member.generateClaims());
         return token;
     }
 

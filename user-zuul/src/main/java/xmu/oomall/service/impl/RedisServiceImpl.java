@@ -20,13 +20,17 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    private static Map<String, String> redisMap = new HashMap<>();
+
     @Override
     public void set(String key, String value) {
+//        redisMap.put(key, value);
         stringRedisTemplate.opsForValue().set(key, value);
     }
 
     @Override
     public String get(String key) {
+//        return redisMap.get(key);
         return stringRedisTemplate.opsForValue().get(key);
     }
 

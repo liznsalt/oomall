@@ -17,6 +17,8 @@ public class MallPrivilege extends Privilege {
      */
     private static Map<Integer, List<MallPrivilege>> allPrivilege = null;
 
+    private static List<MallPrivilege> whitePrivilegeList = null;
+
     /**
      * @deprecated
      * @param allPrivilege 全部权限
@@ -31,5 +33,13 @@ public class MallPrivilege extends Privilege {
      */
     public static Map<Integer, List<MallPrivilege>> getAllPrivilege() {
         return MallPrivilege.allPrivilege;
+    }
+
+    public static void setWhitePrivilegeList(List<MallPrivilege> privilegeList) {
+        MallPrivilege.whitePrivilegeList = privilegeList;
+    }
+
+    public static List<MallPrivilege> getWhitePrivilegeList() {
+        return MallPrivilege.whitePrivilegeList;
     }
 }

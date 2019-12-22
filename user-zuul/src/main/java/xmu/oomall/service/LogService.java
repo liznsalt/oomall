@@ -14,6 +14,7 @@ import xmu.oomall.service.impl.LogServiceFallBackImpl;
 @Component
 @FeignClient(
         name = "logService",
+        url = "http://101.132.152.28:3410",
         decode404 = true,
         fallbackFactory = LogServiceFactory.class,
         configuration = FeignClientsConfiguration.class

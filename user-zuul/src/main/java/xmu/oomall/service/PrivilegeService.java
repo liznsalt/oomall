@@ -13,12 +13,16 @@ public interface PrivilegeService {
     List<MallPrivilege> getAll();
 
     /**
+     * 得到所有权限
      * @deprecated
      * @return 全部权限
      */
     Map<Integer, List<MallPrivilege>> getAllPrivileges();
 
     /**
+     * 得到白名单
+     * 弃用
+     * @see PrivilegeService#getWhiteUrlList()
      * @deprecated
      * @return 白名单
      */
@@ -32,18 +36,18 @@ public interface PrivilegeService {
 
     /**
      *  检验url+method是否合法
-     * @param method
-     * @param url
-     * @param roleId
-     * @return
+     * @param method 请求方法
+     * @param url 请求url
+     * @param roleId 角色id
+     * @return 是否匹配
      */
     boolean matchAuth(String method, String url, Integer roleId);
 
     /**
      *  检查是否是白名单url
-     * @param method
-     * @param url
-     * @return
+     * @param method 请求方法
+     * @param url 请求url
+     * @return 是否在白名单
      */
     boolean isWhiteUrl(String method, String url);
 }

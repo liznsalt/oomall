@@ -12,6 +12,7 @@ import xmu.oomall.service.RoleService;
 import xmu.oomall.util.UriUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public MallRole insert(MallRole role) {
+        // 先查看这个role是否存在
+        MallRole oldRole = roleMapper.findByName(role.getName());
+        if (oldRole != null) {
+            return null;
+        }
+
         role.setGmtCreate(LocalDateTime.now());
         role.setGmtModified(LocalDateTime.now());
         role.setBeDeleted(false);
@@ -52,7 +59,7 @@ public class RoleServiceImpl implements RoleService {
         if (count == 0) {
             return false;
         } else {
-            // FIXME 去掉redis中存在的记录
+            // 去掉redis中存在的记录
             redisService.deleteByPrefix(UriUtil.METHOD_URL_PREFIX);
             return true;
         }
@@ -86,6 +93,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<MallPrivilege> getPrivilegesByRoleId(Integer id) {
+        // 确认角色不存在
+        MallRole role = roleMapper.findById(id);
+        if (role == null) {
+            return new ArrayList<>(0);
+        }
         return roleMapper.getPrivilegesByRoleId(id);
     }
 
@@ -98,7 +110,7 @@ public class RoleServiceImpl implements RoleService {
         if (privileges.size() != 0) {
             privilegeMapper.addPrivileges(privileges);
         }
-        // FIXME 去掉redis中存在的记录
+        // 去掉redis中存在的记录
         redisService.deleteByPrefix(UriUtil.METHOD_URL_PREFIX);
         return privileges;
     }

@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import standard.oomall.domain.Log;
@@ -24,6 +26,7 @@ import xmu.oomall.service.RoleService;
 import xmu.oomall.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +36,6 @@ import java.util.Map;
  * @author liznsalt
  */
 @RestController
-@RequestMapping("/myUser")
 public class UserControllerImpl {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -149,12 +151,12 @@ public class UserControllerImpl {
                             HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            return ResponseUtil.fail(675, "管理员操作失败");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         List<MallAdmin> admins;
@@ -187,18 +189,18 @@ public class UserControllerImpl {
     public Object createAdmin(@RequestBody MallAdmin admin, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (admin == null || !admin.isValid()) {
-            return ResponseUtil.fail(671, "新增管理员失败");
+            return ResponseUtil.fail(672, "新增管理员失败");
         }
 
         MallAdmin newAdmin = adminService.add(admin);
         if (newAdmin == null || newAdmin.getId() == null) {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), INSERT, "添加管理员", 0, null);
-            return ResponseUtil.fail(671, "新建管理员失败");
+            return ResponseUtil.fail(672, "新增管理员失败");
         } else {
             newAdmin.setPassword(null);
             writeLog(adminId, IpAddressUtil.getIpAddress(request), INSERT, "添加管理员", 1, newAdmin.getId());
@@ -216,12 +218,12 @@ public class UserControllerImpl {
     public Object getAdminInfo(@PathVariable Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(675, "管理员操作失败");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         MallAdmin admin = adminService.findById(id);
@@ -245,12 +247,12 @@ public class UserControllerImpl {
     public Object updateAdmin(@PathVariable Integer id, @RequestBody MallAdmin admin, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0 || admin == null) {
-            return ResponseUtil.fail(673, "更新管理员失败");
+            return ResponseUtil.fail(674, "更新管理员失败");
         }
 
         // 防止修改密码
@@ -258,7 +260,7 @@ public class UserControllerImpl {
 
         MallAdmin newAdmin = adminService.update(id, admin);
         if (newAdmin == null) {
-            return ResponseUtil.fail(673, "更新管理员失败");
+            return ResponseUtil.fail(674, "更新管理员失败");
         }
 
         newAdmin.setPassword(null);
@@ -277,12 +279,12 @@ public class UserControllerImpl {
     public Object delete(@PathVariable Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id < 0) {
-            return ResponseUtil.fail(672, "删除管理员失败");
+            return ResponseUtil.fail(673, "删除管理员失败");
         }
 
         boolean ok = adminService.delete(id);
@@ -291,7 +293,7 @@ public class UserControllerImpl {
             return ResponseUtil.ok();
         } else {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), DELETE, "删除管理员", 1, id);
-            return ResponseUtil.fail(672, "删除管理员失败");
+            return ResponseUtil.fail(673, "删除管理员失败");
         }
     }
 
@@ -303,7 +305,7 @@ public class UserControllerImpl {
     public Object adminInfo(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         MallAdmin admin = adminService.findById(adminId);
@@ -318,15 +320,24 @@ public class UserControllerImpl {
      * @return admin对象
      */
     @PostMapping("/admin/login")
-    public Object adminLogin(@RequestBody LoginVo loginVo, HttpServletRequest request) {
+    public Object adminLogin(@RequestBody LoginVo loginVo,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
         if (loginVo == null || loginVo.getUsername() == null || loginVo.getPassword() == null) {
-            return ResponseUtil.fail(675, "管理员操作失败");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
-        String token = adminService.login(loginVo.getUsername(), loginVo.getPassword());
-        if (token == null) {
-            return CommonResult.badArgumentValue("账号或密码不正确");
+        String token = null;
+        try {
+            token = adminService.login(loginVo.getUsername(), loginVo.getPassword());
+        } catch (UsernameNotFoundException e) {
+            logger.warn("登录异常:{}", e.getMessage());
+            return ResponseUtil.fail(671, "管理员名不存在");
+        } catch (BadCredentialsException e) {
+            logger.warn("登录异常:{}", e.getMessage());
+            return ResponseUtil.fail(670, "管理员密码错误");
         }
+
         Map<String, Object> map = new HashMap<>(5);
         map.put("token", token);
         map.put(UriUtil.TOKEN_NAME, token);
@@ -335,7 +346,11 @@ public class UserControllerImpl {
         admin.setPassword(null);
         map.put("data", admin);
 
-        writeLog(admin.getId(), IpAddressUtil.getIpAddress(request), null, "管理员登录", 1, admin.getId());
+        // FIXME
+//        writeLog(admin.getId(), IpAddressUtil.getIpAddress(request), null, "管理员登录", 1, admin.getId());
+
+        // 返回token
+        response.setHeader(UriUtil.TOKEN_NAME, token);
         return ResponseUtil.ok(map);
     }
 
@@ -347,7 +362,7 @@ public class UserControllerImpl {
     public Object adminLogOut(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), null, "管理员登出", 1, adminId);
@@ -365,21 +380,21 @@ public class UserControllerImpl {
                                       HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (oldPassword == null || newPassword == null) {
-            return ResponseUtil.fail(675, "管理员操作失败");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         MallAdmin admin = adminService.findById(adminId);
         if (admin == null) {
-            return CommonResult.updatedDataFailed("用户已经不存在");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         if (!admin.getPassword().equals(Md5Util.encode(oldPassword))) {
-            return ResponseUtil.fail(669, "管理员密码错误");
+            return ResponseUtil.fail(670, "管理员密码错误");
         }
 
         // 开始修改
@@ -387,7 +402,7 @@ public class UserControllerImpl {
         MallAdmin newAdmin = adminService.update(adminId, admin);
         if (newAdmin == null) {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), UPDATE, "更新密码", 0, adminId);
-            return ResponseUtil.fail(673, "更新管理员失败");
+            return ResponseUtil.fail(674, "更新管理员失败");
         }
 
         newAdmin.setPassword(null);
@@ -405,7 +420,7 @@ public class UserControllerImpl {
     public Object roleList(HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), SELECT, "查看所有角色", 1, null);
@@ -421,18 +436,18 @@ public class UserControllerImpl {
     public Object addRole(@RequestBody MallRole role, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (role == null || role.getName() == null) {
-            return CommonResult.badArgumentValue();
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         MallRole newRole = roleService.insert(role);
         if (newRole == null) {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), SELECT, "创建角色", 0, null);
-            return CommonResult.updatedDataFailed();
+            return ResponseUtil.fail(750, "角色已存在");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), SELECT, "创建角色", 1, newRole.getId());
@@ -449,12 +464,12 @@ public class UserControllerImpl {
     public Object getRole(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id <= 0) {
-            return ResponseUtil.fail(679, "获取角色失败");
+            return ResponseUtil.fail(753, "获取角色失败");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), SELECT, "查看某角色", 1, id);
@@ -472,12 +487,12 @@ public class UserControllerImpl {
                              HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id <= 0 || role == null) {
-            return ResponseUtil.fail(678, "更新角色失败");
+            return ResponseUtil.fail(752, "更新角色失败");
         }
 
         role.setId(id);
@@ -485,7 +500,7 @@ public class UserControllerImpl {
 
         if (newRole == null) {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), UPDATE, "更新角色", 0, id);
-            return ResponseUtil.fail(678, "更新角色失败");
+            return ResponseUtil.fail(752, "更新角色失败");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), UPDATE, "更新角色", 1, id);
@@ -501,19 +516,19 @@ public class UserControllerImpl {
     public Object deleteRole(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || MallRole.isCannotDelete(id)) {
-            return ResponseUtil.fail(677, "删除角色失败");
+            return ResponseUtil.fail(751, "删除角色失败");
         }
 
         boolean ok = roleService.deleteById(id);
 
         if (!ok) {
             writeLog(adminId, IpAddressUtil.getIpAddress(request), DELETE, "删除角色", 0, id);
-            return ResponseUtil.fail(677, "删除角色失败");
+            return ResponseUtil.fail(751, "删除角色失败");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), DELETE, "删除角色", 1, id);
@@ -529,12 +544,12 @@ public class UserControllerImpl {
     public Object getRolePermission(@PathVariable("id") Integer id, HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id <= 0) {
-            return ResponseUtil.fail(679, "获取角色失败");
+            return ResponseUtil.fail(676, "管理员操作失败");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), SELECT, "查看角色的权限", 1, null);
@@ -552,15 +567,15 @@ public class UserControllerImpl {
                                        HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (id == null || id <= 0) {
-            return ResponseUtil.fail(678, "更新角色失败");
+            return ResponseUtil.fail(752, "更新角色失败");
         }
         if (privileges == null) {
-            return ResponseUtil.fail(678, "更新角色失败");
+            return ResponseUtil.fail(752, "更新角色失败");
         }
 
         writeLog(adminId, IpAddressUtil.getIpAddress(request), UPDATE, "更新角色权限", 1, null);
@@ -596,12 +611,12 @@ public class UserControllerImpl {
                               HttpServletRequest request) {
         Integer adminId = getUserId(request);
         if (adminId == null) {
-            return ResponseUtil.fail(668, "管理员未登录");
+            return ResponseUtil.fail(669, "管理员未登录");
         }
 
         // 参数校验
         if (page == null || limit == null || page <= 0 || limit <= 0) {
-            return ResponseUtil.fail(667, "获取用户信息失败");
+            return ResponseUtil.fail(668, "获取用户信息失败");
         }
 
         List<MallUser> users;
@@ -638,12 +653,13 @@ public class UserControllerImpl {
     public Object captcha(@RequestBody String telephone) {
         // 参数校验
         if (telephone == null) {
-            return CommonResult.badArgument("telephone为空");
+            // TODO
+            return ResponseUtil.fail();
         }
 
         String code = userService.generateAuthCode(telephone);
         if (code == null) {
-            return CommonResult.serious();
+            return ResponseUtil.fail();
         }
         return ResponseUtil.ok(code);
     }
@@ -653,7 +669,9 @@ public class UserControllerImpl {
      * @return 数据是userInfoVo
      */
     @PostMapping("/login")
-    public Object userLogin(@RequestBody LoginVo loginVo, HttpServletRequest request) {
+    public Object userLogin(@RequestBody LoginVo loginVo,
+                            HttpServletRequest request,
+                            HttpServletResponse response) {
         // 参数校验
         if (loginVo == null) {
             return CommonResult.badArgumentValue("loginVo为空");
@@ -665,9 +683,15 @@ public class UserControllerImpl {
             return CommonResult.badArgumentValue("password不能为空");
         }
 
-        String token = userService.login(loginVo.getUsername(), loginVo.getPassword(), request);
-        if (token == null) {
-            return CommonResult.badArgumentValue("用户名或密码错误");
+        String token = null;
+        try {
+            token = userService.login(loginVo.getUsername(), loginVo.getPassword(), request);
+        } catch (UsernameNotFoundException e) {
+            logger.warn("登录异常:{}", e.getMessage());
+            return ResponseUtil.fail(663, "用户名不存在");
+        } catch (BadCredentialsException e) {
+            logger.warn("登录异常:{}", e.getMessage());
+            return ResponseUtil.fail(664, "登录密码错误");
         }
 
         Map<String, Object> tokenMap = new HashMap<>(5);
@@ -677,6 +701,8 @@ public class UserControllerImpl {
         MallUser user = userService.findByName(loginVo.getUsername());
         user.setPassword(null);
         tokenMap.put("data", user);
+        // 设置token
+        response.setHeader(UriUtil.TOKEN_NAME, token);
         return ResponseUtil.ok(tokenMap);
     }
 
@@ -690,17 +716,11 @@ public class UserControllerImpl {
     @PutMapping("/password")
     public Object reset(@RequestBody ResetPasswordVo resetPasswordVo) {
         // 参数校验
-        if (resetPasswordVo == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPasswordVo.getTelephone() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPasswordVo.getPassword() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPasswordVo.getCode() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
+        if (resetPasswordVo == null
+                || resetPasswordVo.getTelephone() == null
+                || resetPasswordVo.getPassword() == null
+                || resetPasswordVo.getCode() == null) {
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
 
         return userService.updatePassword(resetPasswordVo.getTelephone(), resetPasswordVo.getPassword(),
@@ -723,20 +743,12 @@ public class UserControllerImpl {
     @PutMapping("/phone")
     public Object resetPhone(@RequestBody ResetPhoneVo resetPhoneVo) {
         // 参数校验
-        if (resetPhoneVo == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPhoneVo.getTelephone() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPhoneVo.getPassword() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPhoneVo.getCode() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
-        }
-        if (resetPhoneVo.getNewTelephone() == null) {
-            return ResponseUtil.fail(664, "修改用户信息失败");
+        if (resetPhoneVo == null
+                || resetPhoneVo.getTelephone() == null
+                || resetPhoneVo.getPassword() == null
+                || resetPhoneVo.getCode() == null
+                || resetPhoneVo.getNewTelephone() == null) {
+            return ResponseUtil.fail(665, "修改用户信息失败");
         }
 
         return userService.updateTelephone(resetPhoneVo.getTelephone(), resetPhoneVo.getPassword(),
@@ -785,22 +797,15 @@ public class UserControllerImpl {
     @PostMapping("/register")
     public Object register(@RequestBody UserRegisterVo userRegisterVo) {
         // 参数校验
-        if (userRegisterVo == null) {
-            return CommonResult.badArgument("vo为空");
+        if (userRegisterVo == null
+                || userRegisterVo.getUsername() == null
+                || userRegisterVo.getPassword() == null
+                || userRegisterVo.getTelephone() == null
+                || userRegisterVo.getCode() == null) {
+            // TODO
+            return CommonResult.badArgument("vo缺失属性");
         }
-        if (userRegisterVo.getUsername() == null) {
-            return CommonResult.badArgumentValue("用户名为空");
-        }
-        if (userRegisterVo.getPassword() == null) {
-            return CommonResult.badArgumentValue("密码为空");
-        }
-        if (userRegisterVo.getTelephone() == null) {
-            return CommonResult.badArgumentValue("手机号为空");
-        }
-        if (userRegisterVo.getCode() == null) {
-            return CommonResult.badArgumentValue("验证码为空");
-        }
-
+        logger.debug("code:{}", userRegisterVo.getCode());
         return userService.register(userRegisterVo.getUsername(), userRegisterVo.getPassword(),
                 userRegisterVo.getTelephone(), userRegisterVo.getCode());
     }

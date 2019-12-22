@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: jicheng
+    active: ljh
   http:
     cloud:
       loadbalancer:
@@ -86,8 +86,8 @@ feign:
 #      enabled: true
 
 ribbon:
-  ConnectTimeout: 60000
-  ReadTimeout: 60000
+  ConnectTimeout: 20000
+  ReadTimeout: 20000
 
 hystrix:
   command:

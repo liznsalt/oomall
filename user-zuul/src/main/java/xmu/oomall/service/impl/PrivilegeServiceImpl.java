@@ -58,7 +58,6 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public List<String> getWhiteList() {
-        // FIXME
         return Arrays.asList(
                 "/userInfoService/admins/login",
                 "/userInfoService/register",
@@ -70,7 +69,11 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public List<MallPrivilege> getWhiteUrlList() {
-        return new ArrayList<>(0);
+        if (MallPrivilege.getWhitePrivilegeList() == null) {
+            MallPrivilege.setWhitePrivilegeList(privilegeMapper.getWhiteUrlList());
+        }
+        return MallPrivilege.getWhitePrivilegeList();
+        // TODO Redis缓存更好 没时间做了
 //        List<MallPrivilege> privileges = redisService.getPrivilegeList(UriUtil.WHITE_URL_KEY_PREFIX);
 //        if (privileges == null || privileges.size() == 0) {
 //            System.out.println("buzairedis");
@@ -85,7 +88,9 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public boolean matchAuth(String method, String url, Integer roleId) {
+        logger.info("->matchAuth");
         List<MallPrivilege> rolePrivilegeList = roleService.getPrivilegesByRoleId(roleId);
+        //logger.debug("matchAuth: rolePrivilegeList:{}", rolePrivilegeList);
 
         if (rolePrivilegeList == null) {
             return false;
@@ -96,19 +101,30 @@ public class PrivilegeServiceImpl implements PrivilegeService {
                 return true;
             }
         }
+        logger.info("无权限");
         return false;
     }
 
     private boolean isMatch(MallPrivilege privilege, String method, String url) {
+        //logger.info("->isMatch：privilege:{}", privilege);
+
+        if (privilege == null) {
+            return false;
+        }
         String pMethod = privilege.getMethod();
         String pUrl = privilege.getUrl();
         if (pUrl == null || pMethod == null || method == null || url == null) {
             return false;
         }
         // 修改成正则表达式
-        pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
-        return pMethod.toLowerCase().equals(method.toLowerCase())
-                && Pattern.matches(pUrl, url);
+        try {
+            pUrl = pUrl.replaceAll("\\{id}", "\\\\d+");
+            return pMethod.toLowerCase().equals(method.toLowerCase())
+                    && Pattern.matches(pUrl, url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
