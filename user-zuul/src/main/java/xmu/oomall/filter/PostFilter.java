@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class PostFilter extends ZuulFilter {
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public String filterType() {
@@ -40,11 +40,11 @@ public class PostFilter extends ZuulFilter {
         HttpServletRequest request = requestContext.getRequest();
         HttpServletResponse response = requestContext.getResponse();
         // 得到和刷新token
-        LOGGER.info("刷新token");
+        logger.info("刷新token");
         String token = request.getHeader(UriUtil.TOKEN_NAME);
         String newToken = JwtTokenUtil.refreshHeadToken(token);
         response.setHeader(UriUtil.TOKEN_NAME, newToken);
-        LOGGER.info("刷新结束");
+        logger.info("刷新结束");
 
         return null;
     }

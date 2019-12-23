@@ -46,10 +46,10 @@ public class AdminServiceImpl implements AdminService {
     private RoleService roleService;
 
     @Value("${redis.key.admin.prefix.authCode}")
-    private String REDIS_KEY_PREFIX_AUTH_CODE;
+    private String redisKeyPrefixAuthCode;
 
     @Value("${redis.key.admin.expire.authCode}")
-    private Long AUTH_CODE_EXPIRE_SECONDS;
+    private Long authCodeExpireSeconds;
 
 
     @Override

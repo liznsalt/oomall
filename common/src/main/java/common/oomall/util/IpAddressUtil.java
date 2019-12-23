@@ -8,42 +8,45 @@ import javax.servlet.http.HttpServletRequest;
  * @author ?
  */
 public class IpAddressUtil {
+
     /**
      * 获取Ip地址
      * @param request
      * @return
      */
     public static String getIpAddress(HttpServletRequest request) {
-        String Xip = request.getHeader("X-Real-IP");
-        String XFor = request.getHeader("X-Forwarded-For");
-        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
+        String xip = request.getHeader("X-Real-IP");
+        String xFor = request.getHeader("X-Forwarded-For");
+        String unknown = "unKnown";
+
+        if(StringUtils.isNotEmpty(xFor) && ! unknown.equalsIgnoreCase(xFor)){
             //多次反向代理后会有多个ip值，第一个ip才是真实ip
-            int index = XFor.indexOf(",");
+            int index = xFor.indexOf(",");
             if(index != -1){
-                return XFor.substring(0,index);
+                return xFor.substring(0,index);
             }else{
-                return XFor;
+                return xFor;
             }
         }
-        XFor = Xip;
-        if(StringUtils.isNotEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)){
-            return XFor;
+        xFor = xip;
+        if(StringUtils.isNotEmpty(xFor) && ! unknown.equalsIgnoreCase(xFor)){
+            return xFor;
         }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("Proxy-Client-IP");
+        if (StringUtils.isBlank(xFor) || unknown.equalsIgnoreCase(xFor)) {
+            xFor = request.getHeader("Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("WL-Proxy-Client-IP");
+        if (StringUtils.isBlank(xFor) || unknown.equalsIgnoreCase(xFor)) {
+            xFor = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("HTTP_CLIENT_IP");
+        if (StringUtils.isBlank(xFor) || unknown.equalsIgnoreCase(xFor)) {
+            xFor = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
+        if (StringUtils.isBlank(xFor) || unknown.equalsIgnoreCase(xFor)) {
+            xFor = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (StringUtils.isBlank(XFor) || "unknown".equalsIgnoreCase(XFor)) {
-            XFor = request.getRemoteAddr();
+        if (StringUtils.isBlank(xFor) || unknown.equalsIgnoreCase(xFor)) {
+            xFor = request.getRemoteAddr();
         }
-        return XFor;
+        return xFor;
     }
 }

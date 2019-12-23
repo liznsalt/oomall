@@ -346,10 +346,6 @@ public class UserControllerImpl {
         admin.setPassword(null);
         map.put("data", admin);
 
-        // FIXME
-//        writeLog(admin.getId(), IpAddressUtil.getIpAddress(request), null, "管理员登录", 1, admin.getId());
-
-        // 返回token
         response.setHeader(UriUtil.TOKEN_NAME, token);
         return ResponseUtil.ok(map);
     }

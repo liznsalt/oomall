@@ -122,7 +122,7 @@ public class CookieUtil {
      * @return
      */
     public static Map<String,Cookie> getCookieMap(HttpServletRequest request){
-        Map<String,Cookie> cookieMap = new HashMap<String,Cookie>();
+        Map<String,Cookie> cookieMap = new HashMap<String,Cookie>(100);
         Cookie[] cookies = request.getCookies();
         if(!StrUtil.isEmptyArray(cookies)){
             for(Cookie cookie : cookies){

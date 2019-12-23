@@ -54,13 +54,8 @@ public interface UserService {
      */
     Object register(String username, String password, String telephone, String authCode);
 
-    /**
-     * 注册
-     * @see UserService#register(String, String, String, String)
-     * @deprecated
-     */
-    @Deprecated
-    CommonResult register(MallUser user, String authCode);
+    //@Deprecated
+    //CommonResult register(MallUser user, String authCode);
 
     /**
      * 生成验证码
@@ -131,12 +126,8 @@ public interface UserService {
      */
     MallMember findMemberByName(String username);
 
-    /**
-     * 全部用户
-     * @return 全部用户
-     */
-    @Deprecated
-    List<MallUser> list();
+    //@Deprecated
+    //List<MallUser> list();
 
     /**
      * 通过条件得到用户列表

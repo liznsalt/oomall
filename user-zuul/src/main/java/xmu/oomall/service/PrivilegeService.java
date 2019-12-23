@@ -10,23 +10,11 @@ import java.util.Map;
  * @author liznsalt
  */
 public interface PrivilegeService {
-    List<MallPrivilege> getAll();
-
     /**
-     * 得到所有权限
-     * @deprecated
+     * 全部权限
      * @return 全部权限
      */
-    Map<Integer, List<MallPrivilege>> getAllPrivileges();
-
-    /**
-     * 得到白名单
-     * 弃用
-     * @see PrivilegeService#getWhiteUrlList()
-     * @deprecated
-     * @return 白名单
-     */
-    List<String> getWhiteList();
+    List<MallPrivilege> getAll();
 
     /**
      * 白名单

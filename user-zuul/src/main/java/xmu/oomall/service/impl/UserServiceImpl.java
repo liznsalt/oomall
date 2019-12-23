@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import xmu.oomall.domain.MallMember;
@@ -27,9 +26,7 @@ import xmu.oomall.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -50,11 +47,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisService redisService;
 
-//    @Value("${redis.key.user.prefix.authCode}")
-    private String REDIS_KEY_PREFIX_AUTH_CODE = "user:authCode:";
+    private String redisKeyPrefixAuthCode = "user:authCode:";
 
-//    @Value("${redis.key.user.expire.authCode}")
-    private Long AUTH_CODE_EXPIRE_SECONDS = 180L;
+    private Long authCodeExpireSeconds = 180L;
 
     @Override
     public Object register(String username, String password, String telephone, String authCode) {
@@ -91,37 +86,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonResult register(MallUser user, String authCode) {
-        // 验证验证码
-        if (!verifyAuthCode(authCode, user.getMobile())) {
-            return CommonResult.codeError();
-        }
-        // 查询是否已经有该用户
-        MallUser user1 = findByName(user.getName());
-        MallUser user2 = findByTelephone(user.getMobile());
-        if (user1 != null || user2 != null) {
-            return CommonResult.failed("该用户已经存在");
-        }
-        // 添加进数据库
-        user.setRebate(0);
-        userMapper.addUser(user);
-        user.setPassword(null);
-        user.setRoleId(MallRole.USER);
-        // 成功
-        return CommonResult.success(user, "注册成功");
-    }
-
-    @Override
     public String generateAuthCode(String telephone) {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < 6; i++) {
+        int codeSize = 6;
+        for (int i = 0; i < codeSize; i++) {
             sb.append(random.nextInt(10));
         }
         // 验证码绑定手机号并存储到redis
-        redisService.set(REDIS_KEY_PREFIX_AUTH_CODE + telephone, sb.toString());
-        LOGGER.debug("generate key:{} code: {} ", REDIS_KEY_PREFIX_AUTH_CODE + telephone, sb.toString());
-        redisService.expire(REDIS_KEY_PREFIX_AUTH_CODE + telephone, AUTH_CODE_EXPIRE_SECONDS);
+        redisService.set(redisKeyPrefixAuthCode + telephone, sb.toString());
+        LOGGER.debug("generate key:{} code: {} ", redisKeyPrefixAuthCode + telephone, sb.toString());
+        redisService.expire(redisKeyPrefixAuthCode + telephone, authCodeExpireSeconds);
         return sb.toString();
     }
 
@@ -273,11 +248,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<MallUser> list() {
-        return userMapper.getAllUsers();
-    }
-
-    @Override
     public List<MallUser> listByCondition(String username, Integer page, Integer limit) {
         return userMapper.getUsersByCondition(username, page, limit);
     }
@@ -292,8 +262,8 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("authCode empty");
             return false;
         }
-        LOGGER.debug("code key:{}", REDIS_KEY_PREFIX_AUTH_CODE + telephone);
-        String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE + telephone);
+        LOGGER.debug("code key:{}", redisKeyPrefixAuthCode + telephone);
+        String realAuthCode = redisService.get(redisKeyPrefixAuthCode + telephone);
         LOGGER.info("realAuthCode:{}", realAuthCode);
         return authCode.equals(realAuthCode);
     }
