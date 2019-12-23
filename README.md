@@ -1,5 +1,7 @@
 # OOAD 3-4
 
+OOAD 课程作业记录。
+
 ## 须知
 
 记得先启动 eureka-server 服务器，不然有的模块跑不起来
@@ -30,16 +32,16 @@
 
 - 2019-12-07
     
-    - goods 洪永团负责
-    - brand 张有坤负责
-    - goods category 吴啸明负责
-    - product 沈湘越负责
+    - goods xxx负责
+    - brand xxx负责
+    - goods category xxx负责
+    - product xxx负责
     
     maven 配置最好和我同步，已经排除很多版本冲突问题。
 - 2019-12-08
     
-    - topic log 洪永团负责
-    - cart 张有坤负责
+    - topic log xxx负责
+    - cart xxx负责
     
 - 2019-12-12
     
@@ -47,3 +49,6 @@
     - [ ] 用户管理员权限问题
     - [ ] 写日志问题
     - [ ] 完成 Goods 模块
+- 2019-12-22
+    
+    完成，不再维护
