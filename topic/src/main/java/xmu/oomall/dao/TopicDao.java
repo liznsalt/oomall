@@ -56,7 +56,13 @@ public class TopicDao {
      * @return 专题信息
      */
     public MallTopic findNotDeletedTopicById(Integer id){
-        return topicMapper.findNotDeletedTopicById(id).picturesset();
+        MallTopic result=topicMapper.findNotDeletedTopicById(id);
+        if(result==null){
+            return null;
+        }
+        else {
+            return result.picturesset();
+        }
     }
 
     /**

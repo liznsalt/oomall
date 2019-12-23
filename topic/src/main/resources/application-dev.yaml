@@ -1,5 +1,5 @@
 server:
-  port: 3440
+  port: 8084
 
 spring:
   application:
@@ -39,13 +39,10 @@ spring:
           #慢SQL执行时间
           slow-sql-millis: 100
       validation-query: select 1
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://47.100.91.153:3500/eureka/
-  instance:
-    prefer-ip-address: true
-    ip-address: 192.168.1.141
-    non-secure-port: 3440
+      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/
