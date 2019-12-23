@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 3430
 
 spring:
   application:
@@ -55,4 +55,8 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://liznsalt:123456@101.132.152.28:9000/eureka/
+      defaultZone: http://47.100.91.153:3500/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 192.168.1.141
+    non-secure-port: 3430

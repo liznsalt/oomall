@@ -42,9 +42,26 @@ logging:
 feign:
   hystrix:
     enabled: true
-    command:
-      default:
-        execution:
-          isolation:
-            thread:
-              timeoutInMilliseconds: 30000
+#  client:
+#    config:
+#      share:
+#        connectTimeout: 120000
+#        readTimeout: 120000
+#  compression:
+#    request:
+#      enabled: true
+#      mime-types: text/html,application/xml,application/json
+#      min-request-size: 2048
+#    response:
+#      enabled: true
+
+ribbon:
+  ConnectTimeout: 600000
+  ReadTimeout: 600000
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false

@@ -12,7 +12,7 @@ import xmu.oomall.service.impl.LogServiceFactory;
  * @author liznsalt
  */
 @Component
-@FeignClient(name = "oomall-log",
+@FeignClient(name = "logService",
         decode404 = true,
         fallbackFactory = LogServiceFactory.class,
         configuration = FeignClientsConfiguration.class)
