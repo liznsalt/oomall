@@ -1,7 +1,5 @@
 package xmu.oomall.domain;
 
-import common.oomall.component.ERole;
-
 /**
  * @author liznsalt
  */

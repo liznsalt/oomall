@@ -1,7 +1,6 @@
 package xmu.oomall.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import common.oomall.component.ERole;
 import org.apache.ibatis.type.Alias;
 import standard.oomall.domain.User;
 

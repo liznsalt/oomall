@@ -1,6 +1,5 @@
 package xmu.oomall.domain;
 
-import common.oomall.component.ERole;
 import common.oomall.util.JwtTokenUtil;
 import xmu.oomall.domain.details.MallMemberDetails;
 

@@ -1,9 +1,6 @@
 package xmu.oomall.service;
 
-import common.oomall.api.CommonResult;
-import common.oomall.util.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.transaction.annotation.Transactional;
 import xmu.oomall.domain.MallMember;
 import xmu.oomall.domain.MallUser;
 import xmu.oomall.domain.details.MallMemberDetails;

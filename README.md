@@ -2,53 +2,20 @@
 
 OOAD 课程作业记录。
 
-## 须知
+## 技术栈
 
-记得先启动 eureka-server 服务器，不然有的模块跑不起来
+1. SpringBoot
+2. Spring Security (JWT)
+3. Mybatis + 通用 Mapper
+4. MySQL + Redis
+5. Zuul 网关
+6. Feign
+7. Eureka
 
-## 规定
+## 组员
 
-1. 标准组的代码独立在 standard 模块，在各个模块的 domain 层进行继承（取名为 Mall + 标准组的类名），然后在其它地方都使用自己的 domain。
-2. 自己的 domain 层应该有一个别名（取名为 mall + 该类的名字），注意：定义 Po 的类为和数据库映射的类，应该有别名，如 MallProductPo 的别名为 mallProductPo。
-3. 测试代码不要提交到 github 上，提交过的就算了。
-4. 在自己写的类上加上 `@author 自己的名字`，或者添加在别人的后面。
-5. 配置文件也不要提交到 github 上。
-
-## 说明
-
-### 各模块及端口号
-
-- [X] eureka 9000
-- [X] common 公共模块 无端口
-- [X] standard 标准组模块 无端口
-- [X] log 8082 待测试
-- [ ] cart 8083 
-- [X] topic 8084 待测试
-- [X] ad 8086 
-- [X] user 8888
-- [ ] goods-info 8081
-
-### 日志
-
-- 2019-12-07
-    
-    - goods xxx负责
-    - brand xxx负责
-    - goods category xxx负责
-    - product xxx负责
-    
-    maven 配置最好和我同步，已经排除很多版本冲突问题。
-- 2019-12-08
-    
-    - topic log xxx负责
-    - cart xxx负责
-    
-- 2019-12-12
-    
-    - [ ] feign 第一次启动失败问题
-    - [ ] 用户管理员权限问题
-    - [ ] 写日志问题
-    - [ ] 完成 Goods 模块
-- 2019-12-22
-    
-    完成，不再维护
+- [liznsalt](https://github.com/liznsalt)
+- [JerryShen710](https://github.com/JerryShen710)
+- [YAAAAAH](https://github.com/YAAAAAH)
+- [sarielwxm](https://github.com/sarielwxm)
+- [zhangyoukun1](https://github.com/zhangyoukun1)

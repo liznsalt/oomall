@@ -1,10 +1,8 @@
 package xmu.oomall.service;
 
-import common.oomall.component.ERole;
 import xmu.oomall.domain.MallPrivilege;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author liznsalt
